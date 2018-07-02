@@ -2,6 +2,7 @@
 setlocal enabledelayedexpansion enableextensions
 REM https://askubuntu.com/questions/61408/what-is-a-command-to-compile-and-run-c-programs
 REM cd \ && cd windows\system32
+call :run
 
 :setvar
 goto:EOF
@@ -12,6 +13,10 @@ set /a sleeptime=%1+1
 ping 127.0.0.1 -n %sleeptime% > nul
 goto:EOF
 
-REM cl /EHsc C:\Users\user\Documents\GitHub\reinstallw10\pdftonote.cpp
-echo bla
+:run
 call :sleep 100
+
+:compileandparsecpp
+set "cppdir=C:\Users\user\Documents\GitHub\reinstallw10\pdftonote.cpp"
+rem https://msdn.microsoft.com/en-us/library/ms235639.aspx
+REM cl /EHsc %cppdir%

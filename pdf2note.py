@@ -70,7 +70,6 @@ def parse_args():
         help="Loc of PDFs. Example: -pdir /home/user"
     )
     return parser.parse_args()
-
 args = parse_args()
 
 def testing() :
@@ -123,6 +122,22 @@ def setvarargs():
     if int(args.noconversion)==1:
         noconversion=True
     return True
+setvarargs()
+
+def convertpdf2jpg(pdfdir,pdfname,quality,page,outputdir):
+    ##converteddir=pdfdir+"/ConvertedPDF"
+    converteddir=outputdir
+    pdfpage=subprocess.getoutput("pdfinfo \""+pdfdir+"/"+pdfname+"\" | grep Pages: | awk '{print $2}'")
+    ##for i in range(int(pagestart),int(pageend)):
+    pagei=str(page).zfill(4)
+    convpname="conv"+pagei
+    print("pdftoppm \""+pdfdir+"/"+pdfname+"\" \""+converteddir+"/"+convpname+"\" -jpeg -f "+str(page)+" -singlefile")
+    subprocess.call("pdftoppm \""+pdfdir+"/"+pdfname+"\" \""+converteddir+"/"+convpname+"\" -jpeg -f "+str(page)+" -singlefile",shell=True)
+    #subprocess.call("convert -verbose -density "+str(quality)+" -trim "+pdfdir+"/"+pdfname+"["+str(page)+"] -quality 100 -flatten -sharpen 0x1.0 "+converteddir+"/"+convpname, shell=True)
+    return (convpname)
+#convertpdf2jpg(pdfdir,pdfname)
+#runengine(str(0),str(0),converteddir)
+
 
 
 column=1
@@ -175,5 +190,4 @@ if args.pdfmdir :
 
     for i in range(0,len(pdf_names)):
         print(pdf_names[i])
-        ##sys.exit()
-        subprocess.call("python3 ~/Documents/Docs/Tech/Automate/FN35AOCV/startpdf2note.py -pdir \""+relevant_path+"\" -p \""+pdf_names[i]+"\" -d 100 -t 1 -nc 1" ,shell=True)
+        subprocess.call("python3 ~/Documents/Docs/Tech/Automate/FN35AOCV/pdf2note.py -pdir \""+relevant_path+"\" -p \""+pdf_names[i]+"\" -d 100 -t 1 -nc 1" ,shell=True)
