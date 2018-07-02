@@ -1,0 +1,13 @@
+29
+python3 ~/Documents/Docs/Tech/Automate/FN35AOCV/startpdf2note.py -p "29.pdf" -d 120 -t 1 -nc 2
+alltopics(math)
+python3 ~/Documents/Docs/Tech/Automate/FN35AOCV/startpdf2note.py -p "29.pdf" -d 120 -t 1 -nc 2
+Summary4, lecture1-2
+python3 ~/Documents/Docs/Tech/Automate/FN35AOCV/startpdf2note.py -p "29.pdf" -d 120 -t 3 -nc 2
+Physics workbook
+python3 ~/Documents/Docs/Tech/Automate/FN35AOCV/startpdf2note.py -p "29.pdf" -d 120 -t 2 -nc 2
+
+sudo apt-get install -y python3-psutil android-tools-adb
+python3 /mnt/c/Users/SP3/Documents/Docs/Tech/Automate/FN35AOCV/startpdf2note.py -p "29.pdf" -d 120 -t 1 -nc 2
+
+
