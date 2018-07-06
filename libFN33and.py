@@ -1,177 +1,91 @@
 #!/usr/bin/env python
-#sudo apt-get install python3-xlib python3-psutil wmctrl thunar &&\
-#python install --upgrade pip &&\
-#pip install pyscreenshot
+#sudo apt-get install python3 python3-pip idle3 python3-xlib python3-psutil
+#xdotool wmctrl thunar
+#sudo -H pip3 install pyscreenshot
+#pip3 install opencv-python imutils scipy numpy
 import os, sys, threading
 import _thread
 import subprocess
 import shutil
 import psutil
+
+import binascii
 import re
+import time
 from datetime import datetime
 from time import gmtime,strftime
-import time
-import binascii
 import math
-import pyscreenshot
 import tkinter as tk
 from tkinter import *
 from tkinter import Tk
-
-if sys.platform in ['linux', 'linux2']:
-    from Xlib.display import Display
-    import Xlib.display as display
-    from Xlib import X, XK
-    from Xlib.ext import record
-    from Xlib.protocol import rq
-    import signal
-    
-    dirand="/run/user/1000/gvfs"
-    dirand2=os.listdir(dirand)
-    fnsavedirand=dirand+"/"+dirand2[0]+"/Internal shared storage/fiinote/notes/"
-    subprocess.call("nautilus file:///home/user/Documents/Docs/Tech/Automate/PDF/Sem2",shell=True)
-if sys.platform in ['Windows', 'win32', 'cygwin']:
-    dirand="Z:\\"
-    fnsavedirand=dirand+"fiinote\\notes\\"
-    
-##fnnotespdir=dir_path+os.path.sep+"FiiNote"+os.path.sep+"Save"+os.path.sep+"@pagkly"+os.path.sep+"notes"+os.path.sep
-andfndir="/storage/emulated/0/fiinote/notes/"
-andfndir2="/storage/emulated/0/fiinote/notes"
-fnnotespdir=fnsavedirand
-dir_path = os.path.dirname(os.path.realpath(__file__))
-##curnotedir="/home/user/Documents/Docs/Tech/Automate/andimages.txt"
-curnotedir=dir_path+os.path.sep+"andimages.txt"
-print(curnotedir)
-curpicdir=dir_path+os.path.sep+"attach"
-fndir = dir_path+os.path.sep+"FiiNote"+os.path.sep+"FiiNote.exe"
-readerdir=dir_path+os.path.sep+"SumatraPDF-3.1.2"+os.path.sep+"SumatraPDF.exe"
-winefndir="wine "+fndir
-winereaderdir="wine "+readerdir
-
-textclick=0
-pause=0
-is_recording=0
-    
-def Default():
-    textclick=0
-    pause=0
-    is_recording=0
-
-if sys.platform in ['linux', 'linux2'] or sys.platform in ['Windows', 'win32', 'cygwin']:
-    def MouseGetPos():
-        if sys.platform in ['linux', 'linux2']:
-            screenroot=display.Display().screen().root
-            pointer = screenroot.query_pointer()
-            data = pointer._data
-            x=data["root_x"]
-            y=data["root_y"]
-            return x, y
-        if sys.platform in ['Windows', 'win32', 'cygwin']:
-            pass
-            
-    def mouselu(event):
-        global textclick, clickStartX, clickStopX, clickStartY, clickStopY, objno2
-        if pause==0 :
-            if (textclick==0):
-                subprocess.call("adb shell \"su -c 'input keyevent KEYCODE_ESCAPE && sleep 0.1 && killall com.fiistudio.fiinote'\"", shell=True)
-                if sys.platform in ['linux', 'linux2']:
-                    clickStartX, clickStartY=MouseGetPos()
-                if sys.platform in ['Windows', 'win32', 'cygwin']:
-                    clickStartX, clickStartY=event.Position
-                print(clickStartX, clickStartY)
-                TT.config(text="C")
-                textclick=1
-            elif (textclick==1):
-                if sys.platform in ['linux', 'linux2']:
-                    clickStopX, clickStopY=MouseGetPos()
-                if sys.platform in ['Windows', 'win32', 'cygwin']:
-                    clickStopX, clickStopY=event.Position
-                print(clickStopX, clickStopY)
-                if clickStartX<clickStopX :
-                    clickStartX=int(clickStartX)
-                    clickStartY=int(clickStartY)
-                    clickStopX=int(clickStopX)
-                    clickStopY=int(clickStopY)
-                    ##try:
-                    SS=SS1(clickStartX,clickStartY,clickStopX,clickStopY)
-                    print(SS)
-                    objno2=appendnewpic(SS[0],SS[1],SS[2],SS[3],SS[4])
-                    imgdir=curpicdir+os.path.sep+SS[2]
-                    subprocess.call("adb push -p "+imgdir+" "+andfndir+newdir1+".notz/attach",shell=True)
-                    TT.config(text="P")
-                    TT2.config(text=str(objno2))
-                    ##subprocess.call("adb shell su -c 'monkey -p com.fiistudio.fiinote -c android.intent.category.LAUNCHER 1'", shell=True)
-                        ## \"su -c 'killall com.fiistudio.fiinote'\"
-                    #except :
-                        ##TT.config(text="try")
-                    ##monkey -p com.fiistudio.fiinote.editor.Fiinote -c android.intent.category.LAUNCHER 1
-                else:
-                    TT.config(text="Rep")
-                textclick=0
-    
-    def task2():
-        global TT, TT2
-        root = tk.Tk()
-        m = Button(root, text="Pause R", command=Suspend1)
-        newf = Button(root, text="New F", command=newnotz)
-        TT=Label(root, relief='raised')
-        TT2=Label(root)
-        m.pack()
-        newf.pack()
-        TT.pack()
-        TT2.pack()
-
-        #root.withdraw()
-        if sys.platform in ['linux', 'linux2'] :
-            w = root.winfo_screenwidth()
-            h = root.winfo_screenheight()
-        if sys.platform in ['Windows', 'win32', 'cygwin']:
-            w=GetSystemMetrics(0)
-            h=GetSystemMetrics(1)
-        x = w-70
-        y = h-(h*1300/1440)
-        wn=50
-        hn=770
-        root.wm_attributes('-alpha',0.50,'-topmost',1)
-        root.geometry('%dx%d+%d+%d' % (wn, hn, x,y) )
-        root.resizable(False, False)
-        root.update_idletasks()
-        root.overrideredirect(True)
-        Suspend1()
-        root.mainloop()
-
-    def ClearTT():
-        TT.config(text="")
-        return True
-
-    def Suspend1():
-        global pause
-        if pause==0:
-            pause=1
-            TT.config(text="Suspended")
-        elif pause==1:
-            pause=0
-            TT.config(text="Resume")
-
-    def newnotz():
-        global newdir1, objno2
-        os.remove(curnotedir)
-        CN=checknotz(curnotedir)
-        newdir1=CN[0]
-        objno2=CN[1]
-        TT2.config(text="NEW")
-
-    def term(scriptn):
-        if sys.platform in ['linux', 'linux2'] :
-            python_path=""
-            subprocess.call("python3 "+str(dir_path)+"/"+str(scriptn)+".py", shell=True)
-            print(python_path+"sudo python3 "+str(dir_path)+"/"+scriptn)
-        if sys.platform in ['Windows', 'win32', 'cygwin']:
-            python_path=dir_path+os.path.sep+"WinPython-32bit-3.5.3.1Qt5"+os.path.sep+"scripts"+os.path.sep
-            subprocess.call(python_path+"python "+str(dir_path)+"\\"+str(scriptn)+".py", shell=True)
-        return True
-
-def getdateinhex():
+import pyscreenshot
+import argparse
+from PIL import Image
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-pdir","--pdfdir",help="Loc of PDF. Example: -pdir /home/")
+    parser.add_argument("-p","--pdfname",help="Name of PDF. Example: -p ABC.pdf")
+    parser.add_argument("-ps","--pagestart",help="Starting Page. Example: -ps 1")
+    parser.add_argument("-pe","--pageend",help="End Page. Example: -pe 6")
+    parser.add_argument("-d","--density",help="DPI. Example: -d 100")
+    parser.add_argument("-t","--type",help="OCV Type. Example: -t 1")
+    parser.add_argument("-nc","--noconversion",help="OCV Type. Example: -nc 1")
+    parser.add_argument("-pmdir","--pdfmdir",help="Loc of PDFs. Example: -pdir /home/user")
+    return parser.parse_args()
+def checkfile(filename):
+    if not os.path.exists(filename):
+        f = open(filename,'w')
+        f.close()
+def checkdir(dirname,mode):
+    if mode=="rw":
+        shutil.rmtree(dirname)
+    if not os.path.exists(dirname):
+        os.makedirs(dirname)
+    return True
+def checkfileand(filename):
+    if not os.path.exists(filename):
+        f = open(filename,'w')
+        f.close()
+def checkdirand(dirname):
+    if os.path.exists(dirname):
+        #shutil.rmtree(dirname)
+        subprocess.call("adb shell mkdir -p "+dirname,shell=True)
+    else:
+        subprocess.call("adb shell mkdir "+dirname,shell=True)
+    return True
+def copyfile(source,dest):
+    if sys.platform in ['linux', 'linux2']:
+        subprocess.call("cp "+source+" "+dest,shell=True)
+    if sys.platform in ['Windows', 'win32', 'cygwin']:
+        subprocess.call("cp "+source+" "+dest,shell=True)
+    return True
+def removefile(dirname):
+    if sys.platform in ['linux', 'linux2']:
+        if os.path.exists(dirname):
+            subprocess.call("rm -rf "+dirname+" ;", shell=True)
+def convasciitohex(text,texttype):
+    if texttype==1:
+        textinhex="".join("{:02x}".format(ord(c)) for c in text)
+    elif texttype==2:
+        textinhex=bytes(bytearray.fromhex(text))
+    elif textype==3:
+        textinhex=format(int(text),'x')
+    return textinhex
+def appendtext(filedir,text,textformat):
+    if textformat=="w":
+        if not os.path.exists(filedir):
+            f = open(filedir,'w')
+            f.close()
+    if textformat=="w+":
+        f = open(filedir,'w+')
+        f.write(text)
+        f.close()
+    if textformat=="wb":
+        with open(filedir,"wb") as fout:
+            append=bytes(bytearray.fromhex(text))
+            fout.write(append)
+            fout.close()
+def getdateinhex0():
     my_date="05/11/2009"
     b_date = datetime.strptime(my_date, '%d/%m/%Y')
     diffYear=int((datetime.today() - b_date).days/365)
@@ -180,108 +94,166 @@ def getdateinhex():
     diffDay=int(((datetime.today() - b_date).days-(diffMonth*30)))
     diffDayHex=str(format(diffDay,'x')).zfill(2)
     return diffDayHex, diffMonthHex
+def getdateinhex():
+    diffDayHex, diffMonthHex=getdateinhex0()
+    difftime=diffDayHex+diffMonthHex
+    print(diffDayHex, diffMonthHex)
+    print(difftime)
+    return difftime
+def imgsize(imgdir):
+    im = Image.open(imgdir)
+    w, h = im.size
+    return w,h
+def grabimg(startx,starty,stopx,stopy):
+    im=pyscreenshot.grab(bbox=(startx,starty,stopx,stopy),childprocess=False)
+    return im
+def SS1(clickStartX,clickStartY,clickStopX,clickStopY):
+    picname=strftime("%Y%m%d%H%M%S")+'abcdefghijklmno.jpg'
+    imgdir=curattachdirpc+os.path.sep+picname
+    im=grabimg(clickStartX,clickStartY,clickStopX,clickStopY)
+    w,h=im.size
+    im.save(imgdir)
+    print(imgdir)
+    return w,h,picname,newdir1,objno2
+def checkadbdevices():
+    global curanddevice
+    curanddevice=subprocess.getoutput("adb devices | awk '{gsub(\"List of devices attached\",\"\");print}'")
+    print(curanddevice)
+    deviceconnected="device"
+    if not deviceconnected in curanddevice:
+        print("notconnected")
+    return curanddevice
+def runadbcommand(command):
+    curanddevice=checkadbdevices()
+    #nulldevice="error: device '(null)' not found"
+    deviceconnected="device"
+    if deviceconnected in curanddevice:
+        subprocess.call(command, shell=True)
+checkadbdevices()
+dir0=os.path.dirname(os.path.realpath(__file__))
+userid=subprocess.getoutput("awk -F: '!/root/ && /(\/bin\/bash)/ {print $1}' /etc/passwd")
+userhomedir="/home/"+userid
+autodirpc=userhomedir+"/Documents/Docs/Tech/Automate"
+schooldirpc=autodirpc+"/PDF/Sem2"
+pdftonotedir=autodirpc+"/FN35AOCV/pdf2note.py"
+fnexedir = dir0+os.path.sep+"FiiNote"+os.path.sep+"FiiNote.exe"
+pdfreaderexedir=dir0+os.path.sep+"SumatraPDF-3.1.2"+os.path.sep+"SumatraPDF.exe"
+winefnexedir="wine "+fnexedir
+winepdfreaderexedir="wine "+pdfreaderexedir
 
-def checknotz(curnotedir):
-    subprocess.call("adb shell \"su -c 'input keyevent KEYCODE_ESCAPE && sleep 0.1 && killall com.fiistudio.fiinote'\"", shell=True)
-    global objno2
-    if os.path.exists(curnotedir):
-        with open(curnotedir) as f:
+regexindex1=r'(01)(.{8})(.{4})(011a)'
+regexindex2=r'(1123236e6f7465732f2323756e66696c6564(?!.*1123236e6f7465732f2323756e66696c6564))(.*?)(00\d\d\d\d00\d\d)(2323)'
+regexnote1=r'(0302010201)(.{2})'
+regexnote2=r'(0302010201)(.{2})(.{2})'
+
+if sys.platform in ['linux', 'linux2']:
+    from Xlib.display import Display
+    import Xlib.display as display
+    from Xlib import X, XK
+    from Xlib.ext import record
+    from Xlib.protocol import rq
+    import signal
+    dirand="/run/"+userid+"/1000/gvfs"
+    dirandcheck=dirand+"*/Internal shared storage"
+    if os.path.exists(dirandcheck):
+        dirand2=os.listdir(dirand)
+        fnnotesdirand=dirand+os.path.sep+dirand2[0]+"/Internal shared storage/fiinote/notes/"
+        subprocess.call("nautilus file://"+schooldirpc,shell=True)
+if sys.platform in ['Windows', 'win32', 'cygwin']:
+    dirand="Z:"
+    if os.path.exists(dirand):
+        fnnotesdirand=dirand+os.path.sep+"fiinote\\notes\\"
+
+#thedir=autodir+"/FiiNote/Save/@pagkly/notes/"
+thedir=dir0+os.path.sep+"ConvPDF"
+fnnotesdirpc=thedir
+fnnotesdirandint="/storage/emulated/0/fiinote/notes"
+curnotelocpc=fnnotesdirpc+os.path.sep+"andimages.txt"
+convpdfdirpc=dir0+os.path.sep+"ConvertedPDF"
+noconversion=False
+quality=100
+pagestart=1
+ocvtype=0
+#os.remove(curnotelocpc)
+#####pdf2note
+def setvarnotz(thedir,newdir1):
+    global notzdn,notefn,curindexpc,curindexoldpc,curnotzpc,curnotefpc,curattachdirpc,curnotzand,curattachdirand,convpdfdirpc
+    notzdn=newdir1+".notz"
+    notefn=newdir1+".note"
+    curindexpc=thedir+os.path.sep+"index.nti"
+    curindexoldpc=thedir+os.path.sep+"index.ntiold"
+    curnotzpc=thedir+os.path.sep+notzdn
+    curnotefpc=curnotzpc+os.path.sep+notefn
+    curattachdirpc=curnotzpc+os.path.sep+"attach"
+    curnotefpc1=thedir+os.path.sep+"ConvertedPDF"+os.path.sep+notefn
+    curnotzand=fnnotesdirandint+os.path.sep+notzdn
+    curattachdirand=curnotzand+os.path.sep+"attach"
+
+    checkdir(curnotzpc,"")
+    checkdir(curattachdirpc,"")
+    if not os.path.exists(curnotefpc):
+        checkfile(curnotefpc)
+        ##subprocess.call("adb shell touch "+curnotefand,shell=True)
+        firstlineappend(newdir1,curnotefpc)
+        runadbcommand("adb push "+curnotefpc+" "+curnotzand)
+        print("appendfline")
+    appendtext(curnotelocpc,newdir1+".notz","w+")
+    runadbcommand("adb push "+curnotzpc+" "+fnnotesdirandint)
+    return curnotzpc,curnotefpc,curattachdirpc,curnotzand,curattachdirand
+def checknotz(curnotelocpc):
+    global objno2,newdir1
+    runadbcommand("adb shell \"su -c 'input keyevent KEYCODE_ESCAPE && sleep 0.1 && killall com.fiistudio.fiinote'\"")
+    if os.path.exists(curnotelocpc):
+        with open(curnotelocpc) as f:
             for line in f:
                 if re.search(r"\.notz",str(line)):
                     newdir1=line
                     newdir1 = re.sub('.notz', '', newdir1)
-        curnotz=fnnotespdir+newdir1+".notz"
-        curnotef=fnnotespdir+newdir1+".notz"+os.path.sep+newdir1+".note"
-        curpicdir2=fnnotespdir+newdir1+".notz"+os.path.sep+"attach"
-        print(curnotef)
-        if os.path.exists(curnotz) and os.path.exists(curnotef) and os.path.exists(curpicdir2):
+        setvarnotz(fnnotesdirpc,newdir1)
+        print(curnotefpc)
+        if os.path.exists(curnotzpc) and os.path.exists(curnotefpc) and os.path.exists(curattachdirpc):
             print("checkingcnf")
-            with open(curnotef,"rb") as f:
-                    content=f.read()
-                    contenthex=str(binascii.hexlify(content).decode('utf-8'))
-                    regex_number=r'(0302010201)(..)'
-                    mo1 = re.search(regex_number,contenthex)
-                    mo2 = re.compile(regex_number)
+            with open(curnotefpc,"rb") as f:
+                content=f.read()
+                contenthex=str(binascii.hexlify(content).decode('utf-8'))
+                mo1 = re.search(regexnote1,contenthex)
+                mo2 = re.compile(regexnote1)
+                if mo2.search(contenthex):
+                    objno2=int(mo1.group(2), 16)
+                else:
+                    mo1 = re.search(regexnote2,contenthex)
+                    mo2 = re.compile(regexnote2)
                     if mo2.search(contenthex):
-                        objno2=int(mo1.group(2), 16)
+                        prefix=int(mo1.group(2), 16)
+                        objno2=int(mo1.group(3), 16)
+                        prefix0=((prefix-194)*128)
+                        objno2=prefix0+objno2
                     else:
                         objno2=1
-                    print(str(objno2))
-                    f.close()
-        if (not os.path.exists(curnotz) or not os.path.exists(curnotef) or not os.path.exists(curpicdir2)) :
-            ##or (objno2>=30)
-            objno2=1
-            Time=strftime("%Y%m%d%H%M%S")
-            newdir1="AOWNLPC00000"+Time
-            ##curnotz=fnnotespdir+newdir1+".notz"
-            ##curnotef=fnnotespdir+newdir1+".notz"+os.path.sep+newdir1+".note"
-            ##curpicdir2=fnnotespdir+newdir1+".notz"+os.path.sep+"attach"
-            ##curnotz=dir_path+os.path.sep+newdir1+".notz"
-            ##curnotef=dir_path+os.path.sep+newdir1+".notz"+os.path.sep+newdir1+".note"
-            ##curpicdir2=dir_path+os.path.sep+newdir1+".notz"+os.path.sep+"attach"
-            ##curnotz=andfndir+newdir1+".notz"
-            ##curnotef=andfndir+newdir1+".notz"+os.path.sep+newdir1+".note"
-            ##curpicdir2=andfndir+newdir1+".notz"+os.path.sep+"attach"
-            curnotz=andfndir+newdir1+".notz"
-            curnotef2=andfndir+newdir1+".notz"+os.path.sep+newdir1+".note"
-            curpicdir2=andfndir+newdir1+".notz"+os.path.sep+"attach"
-            curnotef=dir_path+os.path.sep+"ConvertedPDF"+os.path.sep+newdir1+".note"
-            if not os.path.exists(curnotz):
-                ##os.mkdir(curnotz)
-                subprocess.call("adb shell mkdir "+curnotz,shell=True)
-            if not os.path.exists(curpicdir2):
-                ##os.mkdir(curpicdir2)
-                subprocess.call("adb shell mkdir -p "+curpicdir2,shell=True)
-            if not os.path.exists(curnotef):
-                ##curnotefinpc=dir_path+"/attach/"+newdir1+".note"
-                f2=open(curnotef,"w+")
-                f2.close()
-                ##subprocess.call("adb shell touch "+curnotef,shell=True)
-                firstlineappend(newdir1,curnotef)
-                subprocess.call("adb push "+curnotef+" "+curnotz,shell=True)
-                print("appendfline")
-            ##os.remove(curnotef)
-            f1=open(curnotedir,"w+")
-            f1.write(newdir1+".notz")
-            f1.close()
-            ##subprocess.call("adb push "+curnotz+" "+andfndir,shell=True)
-            appendnewnote(newdir1,fnnotespdir)
-             
-    elif not os.path.exists(curnotedir) or (not os.path.exists(curnotz)) :
-        ##or (objno2>=30)
-        objno2=1
-        Time=strftime("%Y%m%d%H%M%S")
-        newdir1="AOWNLPC00000"+Time
-        curnotz=andfndir+newdir1+".notz"
-        curnotef2=andfndir+newdir1+".notz"+os.path.sep+newdir1+".note"
-        curpicdir2=andfndir+newdir1+".notz"+os.path.sep+"attach"
-        curnotef=dir_path+os.path.sep+"ConvertedPDF"+os.path.sep+newdir1+".note"
-        if not os.path.exists(curnotz):
-            subprocess.call("adb shell mkdir "+curnotz,shell=True)
-        if not os.path.exists(curpicdir2):
-            subprocess.call("adb shell mkdir -p "+curpicdir2,shell=True)
-        if not os.path.exists(curnotef):
-            f2=open(curnotef,"w+")
-            f2.close()
-            firstlineappend(newdir1,curnotef)
-            subprocess.call("adb push "+curnotef+" "+curnotz,shell=True)
-            print("appendfline")
-        ##os.remove(curnotef)
-        f1=open(curnotedir,"w+")
-        f1.write(newdir1+".notz")
-        f1.close()
-        appendnewnote(newdir1,fnnotespdir)
+                f.close()
+        if (not os.path.exists(curnotzpc) or not os.path.exists(curnotefpc) or not os.path.exists(curattachdirpc)) :
+            newdir1,objno2=newnotz(fnnotesdirpc,fnnotesdirpc)
+    elif not os.path.exists(curnotelocpc) or (not os.path.exists(curnotzpc)) :
+        newdir1,objno2=newnotz(fnnotesdirpc,fnnotesdirpc)
+    print(str(objno2))
     return newdir1,objno2
 
+def newnotz(thedir1,thedir2):
+    objno2=1
+    newdir1="AOWNLPC00000"+strftime("%Y%m%d%H%M%S")
+    #setvarnotz(fnnotesdirandint,newdir1)
+    setvarnotz(thedir1,newdir1)
+    appendnewnote(newdir1,curindexpc,curindexoldpc)
+    return newdir1,objno2
 
+def firstlineappendindex(newdir1,curindexpc):
+    return True
 def firstlineappend(newdir1,curnotef):
-    diffTime=getdateinhex()
-    diffDayHex=diffTime[0]
-    diffMonthHex=diffTime[1]
-    newdir1hex="".join("{:02x}".format(ord(c)) for c in newdir1)
+    difftime=getdateinhex()
+    newdir1hex=convasciitohex(newdir1,1)
     filetypehex="060000" + \
-                 "01" + diffMonthHex + diffDayHex + "FFFFFF" + "0000" + \
-                 "01" + diffMonthHex + diffDayHex + "FFFFFF" + \
+                 "01" + difftime + "FFFFFF" + "0000" + \
+                 "01" + difftime + "FFFFFF" + \
                  "001A" + newdir1hex + \
                  "000000" + "ffff" + \
                  "000000" + "000000" + \
@@ -290,69 +262,49 @@ def firstlineappend(newdir1,curnotef):
                  "01" + \
                  "000000" + "000000" + \
                  "000000" + "000000" + \
-                 "01" + diffMonthHex + diffDayHex + "FFFFFF" + \
+                 "01" + difftime + "FFFFFF" + \
                  "010302010201"+ \
                  "01"
-    append=filetypehex
-    with open(curnotef,"wb") as fout:
-        append=bytes(bytearray.fromhex(append))
-        fout.write(append)
-        fout.close()
-            
-def SS1(clickStartX,clickStartY,clickStopX,clickStopY):
-    Time=strftime("%Y%m%d%H%M%S")
-    picname=Time+'abcdefghijklmno.jpg'
-    imgdir=curpicdir+os.path.sep+picname
-    im=pyscreenshot.grab(bbox=(clickStartX,clickStartY,clickStopX,clickStopY),childprocess=False)
-    w,h=im.size
-    im.save(imgdir)
-    print(imgdir)
-    return w,h,picname,newdir1,objno2
-
-    #if (objno2<32):
-    #    prefixposyhex="A9"
-    #    quot=objno2/2;
-    #    rem=objno2%2;
-    #    objnonow=224+quot+1;
-
-    #elif (objno2>=32):
-    #    prefixposy=int(objno2/34)+169
-    #    prefixposyhex=format(math.trunc(prefixposy), 'x')
-    #    quot=objno2/2;
-    #    rem=objno2%2;
-    #    objnonow=224+quot+1;
+    appendtext(curnotef,filetypehex,"wb")
 
 
-def appendnewpic(w,h,picname,newdir1,objno2):
+def appendnewpic(w,h,picname,newdir1,objno2,column):
     objno2=int(objno2)
-    print("number"+str(objno2))
-    curnotef=fnnotespdir+newdir1+".notz"+os.path.sep+newdir1+".note"
-    newlinehex="0AC480C391C391C39101";
-    secondobjhex="C88A";
-    xlochex="E5A5AA"+\
-             "E5AB81"+\
-             "E5A5A9"+\
-             "E19E81"+\
-             "E5A5A9"+\
-             "E19E81";
+    column=int(column)
     w=int(w)
     h=int(h)
-    objno2c1=int(objno2%13);
-    if (objno2c1<32):
-        prefixposyhex="A9"
-        quot=objno2c1/2;
-        rem=objno2c1%2;
-        objnonow=224+quot+1;
-    elif (objno2c1>=32):
-        prefixposy=int(objno2c1/34)+169
-        prefixposyhex=format(math.trunc(prefixposy), 'x')
-        quot=objno2c1/2;
-        rem=objno2c1%2;
+    newlinehex="0AC480C391C391C39101";
+    secondobjhex="C88A";
+    columnc1=int(column/8);
+    columnc2=int(column%8);
+    if (columnc1==0):
+        prefixposx=169
+        posx=224+columnc2
+    if (columnc1>0):
+        prefixposx=169+columnc1
+        if (columnc2==0):
+            posx=225
+        else:
+            posx=225+columnc2
+    posxhex=format(posx, 'x')
+    prefixposxhex=format(prefixposx, 'x')
+
+
+    objno2c1=int(objno2/14);
+    if (objno2c1==0):
+        prefixposy=169
+    elif (objno2c1>0):
+        prefixposy=int(objno2c1)+169
+    prefixposyhex=format(math.trunc(prefixposy), 'x')
+    quot=objno2/2;
+    rem=objno2%2;
+    if (quot>=31):
+        quotc1=objno2%31;
+        objnonow=224+quotc1+1;
+    else:
         objnonow=224+quot+1;
     objnohex=format(math.trunc(objnonow), 'x')
-    print(objnohex)
-    print("w="+str(w))
-    print("h="+str(h))
+
     if (quot==0):
         if (rem>0):
             posyhex="9E"
@@ -363,6 +315,13 @@ def appendnewpic(w,h,picname,newdir1,objno2):
             posyhex="9E"
         if(rem==0):
             posyhex="81"
+
+    xlochex="E5A5AA"+\
+             "E5AB81"+\
+             "E5A5A9"+\
+             "E19E81"+\
+             "E5A5"+prefixposxhex+\
+             posxhex+"9E81"
     ylochex="E5A5A9"+\
              "E19E81"+\
              "E5A5AA"+\
@@ -375,8 +334,7 @@ def appendnewpic(w,h,picname,newdir1,objno2):
              "E19E81"+\
              "E5A5AA"+\
              "E5AB81"
-    print(ylochex)
-    print(zlochex)
+
     if (w<128):
         xpixshex=format(w,'x')
         xpixshex=str(xpixshex).zfill(2)
@@ -399,7 +357,6 @@ def appendnewpic(w,h,picname,newdir1,objno2):
     yscalehexs="";
     xscalehexs="";
     ysuffix="";
-
     if (w<h):
         a=2717*w;
         div=h*64;
@@ -431,44 +388,94 @@ def appendnewpic(w,h,picname,newdir1,objno2):
     elif (w==h):
         xscalehexs="E2BAA3";
         yscalehexs="E2BAA3";
-
     objscalehex="0303E293B903E293B903"+xscalehexs+"03"+yscalehexs+"22";
-    picnamehex="".join("{:02x}".format(ord(c)) for c in picname)
+    picnamehex=convasciitohex(picname,1)
     hexc = newlinehex+secondobjhex+xlochex+ylochex+zlochex+objscalehex+picnamehex+xpixshex+ypixshex+"01"
-    #print(hexc)
-    if os.path.exists(curnotef) and objno2>=1:
-        with open(curnotef,"rb") as f:
+
+
+    print("number"+str(objno2))
+    print("column"+str(column))
+    print("w="+str(w))
+    print("h="+str(h))
+    print(str(objnonow)+"check")
+    print(objnohex)
+    print(newlinehex)
+    print(xlochex)
+    print(ylochex)
+    print(zlochex)
+    if os.path.exists(curnotefpc) and objno2>=1:
+        with open(curnotefpc,"rb") as f:
             content=f.read()
             cihx=str(binascii.hexlify(content).decode('utf-8'))
-            regex_number=r'(0302010201)(..)'
-            mo1=re.search(regex_number,cihx)
-            mo2=re.compile(regex_number)
+            mo1=re.search(regexnote1,cihx)
+            mo2=re.compile(regexnote1)
             if mo2.search(cihx):
                 print("found")
                 objno2=int(mo1.group(2), 16)
                 objno2+=1
-                totalobjhex=str(format(objno2,'x')).zfill(2)
-                print(totalobjhex)
-                replace1 = re.sub(regex_number, mo1.group(1)+totalobjhex, cihx)
-                append=replace1+hexc
-                with open(curnotef,"wb") as fout:
-                    append=bytes(bytearray.fromhex(append))
-                    fout.write(append)
-                    fout.close()
-    return objno2
+                prefixhex=""
+                if objno2==2:
+                    print("found")
+                    totalobjhex=str(format(objno2,'x')).zfill(2)
+                    print(totalobjhex)
+                    replace1 = re.sub(regexnote1, mo1.group(1)+totalobjhex, cihx)
+                    ##append=replace1+newlinehex+secondobjhex+objscalehex+picnamehex+xpixshex+ypixshex+"01"
+                    append=replace1+hexc
+                if objno2>2 and objno2<128:
+                    print("found2")
+                    totalobjhex=str(format(objno2,'x')).zfill(2)
+                    print(totalobjhex)
+                    replace1 = re.sub(regexnote1, mo1.group(1)+totalobjhex, cihx)
+                    append=replace1+hexc
+                if objno2==128:
+                    print("found3")
+                    prefix=194;
+                    prefixhex=format(prefix,'x')
+                    print(prefixhex)
+                    totalobjhex=str(format(objno2,'x')).zfill(2)
+                    print(totalobjhex)
+                    replace1 = re.sub(regexnote1, mo1.group(1)+prefixhex+totalobjhex, cihx)
+                    append=replace1+hexc
+                if objno2>128:
+                    print("found4")
+                    mo1=re.search(regexnote2,cihx)
+                    mo2=re.compile(regexnote2)
+                    if mo2.search(cihx):
+                        print("found5")
+                        objno2=int(mo1.group(3), 16)
+                        objno2+=1
+                        ##prefix=int((objno2-128)/64);
+                        ##prefix=mo1.group(2)
+                        prefix=int(mo1.group(2), 16)
+                        ##prefix=194+prefix;
+                        prefix=prefix+int((objno2-128)/64);
+                        #if (objno2<192):
+                            #prefix=int((objno2-128)/64);
+                            #prefix=194+prefix;
+                        #if (objno2>=192):
+                            #prefix=int((objno2-192)/64);
+                            #prefix=195+prefix;
+                        prefixhex=format(prefix,'x')
+                        print(prefixhex)
+                        if (objno2<192):
+                            totalobjhex=str(format(objno2,'x')).zfill(2)
+                        if (objno2>=192):
+                            totalobjhex=str(format((128+int((objno2-192)%64)),'x')).zfill(2)
+                        print(totalobjhex)
+                        replace1 = re.sub(regexnote2, mo1.group(1)+prefixhex+totalobjhex, cihx)
+                        append=replace1+hexc
+    appendtext(curnotefpc,append,"wb")
+    return objno2,curattachdirpc
 
-def appendnewnote(newdir1,fnnotespdir):
+def appendnewnote(newdir1,curindexpc,curindexoldpc):
     global replace1, replace2
     replace1=""
     replace2=""
-    indexcur = fnnotespdir+'index.nti'
-    indexold = fnnotespdir+'indexold.nti'
-    with open(indexcur, 'rb') as f:
+    with open(curindexpc, 'rb') as f:
         print("checkingindexcur")
         content = f.read()
         cihx=str(binascii.hexlify(content).decode('utf-8'))
-        regexp1=r'(01)(.{8})(.{4})(011a)'
-        regexc1=re.compile(regexp1)
+        regexc1=re.compile(regexindex1)
         if regexc1.search(cihx):
             mo1= re.search(regexp1,cihx)
             p1d=(int(mo1.group(3), 16))+1
@@ -477,161 +484,335 @@ def appendnewnote(newdir1,fnnotespdir):
             replace1 = re.sub(regexp1, regexr1, cihx)
         else:
             pass
-        diffTime=getdateinhex()
-        diffDayHex=diffTime[0]
-        diffMonthHex=diffTime[1]
-        newdir1hex="".join("{:02x}".format(ord(c)) for c in newdir1)
+        difftime=getdateinhex()
+        newdir1hex=convasciitohex(newdir1,1)
         newfolderhex1="011A"+newdir1hex+"00" + \
                         "00" + \
                         "04" + \
                         "00" + \
                         "00" + \
-                        "01" + diffMonthHex + diffDayHex + "FFFFFF" + "0000" + \
-                        "01" + diffMonthHex + diffDayHex + "FFFFFF" + "0000" + \
+                        "01" + difftime + "FFFFFF" + "0000" + \
+                        "01" + difftime + "FFFFFF" + "0000" + \
                         "001A" + newdir1hex + \
                         "00" + "1123236E6F7465732F2323756E66696C6564" + "05" + \
                         "00"+ \
                         "000000" + \
                         "000000" + \
                         "000000" + \
-                        "01" + diffMonthHex + diffDayHex + "FFFFFF" + "0000" + \
-                        "01" + diffMonthHex + diffDayHex + "FFFFFF"
-        ##.+
-        regexp2=r'(1123236e6f7465732f2323756e66696c6564(?!.*1123236e6f7465732f2323756e66696c6564))(.*?)(00\d\d\d\d00\d\d)(2323)'
-        regexc2=re.compile(regexp2)
+                        "01" + difftime + "FFFFFF" + "0000" + \
+                        "01" + difftime + "FFFFFF"
+        regexc2=re.compile(regexindex2)
         if regexc2.search(replace1):
             mo2 = re.search(regexp2,replace1)
             regexr2=mo2.group(1)+mo2.group(2)+newfolderhex1+mo2.group(3)+mo2.group(4)
             replace2 = re.sub(regexp2, regexr2, replace1)
-        else:
-            pass
-        print("checkingindexcurfinal")
-        newindexhex=bytes(bytearray.fromhex(replace2))
-        with open(indexcur,"wb") as fout:
-            fout.write(newindexhex)
-            fout.close()
+        appendtext(curindexpc,replace2,"wb")
         print("donecheckingindexcur")
     return True
-                    
-        
-if sys.platform in ['linux', 'linux2']:
-    # Adapted from http://stackoverflow.com/questions/22367358/             
-    
-    class Listener:
-      def __init__(self):
-        self.disp = None
-        self.keys_down = set()
-
-      def keycode_to_key(self, keycode, state):
-        i = 0
-        #if state & X.ShiftMask:
-        #i += 1
-        #if state & X.Mod1Mask:
-          #i += 2
-        return self.disp.keycode_to_keysym(keycode, i)
-
-      def key_to_string(self, key):
-        keys = []
-        for name in dir(XK):
-          if name.startswith("XK_") and getattr(XK, name) == key:
-            keys.append(name.lstrip("XK_").replace("_L", "").replace("_R", ""))
-        if keys:
-          return " or ".join(keys)
-        return "[%d]" % key
-
-      def keycode_to_string(self, keycode, state):
-        return self.key_to_string(self.keycode_to_key(keycode, state))
 
 
-      def mouse_to_string(self, code):
-        if code == X.Button1:
-          return "Button1"
-        elif code == X.Button2:
-          return "Button2"
-        elif code == X.Button3:
-          return "Button3"
-        elif code == X.Button4:
-          return "Button4"
-        elif code == X.Button5:
-          return "Button5"
+
+
+
+
+#####libocvfinal
+import cv2
+import numpy as np
+a=1000
+def convertrest(imgdir,imgname,afterimg,a,ocvtype):
+    ##a=0
+    if ocvtype==2 or ocvtype==21:
+        image = cv2.imread(imgdir+os.path.sep+imgname)
+    if ocvtype==1 or ocvtype==3:
+        image = cv2.imread(imgdir+os.path.sep+imgname)
+    ##image=img
+    gray = cv2.cvtColor(image,cv2.COLOR_BGR2GRAY) # grayscale
+    _,thresh = cv2.threshold(gray,150,255,cv2.THRESH_BINARY_INV) # threshold
+    kernel = cv2.getStructuringElement(cv2.MORPH_CROSS,(3,3))
+    dilated = cv2.dilate(thresh,kernel,iterations = 13) # dilate
+    _, contours, hierarchy = cv2.findContours(dilated,cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_NONE) # get contours
+    # for each contour found, draw a rectangle around it on original image
+    for contour in contours:
+        a-=1
+        # get rectangle bounding contour
+        [x,y,w,h] = cv2.boundingRect(contour)
+        # discard areas that are too large
+
+        if ocvtype==1 or ocvtype==3:
+            if h>500 and w>500:
+                continue
+        if ocvtype==2 or ocvtype==21:
+            if h>700 and w>700:
+                continue
+        # discard areas that are too small
+        if h<40 or w<40:
+            continue
         else:
-          return "{%d}" % code
+            # draw rectangle around contour on original image
+            #im=pyscreenshot.grab(bbox=(x,y,x+w,y+h),childprocess=False)
+            ##cv2.rectangle(image,(x,y),(x+w,y+h),(255,0,255),2)
+            ##img = image[y:y+h, x:x+w]
+            img=image[y-5:y+h+5, x-5:x+w+5]
+            cv2.imwrite(imgdir+os.path.sep+str(a)+"t2"+imgname, img)
+            #img.save(str(x)+'test.jpg')
+    # write original image with added contours to disk
+    cv2.imwrite(imgdir+os.path.sep+afterimg, image)
+    #ocv1/3
+    ##converttext(dir_path,"13.jpg",1000)
+    #ocv2
+    ##converttext(dir_path,"conv0003.jpg",1000)
 
-      def down(self, key):
-        self.keys_down.add(key)
-        self.print_keys()
+def converttext(imgdir,imgname,afterimg,a,ocvtype,colour):
+    large=cv2.imread(imgdir+os.path.sep+imgname)
+    print(imgdir+os.path.sep+imgname)
+    if ocvtype==1 or ocvtype==2 or ocvtype==4:
+        rgb=large
+    if ocvtype==3:
+        rgb=cv2.pyrDown(large)
+    if ocvtype==21:
+        rgb=cv2.pyrUp(large)
+        rgb=cv2.pyrUp(rgb)
 
-      def up(self, key):
-        if key in self.keys_down:
-          self.keys_down.remove(key)
-          self.print_keys()
+    small = cv2.cvtColor(rgb, cv2.COLOR_BGR2GRAY)
+    kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3, 3))
+    grad = cv2.morphologyEx(small, cv2.MORPH_GRADIENT, kernel)
 
-      def print_keys(self):
-        keys = str(list(self.keys_down))
-        #print(keys)
-        self.EventL()
+    _, bw = cv2.threshold(grad, 0.0, 255.0, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
+    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (9, 1))
+    connected = cv2.morphologyEx(bw, cv2.MORPH_CLOSE, kernel)
+    #cv2.imwrite(imgdir+os.path.sep+'grab1.png',connected)
+    # using RETR_EXTERNAL instead of RETR_CCOMP
+    _, contours, hierarchy = cv2.findContours(connected.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
 
+    mask = np.zeros(bw.shape, dtype=np.uint8)
+    print(contours)
+    for idx in range(len(contours)):
+        a-=1
+        x, y, w, h = cv2.boundingRect(contours[idx])
+        mask[y:y+h, x:x+w] = 0
+        cv2.drawContours(mask, contours, idx, (255, 255, 255), -1)
+        r = float(cv2.countNonZero(mask[y:y+h, x:x+w])) / (w * h)
+        if ocvtype==1 or ocvtype==3 :
+            if r > 0.45 and w > 100 and h > 10:
+                ##img = rgb[y:y+h-1, x:x+w-1]
+                img=rgb[y-5:y+h+5, x-5:x+w+5]
+                cv2.imwrite(imgdir+os.path.sep+str(a)+"t1"+imgname, img)
+                cv2.rectangle(rgb, (x, y), (x+w, y+h), (255, 255, 255), -1)
+        elif ocvtype==2 or ocvtype==21:
+            if r > 0.45 and w > 25 and h > 10:
+                ##img = rgb[y+15:y+h-15, x+15:x+w-15]
+                img=rgb[y:y+h, x:x+w]
+                if ocvtype==2:
+                    cv2.imwrite(imgdir+os.path.sep+str(a)+"t1"+imgname, img)
+                elif ocvtype==21:
+                    cv2.rectangle(rgb, (x-3, y-3), (x+w+3, y+h+3), (255, 255, 255), -1)
+                cv2.rectangle(rgb, (x, y), (x+w, y+h), (255, 255, 255), -1)
+                converttext(imgdir, str(a)+"t1"+imgname,a,4,"neutral")
+        elif ocvtype==4:
+            if r > 0.45 and w > 25 and h > 10:
+                ##img = rgb[y:y+h-1, x:x+w-1]
+                img=rgb[y-5:y+h+5, x-5:x+w+5]
+                cv2.imwrite(imgdir+os.path.sep+str(a)+"t3"+imgname, img)
+                cv2.rectangle(rgb, (x, y), (x+w, y+h), (255, 255, 255), -1)
+    if ocvtype==1 or ocvtype==3:
+        ##rgb = cv2.pyrUp(rgb)
+        cv2.imwrite(imgdir+os.path.sep+afterimg, rgb)
+        convertrest(imgdir,imgname,afterimg,a,ocvtype)
+    if ocvtype==4:
+        ##rgb = cv2.pyrUp(rgb)
+        cv2.imwrite(imgdir+os.path.sep+afterimg, rgb)
+        convertrest(imgdir,imgname,a,ocvtype)
+    #import matplotlib.pyplot as plt
+    #plt.imshow('rects', cmap='rgb')
+    #plt.show()
+def convertcolour(imgdir,imgname,afterimg,colour,size):
+    a=1000
+    idx=0
+    # Convert BGR to HSV
+    frame=cv2.imread(imgdir+os.path.sep+imgname)
+    if size=="down":
+        frame=cv2.pyrDown(frame)
+    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+    if colour=="red":
+        lowerr = np.array([110,50,50])
+        upperr = np.array([130,255,255])
+        mask = cv2.inRange(hsv, lowerr, upperr)
+    elif colour=="green":
+        lowerg=np.array([33,80,40])
+        upperg=np.array([102,255,255])
+        mask = cv2.inRange(hsv, lowerg, upperg)
+    elif colour=="blue":
+        lowerb = np.array([110,50,50])
+        upperb = np.array([130,255,255])
+        mask = cv2.inRange(hsv,lowerb,upperb)
+    #cv2.imwrite(imgdir+os.path.sep+'grabblue.png', mask)
 
-      def event_handler(self, reply):
-        data = reply.data
-        while data:
-          event, data = rq.EventField(None).parse_binary_value(data, self.disp.display, None, None)
-          if event.type == X.KeyPress:
-            self.down(self.keycode_to_string(event.detail, event.state))
-          elif event.type == X.KeyRelease:
-            self.up(self.keycode_to_string(event.detail, event.state))
-          elif event.type == X.ButtonPress:
-            self.down(self.mouse_to_string(event.detail))
-          elif event.type == X.ButtonRelease:
-            self.up(self.mouse_to_string(event.detail))
-        
-        
-      def run(self):
-        self.disp = Display()
-        XK.load_keysym_group('xf86')
-        root = self.disp.screen().root
-        ctx = self.disp.record_create_context(0,
-                                          [record.AllClients],
-                                          [{
-                                            'core_requests': (0, 0),
-                                            'core_replies': (0, 0),
-                                            'ext_requests': (0, 0, 0, 0),
-                                            'ext_replies': (0, 0, 0, 0),
-                                            'delivered_events': (0, 0),
-                                            'device_events': (X.KeyReleaseMask, X.ButtonReleaseMask),
-                                            'errors': (0, 0),
-                                            'client_started': False,
-                                            'client_died': False,
-                                          }])
-        self.disp.record_enable_context(ctx, lambda reply: self.event_handler(reply))
-        self.disp.record_free_context(ctx)
-        while True:
-            event = root.display.next_event()
+    kernel = np.ones((5,5),'int')
+    dilated = cv2.dilate(mask,kernel)
+    ##cv2.imwrite(imgdir+os.path.sep+'grabblue1.png',dilated)
+    #res = cv2.bitwise_and(frame,frame,mask=mask)
+    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (9, 1))
+    connected = cv2.morphologyEx(dilated, cv2.MORPH_CLOSE, kernel)
+    ##cv2.imwrite(imgdir+os.path.sep+'grabblue2.png',connected)
+
+    #_,thrshed = cv2.threshold(cv2.cvtColor(connected,cv2.COLOR_BGR2GRAY),3,255,cv2.THRESH_BINARY)
+    #_,contours,hier = cv2.findContours(thrshed,cv2.RETR_LIST,cv2.CHAIN_APPROX_SIMPLE)
+    _, contours, hierarchy = cv2.findContours(connected.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+    #print(contours)
+    for idx in range(len(contours)):
+        a-=1
+        x, y, w, h = cv2.boundingRect(contours[idx])
+        mask[y:y+h, x:x+w] = 0
+        cv2.drawContours(mask, contours, idx, (255, 255, 255), -1)
+        r = float(cv2.countNonZero(mask[y:y+h, x:x+w])) / (w * h)
+        if r > 0.45 and w > 50 and h > 10:
+            a-=1
+            img=frame[y-5:y+h+5, x-5:x+w+5]
+            cv2.imwrite(imgdir+os.path.sep+str(a)+"t1blue"+imgname, img)
+            cv2.rectangle(frame, (x, y), (x+w, y+h), (255, 255, 255), -1)
+    cv2.imwrite(imgdir+os.path.sep+afterimg, frame)
+
+def pushnd1toand(newdir1,curindexpc,curindexoldpc):
+    curanddevice=checkadbdevices()
+    #nulldevice="error: device '(null)' not found"
+    deviceconnected="device"
+    if deviceconnected in curanddevice:
+        copydir(fnnotesdirpc+os.path.sep+newdir1,fnnotesdirand)
+        appendnewnote(newdir1,curindexpc,curindexoldpc)
+    return True
+def runpdftonote(convpdfdirpc,pdfdir,pdfname,pagestart,pageend,ocvtype):
+    print("startpdftonote")
+    column=1
+    if os.path.exists(curnotelocpc):
+        os.remove(curnotelocpc)
+    CN=checknotz(curnotelocpc)
+    newdir1=CN[0]
+    objno2=CN[1]
+    pageend=pageend+1
+    if noconversion:
+        print("noconv")
+        a=0
+        b=objno2
+        for i in range(pagestart,pageend) :
+            a+=1
+            print("Page"+str(i))
+            imgname=convertpdf2jpg(pdfdir,pdfname,quality,i,outputdir)
+            if a==10 or i==(pageend-1):
+                convertjpgtonote(outputdir,column,newdir1,objno2)
+                a=0
+                column+=1
+            print(imgname)
+    if not noconversion:
+        for i in range(pagestart,pageend) :
+            a=1000
+            ##i-=1
+            imgname=convertpdf2jpg(pdfdir,pdfname,quality,i,convpdfdirpc)
+            print(str(i)+" "+imgname)
+            pdfconvimg=convpdfdirpc+os.path.sep+"contouredc"+imgname+".jpg"
+            pdfdir0img=dir0+os.path.sep+"contouredc"+imgname+".jpg"
             
-      
-      def EventL(self):
-        keys = str(list(self.keys_down))
-        #print(keys)
-        if keys == "['Shift']" or keys == "['Button2']":
-            Suspend1()
-        if pause==0 :
-            if keys == "['Button1']":
-               mouselu("")
+            #convertcolour(convpdfdirpc,imgname+".jpg","contouredc"+imgname+".jpg","green","down")
+            convertcolour(convpdfdirpc,imgname+".jpg","contouredc"+imgname+".jpg","green","")
+            subprocess.call("mv "+pdfconvimg+" "+pdfdir0img,shell=True)
+            objno2=convertjpg2note(convpdfdirpc,2,newdir1,1)
+
+            shutil.rmtree(convpdfdirpc)
+            checkdir(convpdfdirpc,"")
+            subprocess.call("mv "+pdfdir0img+" "+pdfconvimg,shell=True)
+            convertcolour(convpdfdirpc,"contouredc"+imgname+".jpg","contouredc"+imgname+".jpg","blue","")
+            subprocess.call("mv "+pdfconvimg+" "+pdfdir0img,shell=True)
+            objno2=convertjpg2note(convpdfdirpc,1,newdir1,objno2)
+
+            shutil.rmtree(convpdfdirpc)
+            checkdir(convpdfdirpc,"")
+            subprocess.call("mv "+pdfdir0img+" "+pdfconvimg,shell=True)
+            converttext(convpdfdirpc,"contouredc"+imgname+".jpg","contouredc"+imgname+".jpg",1000,1,"neutral")
+            subprocess.call("mv "+pdfconvimg+" "+pdfdir0img,shell=True)
+            objno2=convertjpg2note(convpdfdirpc,2,newdir1,objno2)
             
-
-    
-##if sys.platform in ['linux', 'linux2']:
-##    Default()
-##    CN=checknotz(curnotedir)
-##    newdir1=CN[0]
-##    objno2=CN[1]
-##    _thread.start_new_thread(task2, ())
-##    print(newdir1)
-##    print(objno2)
-##    if __name__=='__main__':
-##        while 1:
-##            Listener().run()
+            ###subprocess.call("cp "+convpdfdirpc+os.path.sep+imgname+".jpg "+pdfdir+os.path.sep+"attach/00.jpg",shell=True)
+            ###subprocess.call("cp "+convpdfdirpc+os.path.sep+imgname+".jpg "+pdfdir+os.path.sep+"attach",shell=True)
             
+            a-=1
+            column+=1
+    if args.pdfmdir :
+        relevant_path=args.pdfmdir
+        included_extensions = ['pdf']
+        pdf_names = [fn for fn in os.listdir(relevant_path)
+                      if any(fn.endswith(ext) for ext in included_extensions)]
+        print(len(pdf_names))
+        for i in range(0,len(pdf_names)):
+            print(pdf_names[i])
+            subprocess.call("python3 "+pdftonotedir+" -pdir \""+relevant_path+"\" -p \""+pdf_names[i]+"\" -d 100 -t 1 -nc 1" ,shell=True)
+def convertpdf2jpg(pdfdir,pdfname,quality,page,convpdfdirpc):
+    ##for i in range(int(pagestart),int(pageend)):
+    #ppmcommand2="convert -verbose -density "+str(quality)+" -trim "+pdfdir+os.path.sep+pdfname+"["+str(page)+"] -quality 100 -flatten -sharpen 0x1.0 "+convpdfdirpc+os.path.sep+convpname
+    pdfpage=subprocess.getoutput("pdfinfo \""+pdfdir+os.path.sep+pdfname+"\" | grep Pages: | awk '{print $2}'")
+    pagez=str(page).zfill(4)
+    convpname="conv"+pagez
+    ppmcommand="pdftoppm \""+pdfdir+os.path.sep+pdfname+"\" \""+convpdfdirpc+os.path.sep+convpname+"\" -jpeg -f "+str(page)+" -singlefile"
+    print(ppmcommand)
+    subprocess.call(ppmcommand,shell=True)
+    return convpname
+def convertjpg2note(folderlocation,column,newdir1,objno2):
+    print("runengine")
+    objno2re=objno2
+    allfnpicdir=os.listdir(folderlocation)
+    for i in range(0,len(allfnpicdir)):
+        Time=strftime("%Y%m%d%H%M%S")
+        objno2rez=str(objno2re).zfill(2)
+        picname=Time+'abcdefghijklm'+objno2rez+'.jpg'
+        print(picname)
+        if objno2re>=0:
+            picdir=folderlocation+ os.path.sep +  allfnpicdir[i]
+            picdirnew=folderlocation + os.path.sep + picname
+            print(picdir)
+            subprocess.call("cp \""+picdir+"\" \""+picdirnew+"\"", shell=True)
+            os.remove(picdir)
+            subprocess.call("cp \""+picdirnew+"\" \""+curattachdirpc+"\"", shell=True)
+            attachfnanddir=fnnotesdirandint+os.path.sep+newdir1+".notz/attach"
+            print(attachfnanddir)
+            w, h=imgsize(picdirnew)
+            appendnewpic(w,h,picname,newdir1,objno2re,column)
+            runadbcommand("adb push -p \""+picdirnew+"\" \""+attachfnanddir+"\"")
+            objno2re+=1
+        #setvarnotz(newdir)
+        runadbcommand("adb push \""+curnotefpc+"\" \""+curnotzand+"\"")
+    return objno2re
 
+def setvarconvpdf():
+    global ocvtype,noconversion
+    if args.pdfdir:
+        pdfdir=args.pdfdir
+    else:
+        pdfdir=dir0
+        #print("Slide=100")
+        #print("Tbook=300")
+        #print("Work=300/Adobe")
+    if args.pdfname:
+        shutil.rmtree(convpdfdirpc)
+        checkdir(convpdfdirpc,"")
+        pdfname=args.pdfname
+        if args.density :
+            quality=int(args.density)
+        if args.pagestart :
+            pagestart=int(args.pagestart)
+        if args.pageend :
+            pageend=int(args.pageend)
+            pageend=pageend
+        else:
+            pdfpage=subprocess.getoutput("pdfinfo \""+pdfdir+os.path.sep+pdfname+"\" | grep Pages: | awk '{print $2}'")
+            pageend=int(pdfpage)
+        if args.type:
+            ocvtype=int(args.type)
+        if args.noconversion=="1":
+            noconversion=True
+        print("PDFDir="+pdfdir+os.path.sep+pdfname+" Page="+str(pagestart)+" to "+str(pageend))
+        print("ocvt"+str(ocvtype))
+        runpdftonote(convpdfdirpc,pdfdir,pdfname,pagestart,pageend,ocvtype)
 
-    
+    return True
+args = parse_args()
+setvarconvpdf()
+#convertcolour(convpdfdirpc,imgname+".jpg","green")
+#convertcolour("/home/user/Pictures","Screenshot from 2018-07-05 20-04-46.png","green")
