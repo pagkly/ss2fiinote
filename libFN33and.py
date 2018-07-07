@@ -165,7 +165,18 @@ pdfreaderexedir=dir0+os.path.sep+"SumatraPDF-3.1.2"+os.path.sep+"SumatraPDF.exe"
 winefnexedir="wine "+fnexedir
 winepdfreaderexedir="wine "+pdfreaderexedir
 #thedir=autodir+"/FiiNote/Save/@pagkly/notes/"
+
+
 thedir=dir0+os.path.sep+"ConvPDF"
+wsldir="/mnt/c/Windows"
+thedirw="C:\\Users\\SP3\\AppData\\Roaming\\FiiNote\\@pagkly\\notes"
+if os.path.exists(wsldir):
+	print(thedirw)
+	#thedir=subprocess.getoutput("echo "+thedirw+" | awk '{gsub(\"C:\",\"/mnt/c\");gsub(\"\\\\\",\"/\");print}'")
+	thedir=re.sub(r"C:","/mnt/c",thedirw)
+	thedir=re.sub(r"\\","/",thedir)
+	print(thedir)
+	#time.sleep(3600)
 fnnotesdirpc=thedir
 fnnotesdirandint="/storage/emulated/0/fiinote/notes"
 curnotelocpc=fnnotesdirpc+os.path.sep+"andimages.txt"
@@ -177,29 +188,28 @@ ocvtype=0
 #os.remove(curnotelocpc)
 #####pdf2note
 def setvarnotz(thedir,newdir1):
-    global notzdn,notefn,curindexpc,curindexoldpc,curnotzpc,curnotefpc,curattachdirpc,curnotzand,curattachdirand,convpdfdirpc
-    notzdn=newdir1+".notz"
-    notefn=newdir1+".note"
-    curindexpc=thedir+os.path.sep+"index.nti"
-    curindexoldpc=thedir+os.path.sep+"index.ntiold"
-    curnotzpc=thedir+os.path.sep+notzdn
-    curnotefpc=curnotzpc+os.path.sep+notefn
-    curattachdirpc=curnotzpc+os.path.sep+"attach"
-    curnotefpc1=thedir+os.path.sep+"ConvertedPDF"+os.path.sep+notefn
-    curnotzand=fnnotesdirandint+os.path.sep+notzdn
-    curattachdirand=curnotzand+os.path.sep+"attach"
-
-    checkdir(curnotzpc,"")
-    checkdir(curattachdirpc,"")
-    if not os.path.exists(curnotefpc):
-        checkfile(curnotefpc)
-        ##subprocess.call("adb shell touch "+curnotefand,shell=True)
-        firstlineappend(newdir1,curnotefpc)
-        runadbcommand("adb push "+curnotefpc+" "+curnotzand)
-        print("appendfline")
-    appendtext(curnotelocpc,newdir1+".notz","w+")
-    runadbcommand("adb push "+curnotzpc+" "+fnnotesdirandint)
-    return curnotzpc,curnotefpc,curattachdirpc,curnotzand,curattachdirand
+	global notzdn,notefn,curindexpc,curindexoldpc,curnotzpc,curnotefpc,curattachdirpc,curnotzand,curattachdirand,convpdfdirpc
+	notzdn=newdir1+".notz"
+	notefn=newdir1+".note"
+	curindexpc=thedir+os.path.sep+"index.nti"
+	curindexoldpc=thedir+os.path.sep+"index.ntiold"
+	curnotzpc=thedir+os.path.sep+notzdn
+	curnotefpc=curnotzpc+os.path.sep+notefn
+	curattachdirpc=curnotzpc+os.path.sep+"attach"
+	curnotefpc1=thedir+os.path.sep+"ConvertedPDF"+os.path.sep+notefn
+	curnotzand=fnnotesdirandint+os.path.sep+notzdn
+	curattachdirand=curnotzand+os.path.sep+"attach"
+	checkdir(curnotzpc,"")
+	checkdir(curattachdirpc,"")
+	if not os.path.exists(curnotefpc):
+		checkfile(curnotefpc)
+		##subprocess.call("adb shell touch "+curnotefand,shell=True)
+		firstlineappend(newdir1,curnotefpc)
+		runadbcommand("adb push "+curnotefpc+" "+curnotzand)
+		print("appendfline")
+	appendtext(curnotelocpc,newdir1+".notz","w+")
+	runadbcommand("adb push "+curnotzpc+" "+fnnotesdirandint)
+	return curnotzpc,curnotefpc,curattachdirpc,curnotzand,curattachdirand
 def checknotz(curnotelocpc):
     global objno2,newdir1
     runadbcommand("adb shell \"su -c 'input keyevent KEYCODE_ESCAPE && sleep 0.1 && killall com.fiistudio.fiinote'\"")
@@ -477,11 +487,11 @@ def appendnewnote(newdir1,curindexpc,curindexoldpc):
         cihx=str(binascii.hexlify(content).decode('utf-8'))
         regexc1=re.compile(regexindex1)
         if regexc1.search(cihx):
-            mo1= re.search(regexp1,cihx)
+            mo1= re.search(regexindex1,cihx)
             p1d=(int(mo1.group(3), 16))+1
             p1dhex="%0.4X" % p1d
             regexr1=mo1.group(1)+mo1.group(2)+p1dhex+mo1.group(4)
-            replace1 = re.sub(regexp1, regexr1, cihx)
+            replace1 = re.sub(regexindex1, regexr1, cihx)
         else:
             pass
         difftime=getdateinhex()
@@ -503,9 +513,9 @@ def appendnewnote(newdir1,curindexpc,curindexoldpc):
                         "01" + difftime + "FFFFFF"
         regexc2=re.compile(regexindex2)
         if regexc2.search(replace1):
-            mo2 = re.search(regexp2,replace1)
+            mo2 = re.search(regexindex2,replace1)
             regexr2=mo2.group(1)+mo2.group(2)+newfolderhex1+mo2.group(3)+mo2.group(4)
-            replace2 = re.sub(regexp2, regexr2, replace1)
+            replace2 = re.sub(regexindex2, regexr2, replace1)
         appendtext(curindexpc,replace2,"wb")
         print("donecheckingindexcur")
     return True
