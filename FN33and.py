@@ -121,6 +121,8 @@ if sys.platform in ['linux', 'linux2'] or sys.platform in ['Windows', 'win32', '
             subprocess.call(python_path+"python "+str(dir0)+"\\"+str(scriptn)+".py", shell=True)
         return True
 
+		
+		
 if sys.platform in ['linux', 'linux2']:
     # Adapted from http://stackoverflow.com/questions/22367358/
     class Listener:
@@ -210,9 +212,8 @@ if sys.platform in ['linux', 'linux2']:
         if pause==0 :
             if keys == "['Button1']":
                mouselu("")
-
-if sys.platform in ['linux', 'linux2']:
-    Default()
+	
+	Default()
     CN=checknotz(curnotelocpc)
     newdir1=CN[0]
     objno2=CN[1]
@@ -222,3 +223,5 @@ if sys.platform in ['linux', 'linux2']:
     if __name__=='__main__':
         while 1:
             Listener().run()
+
+if sys.platform in ['Windows', 'win32', 'cygwin']:
