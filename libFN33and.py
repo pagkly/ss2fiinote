@@ -1,10 +1,4 @@
 #!/usr/bin/env python
-#sudo apt-get install -y pdftoppm
-#sudo apt-get install python3 python3-pip idle3 python3-xlib python3-psutil
-#xdotool wmctrl thunar
-#sudo -H pip3 install pyscreenshot
-#pip3 install opencv-python imutils scipy numpy
-#pip install pillow
 import os, sys, threading
 import _thread
 import subprocess
@@ -23,7 +17,9 @@ from tkinter import Tk
 import pyscreenshot
 import argparse
 from PIL import Image
-import Image
+#import Image
+def pythoninstall():
+	subprocess.call("",shell=True)
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("-pdir","--pdfdir",help="Loc of PDF. Example: -pdir /home/")
@@ -134,13 +130,13 @@ def runadbcommand(command):
         subprocess.call(command, shell=True)
 checkadbdevices()
 dir0=os.path.dirname(os.path.realpath(__file__))
+regexindex1=r'(01)(.{8})(.{4})(011a)'
+regexindex2=r'(1123236e6f7465732f2323756e66696c6564(?!.*1123236e6f7465732f2323756e66696c6564))(.*?)(00\d\d\d\d00\d\d)(2323)'
+regexnote1=r'(0302010201)(.{2})'
+regexnote2=r'(0302010201)(.{2})(.{2})'
 if sys.platform in ['linux', 'linux2']:
-	userid=subprocess.getoutput("awk -F: '!/root/ && /(\/bin\/bash)/ {print $1}' /etc/passwd")
-	userhomedir="/home/"+userid
-	winefnexedir="wine "+fnexedir
-	winepdfreaderexedir="wine "+pdfreaderexedir
-
-if sys.platform in ['linux', 'linux2']:
+    userid=subprocess.getoutput("awk -F: '!/root/ && /(\/bin\/bash)/ {print $1}' /etc/passwd")
+    userhomedir="/home/"+userid
     from Xlib.display import Display
     import Xlib.display as display
     from Xlib import X, XK
@@ -154,23 +150,20 @@ if sys.platform in ['linux', 'linux2']:
         fnnotesdirand=dirand+os.path.sep+dirand2[0]+"/Internal shared storage/fiinote/notes"
         subprocess.call("nautilus file://"+schooldirpc,shell=True)
 if sys.platform in ['Windows', 'win32', 'cygwin']:
-	userid=subprocess.getoutput("echo %USERNAME%",shell=True)
-	userhomedir=subprocess.getoutput("echo %USERPROFILE%",shell=True)
+    print("Windows10")
+    userid=subprocess.getoutput("echo %USERNAME%",shell=True)
+    userhomedir=subprocess.getoutput("echo %USERPROFILE%",shell=True)
     dirand="Z:"
     if os.path.exists(dirand):
         fnnotesdirand=dirand+os.path.sep+"fiinote"+os.path.sep+"notes"+os.path.sep
 
-regexindex1=r'(01)(.{8})(.{4})(011a)'
-regexindex2=r'(1123236e6f7465732f2323756e66696c6564(?!.*1123236e6f7465732f2323756e66696c6564))(.*?)(00\d\d\d\d00\d\d)(2323)'
-regexnote1=r'(0302010201)(.{2})'
-regexnote2=r'(0302010201)(.{2})(.{2})'
 autodirpc=userhomedir+os.path.sep+"Documents"+os.path.sep+"Docs"+os.path.sep+"Tech"+os.path.sep+"Automate"
 schooldirpc=autodirpc+os.path.sep+"PDF"+os.path.sep+"Sem2"
 pdftonotedir=autodirpc+os.path.sep+"FN35AOCV"+os.path.sep+"pdf2note.py"
-fnexedir = dir0+os.path.sep+"FiiNote"+os.path.sep+"FiiNote.exe"
+fnexedir=dir0+os.path.sep+"FiiNote"+os.path.sep+"FiiNote.exe"
 pdfreaderexedir=dir0+os.path.sep+"SumatraPDF-3.1.2"+os.path.sep+"SumatraPDF.exe"
-
-
+winefnexedir="wine "+fnexedir
+winepdfreaderexedir="wine "+pdfreaderexedir
 #thedir=autodir+"/FiiNote/Save/@pagkly/notes/"
 thedir=dir0+os.path.sep+"ConvPDF"
 fnnotesdirpc=thedir
@@ -717,7 +710,7 @@ def runpdftonote(convpdfdirpc,pdfdir,pdfname,pagestart,pageend,ocvtype):
             print(str(i)+" "+imgname)
             pdfconvimg=convpdfdirpc+os.path.sep+"contouredc"+imgname+".jpg"
             pdfdir0img=dir0+os.path.sep+"contouredc"+imgname+".jpg"
-            
+
             #convertcolour(convpdfdirpc,imgname+".jpg","contouredc"+imgname+".jpg","green","down")
             convertcolour(convpdfdirpc,imgname+".jpg","contouredc"+imgname+".jpg","green","")
             subprocess.call("mv "+pdfconvimg+" "+pdfdir0img,shell=True)
@@ -736,10 +729,10 @@ def runpdftonote(convpdfdirpc,pdfdir,pdfname,pagestart,pageend,ocvtype):
             converttext(convpdfdirpc,"contouredc"+imgname+".jpg","contouredc"+imgname+".jpg",1000,1,"neutral")
             subprocess.call("mv "+pdfconvimg+" "+pdfdir0img,shell=True)
             objno2=convertjpg2note(convpdfdirpc,2,newdir1,objno2)
-            
+
             ###subprocess.call("cp "+convpdfdirpc+os.path.sep+imgname+".jpg "+pdfdir+os.path.sep+"attach/00.jpg",shell=True)
             ###subprocess.call("cp "+convpdfdirpc+os.path.sep+imgname+".jpg "+pdfdir+os.path.sep+"attach",shell=True)
-            
+
             a-=1
             column+=1
     if args.pdfmdir :
