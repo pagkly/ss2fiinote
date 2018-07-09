@@ -1,4 +1,10 @@
 #!/usr/bin/env python
+#pyhook
+#ph3fn="pyhook-1.6.1-cp35-cp35m-win32.whl"
+#ph3downdir="\\$ph3fn"
+#ph3downlink="https://files.pythonhosted.org/packages/00/36/c08af743a671d94da7fe10ac2d078624f3efc09273ffae7b18601a8414fe/PyHook3-1.6.1-cp35-win32.whl"
+#curl -o "$ph3fn" "$ph3downlink"
+#
 import os, sys, threading
 import _thread
 from libFN33and import *
@@ -22,8 +28,7 @@ def MouseGetPos():
         return x, y
     if sys.platform in ['Windows', 'win32', 'cygwin']:
         pass
-        
-if sys.platform in ['linux', 'linux2'] or sys.platform in ['Windows', 'win32', 'cygwin']:  
+if sys.platform in ['linux', 'linux2'] or sys.platform in ['Windows', 'win32', 'cygwin']:
     def mouselu(event):
         global textclick, clickStartX, clickStopX, clickStartY, clickStopY, objno2
         if pause==0 :
@@ -48,7 +53,7 @@ if sys.platform in ['linux', 'linux2'] or sys.platform in ['Windows', 'win32', '
                 if clickStartX<clickStopX :
                     SS=SS1(clickStartX,clickStartY,clickStopX,clickStopY)
                     print(SS)
-                    objno2,curattachdirpc=appendnewpic(SS[0],SS[1],SS[2],SS[3],SS[4],1)
+                    objno2,curattachdirpc=appendnewpic(SS[0],SS[1],SS[2],SS[3],SS[4],"nearlatest")
                     imgdir=curattachdirpc+os.path.sep+SS[2]
                     if (linuxpc==0) and os.path.exists("/run/user/1000/gvfs/*/Internal"):
                         subprocess.call("adb push -p "+imgdir+" "+fnnotesanddirint+newdir1+".notz/attach",shell=True)
@@ -62,7 +67,6 @@ if sys.platform in ['linux', 'linux2'] or sys.platform in ['Windows', 'win32', '
                 else:
                     TT.config(text="Rep")
                 textclick=0
-    
     def task2():
         global TT, TT2
         root = tk.Tk()
@@ -74,7 +78,6 @@ if sys.platform in ['linux', 'linux2'] or sys.platform in ['Windows', 'win32', '
         newf.pack()
         TT.pack()
         TT2.pack()
-
         #root.withdraw()
         if sys.platform in ['linux', 'linux2'] :
             w = root.winfo_screenwidth()
@@ -87,7 +90,7 @@ if sys.platform in ['linux', 'linux2'] or sys.platform in ['Windows', 'win32', '
         wn=50
         hn=770
         root.wm_attributes('-alpha',0.50,'-topmost',1)
-        root.geometry('%dx%d+%d+%d' % (wn, hn, x,y) )
+        root.geometry('%dx%d+%d+%d' % (wn, hn, x,y))
         root.resizable(False, False)
         root.update_idletasks()
         root.overrideredirect(True)
@@ -119,10 +122,10 @@ if sys.platform in ['linux', 'linux2'] or sys.platform in ['Windows', 'win32', '
         if sys.platform in ['Windows', 'win32', 'cygwin']:
             python_path=dir0+os.path.sep+"WinPython-32bit-3.5.3.1Qt5"+os.path.sep+"scripts"+os.path.sep
             subprocess.call(python_path+"python "+str(dir0)+"\\"+str(scriptn)+".py", shell=True)
-        return True
+            return True
 
-		
-		
+
+
 if sys.platform in ['linux', 'linux2']:
     # Adapted from http://stackoverflow.com/questions/22367358/
     class Listener:
@@ -212,16 +215,254 @@ if sys.platform in ['linux', 'linux2']:
         if pause==0 :
             if keys == "['Button1']":
                mouselu("")
-	
-	Default()
-    CN=checknotz(curnotelocpc)
-    newdir1=CN[0]
-    objno2=CN[1]
-    _thread.start_new_thread(task2, ())
-    print(newdir1)
-    print(objno2)
-    if __name__=='__main__':
-        while 1:
-            Listener().run()
+
 
 if sys.platform in ['Windows', 'win32', 'cygwin']:
+    from tkinter import *
+    from tkinter import Tk
+    import tkinter as tk
+    import ctypes
+    from win32api import GetSystemMetrics
+    import win32com.client as comclt
+    import win32gui, win32con
+    #import pyHook
+    import pythoncom,PyHook3
+    import pyautogui
+    import psutil
+    from pymouse import PyMouse
+    from PyHook3 import HookManager, GetKeyState, HookConstants
+
+    m = PyMouse()
+    w=win32gui
+    wingui=w.GetWindowText(w.GetForegroundWindow())
+    wsh= comclt.Dispatch("WScript.Shell")
+
+    def eventmessage():
+        print ('MessageName:',event.MessageName )
+        print ('Message:',event.Message)
+        print ('Time:',event.Time)
+        print ('Window:',event.Window)
+        print ('WindowName:',event.WindowName)
+        print ('Ascii:', event.Ascii, chr(event.Ascii) )
+        print ('Key:', event.Key)
+        print ('KeyID:', event.KeyID)
+        print ('ScanCode:', event.ScanCode)
+        print ('Extended:', event.Extended)
+        print ('Injected:', event.Injected)
+        print ('Alt', event.Alt)
+        print ('Transition', event.Transition)
+        print ('---')
+
+    def OnKeyboardEventA(event):
+        global is_recording
+        if event.KeyID == HookConstants.VKeyToID('VK_RSHIFT'):
+            #print("Paused")
+            Suspend1()
+            return True
+        elif GetKeyState(HookConstants.VKeyToID('VK_CONTROL')) and event.KeyID == HookConstants.VKeyToID('VK_ESCAPE'):
+            sys.exit()
+            return True
+        elif event.KeyID == HookConstants.VKeyToID('VK_F6'):
+            return True
+        elif event.KeyID == HookConstants.VKeyToID('VK_F7'):
+            return True
+        elif event.KeyID == HookConstants.VKeyToID('VK_F8'):
+            return True
+        elif event.KeyID == HookConstants.VKeyToID('VK_F9'):
+            return True
+        elif event.KeyID == HookConstants.VKeyToID('VK_F10'):
+            return True
+        elif event.KeyID == HookConstants.VKeyToID('VK_F12'):
+            return True
+        elif GetKeyState(HookConstants.VKeyToID('VK_CONTROL')) and HookConstants.IDToName(event.KeyID) == 'P' :
+            print("Pause Recording")
+            return True
+
+        elif event.KeyID == HookConstants.VKeyToID('VK_ESCAPE'):
+            sys.exit()
+        else:
+            if is_recording==1:
+                newhndl = ctypes.windll.user32.GetForegroundWindow()
+                appname=get_app_name(newhndl)
+                print(appname)
+                title=win32gui.GetWindowText (win32gui.GetForegroundWindow())
+                print(title)
+                Hold=0
+                print("recording")
+                print('Key:', event.Key)
+                #if (RegexMatch(activeprocess,"Acrobat|SumatraPDF|chrome|opera")):
+                if GetKeyState(HookConstants.VKeyToID('VK_CONTROL')) and (self.Key == 'Oem_Plus' or self.Key == 'Oem_Minus' or HookConstants.IDToName(event.KeyID) == '0'):
+                    print("captured")
+                    #if RegExMatch(A_ThisHotkey,"\^=|\^-|\^0"):
+                    #append(".+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.1.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.")
+                    return True
+                elif GetKeyState(HookConstants.VKeyToID('VK_LSHIFT')) and GetKeyState(HookConstants.VKeyToID('VK_CONTROL')) and HookConstants.IDToName(event.KeyID) == 'A' :
+                    print("1")
+                    #elif RegExMatch(A_ThisHotkey,"\+\^a"):
+                    #append(".+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.2.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.")
+                    return True
+                    #elif RegExMatch(A_ThisHotkey,"\+(Up|Down|Left|Right)"):
+                elif GetKeyState(HookConstants.VKeyToID('VK_LSHIFT')) and (event.KeyID == HookConstants.VKeyToID('VK_UP') or event.KeyID == HookConstants.VKeyToID('VK_DOWN') or event.KeyID == HookConstants.VKeyToID('VK_LEFT') or event.KeyID == HookConstants.VKeyToID('VK_RIGHT')):
+                    print("2")
+                    #append(".+.+.+.+.+.+.+.+.+.3.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.")
+                    return True
+                else:
+
+                    return True
+            else:
+                return True
+
+    def onclicka(event):
+        X, Y=event.Position
+        if (event.MessageName=='mouse left up'):
+            #mouselu(event)
+            mouselu(event)
+            return True
+        elif (event.MessageName=='mouse left down'):
+            #mouselu(event)
+            return True
+        elif (event.MessageName=='mouse move'):
+            #print("move")
+            #print(X,Y)
+            return True
+        elif (event.MessageName=='mouse wheel'):
+            #print("wheel")
+            return True
+        else:
+            #print(event.MessageName)
+            return True
+
+    def windowEnumerationHandler(hwnd, top_windows):
+        top_windows.append((hwnd, win32gui.GetWindowText(hwnd)))
+
+
+    def focusprog(appname):
+            results = []
+            top_windows = []
+            win32gui.EnumWindows(windowEnumerationHandler, top_windows)
+            for i in top_windows:
+                if appname in i[1].lower():
+                    print (i)
+                    win32gui.ShowWindow(i[0],win32con.SW_MAXIMIZE)
+                    win32gui.SetForegroundWindow(i[0])
+                    j=os.getpid()
+                    print(j)
+                    break
+
+
+    def closeprog(appname):
+            results = []
+            top_windows = []
+            win32gui.EnumWindows(windowEnumerationHandler, top_windows)
+            for i in top_windows:
+                if appname in i[1].lower():
+                    print (i)
+                    win32gui.ShowWindow(i[0],win32con.SW_MAXIMIZE)
+                    win32gui.SetForegroundWindow(i[0])
+                    win32gui.PostMessage(handle,win32con.WM_CLOSE,0,0)
+                    j=os.getpid()
+                    print(j)
+                    break
+        #if __name__ == "__main__":
+
+
+    def runfn():
+        PROCNAME = "FiiNote.exe"
+        for proc in psutil.process_iter():
+            if proc.name() == PROCNAME:
+                subprocess.Popen([fndir])
+                win32gui.EnumWindows(focusfn, None)
+                break
+            else:
+                subprocess.Popen([fndir])
+                win32gui.EnumWindows(focusfn, None)
+                break
+
+        pass
+
+    def focusfn(hwnd, lParam):
+        if win32gui.IsWindowVisible(hwnd):
+            if 'Notes\\' in win32gui.GetWindowText(hwnd):
+                win32gui.ShowWindow(hwnd,win32con.SW_MINIMIZE)
+                win32gui.ShowWindow(hwnd,win32con.SW_MAXIMIZE)
+                win32gui.SetForegroundWindow(hwnd)
+                pass
+
+    def focusfn2(hwnd, lParam):
+        if win32gui.IsWindowVisible(hwnd):
+            if 'Untitled' in win32gui.GetWindowText(hwnd):
+                win32gui.SetForegroundWindow(hwnd)
+                win32gui.PostMessage(hwnd,win32con.WM_CLOSE,0,0)
+
+    def spdfhandler(hwnd, lParam):
+        for proc in psutil.process_iter():
+            if proc.name() == "SumatraPDF.exe":
+                if win32gui.IsWindowVisible(hwnd):
+                    if 'SumatraPDF' in win32gui.GetWindowText(hwnd):
+                        win32gui.ShowWindow(hwnd,win32con.SW_MINIMIZE)
+                        win32gui.ShowWindow(hwnd,win32con.SW_MAXIMIZE)
+                        win32gui.SetForegroundWindow(hwnd)
+                        break
+            else:
+                subprocess.Popen(readerdir)
+                break
+    def currenthwnd():
+        newhndl = ctypes.windll.user32.GetForegroundWindow()
+        appname=get_app_path(newhndl)
+        print(newhndl,appname)
+    def get_app_path(hwnd):
+        global exepath
+        """Get applicatin path given hwnd."""
+        try:
+            _, pid = win32process.GetWindowThreadProcessId(hwnd)
+            for p in c.query('SELECT ExecutablePath FROM Win32_Process WHERE ProcessId = %s' % str(pid)):
+                exepath = p.ExecutablePath
+                break
+        except:
+            return None
+        else:
+            return exepath
+    def get_app_name(hwnd):
+        global exename
+        """Get applicatin filename given hwnd."""
+        try:
+            _, pid = win32process.GetWindowThreadProcessId(hwnd)
+            for p in c.query('SELECT Name FROM Win32_Process WHERE ProcessId = %s' % str(pid)):
+                exename = p.Name
+                break
+        except:
+            return None
+        else:
+            return exename
+
+
+Default()
+CN=checknotz(curnotelocpc)
+newdir1=CN[0]
+objno2=CN[1]
+_thread.start_new_thread(task2, ())
+print(newdir1)
+print(objno2)
+
+if __name__=='__main__':
+    if sys.platform in ['linux', 'linux2']:
+        while 1:
+            Listener().run()
+    if sys.platform in ['Windows', 'win32', 'cygwin']:
+        #https://www.lfd.uci.edu/~gohlke/pythonlibs/#pyhook
+        #https://stackoverflow.com/questions/43417601/using-pyhook-to-detect-key-up-and-down
+        ##https://stackoverflow.com/questions/45113813/check-if-mouse-up-or-mouse-down-with-pyhook
+        #win32gui.EnumWindows(spdfhandler, None)
+        #runfn()
+        #win32gui.EnumWindows(focusfn, None)
+        #currenthwnd()
+        hm = PyHook3.HookManager()
+        hm.HookMouse()
+        hm.MouseAll = onclicka
+        #hm.MouseLeftDown = OnDown
+        #hm.MouseLeftUp = OnUp
+        hm.HookKeyboard()
+        hm.KeyDown = OnKeyboardEventA
+        pythoncom.PumpMessages()
+        hm.UnhookMouse()
+        ##hm.UnhookKeyboard()

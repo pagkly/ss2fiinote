@@ -133,31 +133,46 @@ def runadbcommand(command):
 checkadbdevices()
 dir0=os.path.dirname(os.path.realpath(__file__))
 regexindex1=r'(01)(.{8})(.{4})(011a)'
+patternpic=r'(010ac480c391c391c391(?!.*010ac480c391c391c391))(.*?)(01c88a)(.{36})(.{28})(.{2})(.{2})(.{2})(.{2})(.{36})(0303)(.{102,})'
 regexindex2=r'(1123236e6f7465732f2323756e66696c6564(?!.*1123236e6f7465732f2323756e66696c6564))(.*?)(00\d\d\d\d00\d\d)(2323)'
 regexnote1=r'(0302010201)(.{2})'
 regexnote2=r'(0302010201)(.{2})(.{2})'
+thedir=dir0+os.path.sep+"ConvPDF"
+wsldir="/mnt/c/Windows"
+thedirw="C:\\Users\\SP3\\AppData\\Roaming\\FiiNote\\@pagkly\\notes"
 if sys.platform in ['linux', 'linux2']:
-    userid=subprocess.getoutput("awk -F: '!/root/ && /(\/bin\/bash)/ {print $1}' /etc/passwd")
-    userhomedir="/home/"+userid
-    from Xlib.display import Display
-    import Xlib.display as display
-    from Xlib import X, XK
-    from Xlib.ext import record
-    from Xlib.protocol import rq
-    import signal
-    dirand="/run/"+userid+"/1000/gvfs"
-    dirandcheck=dirand+"*/Internal shared storage"
-    if os.path.exists(dirandcheck):
-        dirand2=os.listdir(dirand)
-        fnnotesdirand=dirand+os.path.sep+dirand2[0]+"/Internal shared storage/fiinote/notes"
-        subprocess.call("nautilus file://"+schooldirpc,shell=True)
+	userid=subprocess.getoutput("awk -F: '!/root/ && /(\/bin\/bash)/ {print $1}' /etc/passwd")
+	userhomedir="/home/"+userid
+	from Xlib.display import Display
+	import Xlib.display as display
+	from Xlib import X, XK
+	from Xlib.ext import record
+	from Xlib.protocol import rq
+	import signal
+	dirand="/run/"+userid+"/1000/gvfs"
+	dirandcheck=dirand+"*/Internal shared storage"
+	if os.path.exists(dirandcheck):
+		dirand2=os.listdir(dirand)
+		fnnotesdirand=dirand+os.path.sep+dirand2[0]+"/Internal shared storage/fiinote/notes"
+		subprocess.call("nautilus file://"+schooldirpc,shell=True)
+	if os.path.exists(wsldir):
+		print(thedirw)
+		#thedir=subprocess.getoutput("echo "+thedirw+" | awk '{gsub(\"C:\",\"/mnt/c\");gsub(\"\\\\\",\"/\");print}'")
+		thedir=re.sub(r"C:","/mnt/c",thedirw)
+		thedir=re.sub(r"\\","/",thedir)
+		print(thedir)
 if sys.platform in ['Windows', 'win32', 'cygwin']:
-    print("Windows10")
-    userid=subprocess.getoutput("echo %USERNAME%",shell=True)
-    userhomedir=subprocess.getoutput("echo %USERPROFILE%",shell=True)
-    dirand="Z:"
-    if os.path.exists(dirand):
-        fnnotesdirand=dirand+os.path.sep+"fiinote"+os.path.sep+"notes"+os.path.sep
+	print("Windows10")
+	userid=subprocess.getoutput("echo %USERNAME%")
+	userhomedir=subprocess.getoutput("echo %USERPROFILE%")
+	dirand="Z:"
+	dirand2=userhomedir+os.path.sep+"AppData"+os.path.sep+"Roaming"+os.path.sep+"FiiNote"+os.path.sep+"@pagkly"+os.path.sep+"notes"
+
+	#time.sleep(3600)
+	if os.path.exists(dirand):
+		fnnotesdirand=dirand+os.path.sep+"fiinote"+os.path.sep+"notes"+os.path.sep
+	if os.path.exists(dirand2):
+		thedir=dirand2
 
 autodirpc=userhomedir+os.path.sep+"Documents"+os.path.sep+"Docs"+os.path.sep+"Tech"+os.path.sep+"Automate"
 schooldirpc=autodirpc+os.path.sep+"PDF"+os.path.sep+"Sem2"
@@ -167,18 +182,7 @@ pdfreaderexedir=dir0+os.path.sep+"SumatraPDF-3.1.2"+os.path.sep+"SumatraPDF.exe"
 winefnexedir="wine "+fnexedir
 winepdfreaderexedir="wine "+pdfreaderexedir
 #thedir=autodir+"/FiiNote/Save/@pagkly/notes/"
-
-
-thedir=dir0+os.path.sep+"ConvPDF"
-wsldir="/mnt/c/Windows"
-thedirw="C:\\Users\\SP3\\AppData\\Roaming\\FiiNote\\@pagkly\\notes"
-if os.path.exists(wsldir):
-	print(thedirw)
-	#thedir=subprocess.getoutput("echo "+thedirw+" | awk '{gsub(\"C:\",\"/mnt/c\");gsub(\"\\\\\",\"/\");print}'")
-	thedir=re.sub(r"C:","/mnt/c",thedirw)
-	thedir=re.sub(r"\\","/",thedir)
-	print(thedir)
-	#time.sleep(3600)
+print("THEDIR="+thedir)
 fnnotesdirpc=thedir
 fnnotesdirandint="/storage/emulated/0/fiinote/notes"
 curnotelocpc=fnnotesdirpc+os.path.sep+"andimages.txt"
@@ -282,24 +286,10 @@ def firstlineappend(newdir1,curnotef):
 
 def appendnewpic(w,h,picname,newdir1,objno2,column):
 	objno2=int(objno2)
-	column=int(column)
 	w=int(w)
 	h=int(h)
 	newlinehex="0AC480C391C391C39101";
 	secondobjhex="C88A";
-	columnc1=int(column/8);
-	columnc2=int(column%8);
-	if (columnc1==0):
-		prefixposx=169
-		posx=224+columnc2
-	if (columnc1>0):
-		prefixposx=169+columnc1
-		if (columnc2==0):
-			posx=225
-		else:
-			posx=225+columnc2
-	posxhex=format(posx, 'x')
-	prefixposxhex=format(prefixposx, 'x')
 
 	objno2c1=int(objno2/14);
 	objno2c2=int(objno2/28);
@@ -327,15 +317,14 @@ def appendnewpic(w,h,picname,newdir1,objno2,column):
 	#	objnonow=224+quotc1+1;
 	#else:
 	#	objnonow=224+quot+1;
+	#C:\Users\SP3\Documents\GitHub\2.3.OCV\app\src\main\java\com\example\user\ocv
+	##export DISPLAY=:0.0 && python3 /mnt/c/Users/SP3/Documents/GitHub/FN35OCVbside/FN33and.py
 	if objnonowc2==0:
 		if objnonowc1>0:
 			prefixposy=int(objnonowc1)+169
 		objnonow=224+1
 	elif objnonowc2>0:
 		objnonow=224+objnonowquot14+1
-		#if objnonowrem==0:
-		#if objnonowrem>0:
-
 	prefixposyhex=format(math.trunc(prefixposy), 'x')
 	objnohex=format(math.trunc(objnonow), 'x')
 
@@ -349,25 +338,71 @@ def appendnewpic(w,h,picname,newdir1,objno2,column):
 			posyhex="9E"
 		if(rem==0):
 			posyhex="81"
-	xlochex="E5A5AA"+\
-	"E5AB81"+\
-	"E5A5A9"+\
-	"E19E81"+\
-	"E5A5"+prefixposxhex+\
-	posxhex+"9E81"
+
+	if column=="nearlatest":
+		print("picnearlatest;"+str(objno2))
+		if objno2<=2:
+			print("picnearlatest1")
+			column=1
+			column=int(column)
+			columnc1=int(column/8);
+			columnc2=int(column%8);
+			if (columnc1==0):
+				prefixposx=169
+				posx=224+columnc2
+			if (columnc1>0):
+				prefixposx=169+columnc1
+				if (columnc2==0):
+					posx=225
+				else:
+					posx=225+columnc2
+			posxhex=format(posx, 'x')
+			prefixposxhex=format(prefixposx, 'x')
+			xlochex="E5A5AA"+\
+			"E5AB81"+\
+			"E5A5A9"+\
+			"E19E81"+\
+			"E5A5"+prefixposxhex+\
+			posxhex+"9E81"
+		if objno2>2:
+			with open(curnotefpc, 'rb') as f:
+				content = f.read()
+				cihx=str(binascii.hexlify(content).decode('utf-8'))
+				regexc1=re.compile(patternpic)
+				#mo1= re.search(patternpic,cihx)
+				print("findpatternpic1")
+				if regexc1.search(cihx):
+					print("findpatternpic2")
+					mo1= re.search(patternpic,cihx)
+					xlochex=mo1.group(4);
+					prefixposyhex=mo1.group(6);
+					objnohex=mo1.group(7);
+					objnonow=(int(objnohex,16));
+					posy=(int(mo1.group(8),16))+5;
+					#bf
+					if posy<=191:
+						posyhex="%0.2X" % posy
+					if posy>191:
+						objnonow=objnonow+1
+						posy=129+5;
+						posyhex="%0.2X" % posy
+				else:
+					pass
 	ylochex="E5A5A9"+\
 	"E19E81"+\
 	"E5A5AA"+\
 	"E5AB81"+\
 	"E5A5"+prefixposyhex+\
 	objnohex+posyhex+"81"
-
 	zlochex="E5A5A9"+\
 	"E19E81"+\
 	"E5A5A9"+\
 	"E19E81"+\
 	"E5A5AA"+\
 	"E5AB81"
+	#print(xlochex)
+	#print(ylochex)
+	#print(zlochex)
 	if (w<128):
 		xpixshex=format(w,'x')
 		xpixshex=str(xpixshex).zfill(2)
@@ -596,6 +631,7 @@ def converttext(imgdir,imgname,afterimg,a,ocvtype,colour,testing):
 	print(imgdir+os.path.sep+imgname+" "+str(imgw)+","+str(imgh))
 	if ocvtype==1 or ocvtype==2 or ocvtype==4 or ocvtype==5:
 		rgb=large
+		rgb=cv2.pyrDown(large)
 	if ocvtype==3:
 		rgb=cv2.pyrDown(large)
 	if ocvtype==21:
@@ -843,7 +879,7 @@ def convertjpg2note(folderlocation,column,newdir1,objno2):
             attachfnanddir=fnnotesdirandint+os.path.sep+newdir1+".notz/attach"
             print(attachfnanddir)
             w, h=imgsize(picdirnew)
-            appendnewpic(w,h,picname,newdir1,objno2re,column)
+            appendnewpic(w,h,picname,newdir1,objno2re,"nearlatest")
             runadbcommand("adb push -p \""+picdirnew+"\" \""+attachfnanddir+"\"")
             objno2re+=1
         #setvarnotz(newdir)
