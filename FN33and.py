@@ -68,15 +68,23 @@ if sys.platform in ['linux', 'linux2'] or sys.platform in ['Windows', 'win32', '
                     TT.config(text="Rep")
                 textclick=0
     def task2():
-        global TT, TT2
+        global TT,TT2,root
         root = tk.Tk()
-        m = Button(root, text="Pause R", command=Suspend1)
-        newf = Button(root, text="New F", command=newnotz)
-        TT=Label(root, relief='raised')
-        TT2=Label(root)
+        m = Button(root, text="Pause R", command=Suspend1,height=3,width=3)
         m.pack()
+        newf = Button(root, text="New F", command=newnotz,height=3,width=3)
         newf.pack()
+        copyk = Button(root, text="copy", command=copykey,height=3,width=3)
+        copyk.pack()
+        pastek = Button(root, text="paste", command=pastekey,height=3,width=3)
+        pastek.pack()
+        restartgui=Button(root, text="restart", command=restartguifn,height=3,width=3)
+        restartgui.pack()
+        #button1.config( height = WHATEVER, width = WHATEVER2 )
+        #button1 = Button(self, text = "Send", command = self.response1, height = 100, width = 100)
+        TT=Label(root, relief='raised')
         TT.pack()
+        TT2=Label(root)
         TT2.pack()
         #root.withdraw()
         if sys.platform in ['linux', 'linux2'] :
@@ -96,9 +104,39 @@ if sys.platform in ['linux', 'linux2'] or sys.platform in ['Windows', 'win32', '
         root.overrideredirect(True)
         Suspend1()
         root.mainloop()
+    def quit():
+        global root
+        root.destroy()
+        #root.quit()
+    def restartguifn():
+        quit()
+        subprocess.call("%USERPROFILE%\\Documents\\GitHub\\FN35OCVbside\\startfn33andgui.bat",shell=True)
+        return True
     def ClearTT():
         TT.config(text="")
         return True
+    def copykey():
+        #if sys.platform in ['linux', 'linux2'] :
+        if sys.platform in ['Windows', 'win32', 'cygwin']:
+            import win32com.client as comclt
+            wsh=comclt.Dispatch("WScript.Shell")
+            #wsh.AppActivate("Notepad") # select another application
+            #wsh.AppActivate("%USERPROFILE%\\Documents\\Docs\\Automate\\FiiNoteWINE\\FiiNote.exe")
+            focusprog("FiiNote")
+            wsh.SendKeys("%{TAB}")
+            time.sleep(0.3)
+            wsh.SendKeys("^c") # send the keys you want
+    def pastekey():
+        #if sys.platform in ['linux', 'linux2'] :
+        if sys.platform in ['Windows', 'win32', 'cygwin']:
+            import win32com.client as comclt
+            wsh=comclt.Dispatch("WScript.Shell")
+            #wsh.AppActivate("%USERPROFILE%\\Documents\\Docs\\Automate\\FiiNoteWINE\\FiiNote.exe")
+            #focusprog("Atom")
+            focusprog("FiiNote")
+            wsh.SendKeys("%{TAB}")
+            time.sleep(0.3)
+            wsh.SendKeys("^v") # send the keys you want
     def Suspend1():
         global pause
         if pause==0:
