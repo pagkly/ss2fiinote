@@ -7,7 +7,7 @@
 #
 import os, sys, threading
 import _thread
-from libFN33and import *
+from FN33andlib import *
 dir0 = os.path.dirname(os.path.realpath(__file__))
 textclick=0
 pause=0
@@ -110,7 +110,9 @@ if sys.platform in ['linux', 'linux2'] or sys.platform in ['Windows', 'win32', '
         #root.quit()
     def restartguifn():
         quit()
-        subprocess.call("%USERPROFILE%\\Documents\\GitHub\\FN35OCVbside\\startfn33andgui.bat",shell=True)
+        #if sys.platform in ['linux', 'linux2'] :
+        if sys.platform in ['Windows', 'win32', 'cygwin']:
+            subprocess.call("%USERPROFILE%\\Documents\\GitHub\\FN35OCVbside\\fn33andguistart.bat",shell=True)
         return True
     def ClearTT():
         TT.config(text="")
