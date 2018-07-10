@@ -1,10 +1,8 @@
 #!/usr/bin/env python
-#pyhook
 #ph3fn="pyhook-1.6.1-cp35-cp35m-win32.whl"
 #ph3downdir="\\$ph3fn"
 #ph3downlink="https://files.pythonhosted.org/packages/00/36/c08af743a671d94da7fe10ac2d078624f3efc09273ffae7b18601a8414fe/PyHook3-1.6.1-cp35-win32.whl"
 #curl -o "$ph3fn" "$ph3downlink"
-#
 import os, sys, threading
 import _thread
 from FN33andlib import *
