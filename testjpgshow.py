@@ -6,6 +6,17 @@ rootimgv = Tk()
 #https://www.sourcecodester.com/tutorials/python/12128/python-simple-image-viewer.html
 #================================METHODS========================================
 
+def prevpage():
+	return True
+def nextpage():
+	return True
+def whitelistpagearea(page,x,y):
+	import cv2
+	return True
+def progresspage(page):
+	return True
+def progresspagewhitelist():
+	return True
 def perccolor():
 	#https://stackoverflow.com/questions/43167867/color-percentage-in-image-python-opencv-using-histogram
 	import numpy as np
