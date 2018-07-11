@@ -142,9 +142,14 @@ if sys.platform in ['linux', 'linux2'] or sys.platform in ['Windows', 'win32', '
         if pause==0:
             pause=1
             TT.config(text="Suspended")
+            fiinotew10pcdir=userhomedir+"\\Documents\\Docs\\Automate\\FiiNoteWINE\\FiiNote.exe"
+            if sys.platform in ['Windows', 'win32', 'cygwin']:
+                subprocess.call("start \"fiinote\" \""+fiinotew10pcdir+"\"",shell=True)
         elif pause==1:
             pause=0
             TT.config(text="Resume")
+            if sys.platform in ['Windows', 'win32', 'cygwin']:
+                subprocess.call("taskkill /F /IM FiiNote.exe /T",shell=True)
     def newnotz():
         global newdir1, objno2
         os.remove(curnotelocpc)
