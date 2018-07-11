@@ -101,6 +101,7 @@ if sys.platform in ['linux', 'linux2'] or sys.platform in ['Windows', 'win32', '
         root.update_idletasks()
         root.overrideredirect(True)
         Suspend1()
+        #MainApplication(rootimgv).pack(side="top", fill="both", expand=True)
         root.mainloop()
     def quit():
         global root

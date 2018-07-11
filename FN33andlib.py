@@ -32,6 +32,7 @@ def parse_args():
 	parser.add_argument("-pmdir","--pdfmdir",help="Loc of PDFs. Example: -pdir /home/user")
 	parser.add_argument("-cont","--continuenote",help="continue previous note.")
 	parser.add_argument("-test","--testing",help="Testing mode")
+	parser.add_argument("-shpdf","--showpdf",help="Testing mode")
 	return parser.parse_args()
 def checkfile(filename):
     if not os.path.exists(filename):
@@ -707,9 +708,6 @@ def converttext(imgdir,imgname,afterimg,a,ocvtype,colour,testing):
 		convertrest(imgdir,"contouredc"+imgname,afterimg,a,ocvtype)
 	if ocvtype==5:
 		cv2.imwrite(imgdir+os.path.sep+afterimg, rgb)
-	#import matplotlib.pyplot as plt
-	#plt.imshow('rects', cmap='rgb')
-	#plt.show()
 #	cv2.imwrite(imgdir+os.path.sep+afterimg+".jpg", img)
 	if testing:
 		#cv2.imwrite(imgdir+os.path.sep+"mask"+afterimg, mask)
@@ -789,7 +787,7 @@ def runpdftonote(convpdfdirpc,pdfdir,pdfname,pagestart,pageend,ocvtype,continuen
 			print("Page"+str(i))
 			imgname=convertpdf2jpg(pdfdir,pdfname,quality,i,outputdir)
 			if a==10 or i==(pageend-1):
-				convertjpgtonote(outputdir,column,newdir1,objno2)
+				convertjpg2note(outputdir,column,newdir1,objno2)
 				a=0
 				column+=1
 			print(imgname)
@@ -850,16 +848,66 @@ def runpdftonote(convpdfdirpc,pdfdir,pdfname,pagestart,pageend,ocvtype,continuen
 		for i in range(0,len(pdf_names)):
 			print(pdf_names[i])
 			subprocess.call("python3 "+pdftonotedir+" -pdir \""+relevant_path+"\" -p \""+pdf_names[i]+"\" -d 100 -t 1 -nc 1" ,shell=True)
+def runshowpdf(convpdfdirpc,pdfdir,pdfname,pagestart,pageend,ocvtype,continuenote):
+	import matplotlib.pyplot as plt
+	import matplotlib.image as mpimg
+	convpdfdirpc1=convpdfdirpc+os.path.sep+pdfname
+	if not os.path.exists(convpdfdirpc1):
+		os.makedirs(convpdfdirpc1)
+	imgname=convertpdf2jpg(pdfdir,pdfname,quality,pagestart,convpdfdirpc1)
+	imgdir=convpdfdirpc+os.path.sep+pdfname+os.path.sep+imgname+".jpg"
+	print(imgdir)
+	img=mpimg.imread(imgdir)
+	imgplot=plt.imshow(img)
+	#countarea
+	plt.show()
+	image = Image.open(open(imgdir, 'rb'))
+	#image.show()
+	return True
+
+import tkinter as tk
+class MainApplication(tk.Frame):
+	def __init__(self, parent, *args, **kwargs):
+		tk.Frame.__init__(self, parent, *args, **kwargs)
+		self.parent = parent
+
+	if __name__ == "__main__":
+		rootimgv = tk.Tk()
+		MainApplication(root).pack(side="top", fill="both", expand=True)
+		rootimgv.mainloop()
+def prevpage(pdfdir,page):
+	page+=1
+	showpdf()
+	return True
+def nextpage(pdfdir,page):
+	page+=1
+	showpdf()
+	return True
+def detecttouch():
+	return True
+def progresswhitelist():
+	return True
+def whitelistarea(xpos,ypos,wimg,himg):
+	return True
+def progresspage():
+	return True
+
 def convertpdf2jpg(pdfdir,pdfname,quality,page,convpdfdirpc):
-    ##for i in range(int(pagestart),int(pageend)):
-    #ppmcommand2="convert -verbose -density "+str(quality)+" -trim "+pdfdir+os.path.sep+pdfname+"["+str(page)+"] -quality 100 -flatten -sharpen 0x1.0 "+convpdfdirpc+os.path.sep+convpname
-    pdfpage=subprocess.getoutput("pdfinfo \""+pdfdir+os.path.sep+pdfname+"\" | grep Pages: | awk '{print $2}'")
-    pagez=str(page).zfill(4)
-    convpname="conv"+pagez
-    ppmcommand="pdftoppm \""+pdfdir+os.path.sep+pdfname+"\" \""+convpdfdirpc+os.path.sep+convpname+"\" -jpeg -f "+str(page)+" -singlefile"
-    print(ppmcommand)
-    subprocess.call(ppmcommand,shell=True)
-    return convpname
+	##for i in range(int(pagestart),int(pageend)):
+	#ppmcommand2="convert -verbose -density "+str(quality)+" -trim "+pdfdir+os.path.sep+pdfname+"["+str(page)+"] -quality 100 -flatten -sharpen 0x1.0 "+convpdfdirpc+os.path.sep+convpname
+	pdfpage=subprocess.getoutput("pdfinfo \""+pdfdir+os.path.sep+pdfname+"\" | grep Pages: | awk '{print $2}'")
+	pagez=str(page).zfill(4)
+	convpname="conv"+pagez
+	ppmcommand="pdftoppm \""+pdfdir+os.path.sep+pdfname+"\" \""+convpdfdirpc+os.path.sep+convpname+"\" -jpeg -f "+str(page)+" -singlefile"
+	print(ppmcommand)
+	print(convpname)
+	subprocess.call(ppmcommand,shell=True)
+	imgdir=convpdfdirpc+os.path.sep+convpname+".jpg"
+	while True:
+		if os.path.exists(imgdir):
+			print(imgdir)
+			break
+	return convpname
 def convertjpg2note(folderlocation,column,newdir1,objno2):
     print("runengine")
     objno2re=objno2
@@ -890,6 +938,7 @@ def setvarconvpdf():
 	global ocvtype,noconversion
 	testing=False
 	continuenote=False
+	showpdf=False
 	if args.testing:
 		testing=True
 	if args.continuenote :
@@ -921,11 +970,14 @@ def setvarconvpdf():
 			noconversion=True
 		print("PDFDir="+pdfdir+os.path.sep+pdfname+" Page="+str(pagestart)+" to "+str(pageend))
 		print("ocvt"+str(ocvtype))
-		if not testing:
-			runpdftonote(convpdfdirpc,pdfdir,pdfname,pagestart,pageend,ocvtype,continuenote,"")
-		if testing:
-			continuenote=False
-			runpdftonote(convpdfdirpc,pdfdir,pdfname,pagestart,pageend,ocvtype,continuenote,testing)
+		if args.showpdf:
+			runshowpdf(convpdfdirpc,pdfdir,pdfname,pagestart,pageend,ocvtype,continuenote)
+		if not args.showpdf:
+			if not testing:
+				runpdftonote(convpdfdirpc,pdfdir,pdfname,pagestart,pageend,ocvtype,continuenote,"")
+			if testing:
+				continuenote=False
+				runpdftonote(convpdfdirpc,pdfdir,pdfname,pagestart,pageend,ocvtype,continuenote,testing)
 	return True
 args = parse_args()
 setvarconvpdf()
