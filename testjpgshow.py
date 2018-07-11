@@ -2,21 +2,21 @@ from tkinter import *
 from PIL import Image, ImageTk
 
 rootimgv = Tk()
-rootimgv.title("Python: Simple Image Viewer")
-width = 600
-height = 300
-screenw = rootimgv.winfo_screenwidth()
-screenh = rootimgv.winfo_screenheight()
-x = (screenw/2) - (width/2)
-y = (screenh/2) - (height/2)
-rootimgv.geometry("%dx%d+%d+%d" % (width, height, x, y))
-rootimgv.resizable(0, 0)
+#rootimgv.title("Python: Simple Image Viewer")
+#width = 600
+#height = 300
+#screenw = rootimgv.winfo_screenwidth()
+#screenh = rootimgv.winfo_screenheight()
+#x = (screenw/2) - (width/2)
+#y = (screenh/2) - (height/2)
+#rootimgv.geometry("%dx%d+%d+%d" % (width, height, x, y))
+#rootimgv.resizable(0, 0)
 
 #https://www.sourcecodester.com/tutorials/python/12128/python-simple-image-viewer.html
 #================================METHODS========================================
 def gettkinterxypos():
 	return xpos,ypos
-def getorigin(eventorigin):
+def gettkinterxypos(eventorigin):
       global x,y
       x = eventorigin.x
       y = eventorigin.y
@@ -29,44 +29,41 @@ def DisplayImage(event=None):
 	imgdir=convpdfdirpc+os.path.sep+"29.pdf"+os.path.sep+"conv0001.jpg"
 	print(imgdir)
 
-	Home = Toplevel()
-	Home.title("Simple Image Viewer/Viewer")
+	#Home = Toplevel()
+	rootimgv.title("Simple Image Viewer/Viewer")
 	load = Image.open(imgdir)
 	imgw, imgh = load.size
 	if sys.platform in ['linux', 'linux2'] :
-		screenw = root.winfo_screenwidth()
-		screenh = root.winfo_screenheight()
+		screenw = rootimgv.winfo_screenwidth()
+		screenh = rootimgv.winfo_screenheight()
 	if sys.platform in ['Windows', 'win32', 'cygwin']:
 		from win32api import GetSystemMetrics
 		screenw=GetSystemMetrics(0)
 		screenh=GetSystemMetrics(1)
-	screenw = Home.winfo_screenwidth()
-	screenh = Home.winfo_screenheight()
 	showimgw=int((screenh/imgh)*imgw)
 	showimgh=int(screenh)
 	x = (screenw/2) - (showimgw/2)
 	y = (screenh/2) - (showimgh/2)
-	Home.geometry("%dx%d+%d+%d" % (showimgw, showimgh, x,y))
-	Home.resizable(1, 1)
+	rootimgv.geometry("%dx%d+%d+%d" % (showimgw, showimgh, x,y))
+	rootimgv.resizable(1, 1)
 	load = load.resize((showimgw, showimgh), Image.ANTIALIAS)
 	render = ImageTk.PhotoImage(load)
-	panel = Label(Home, image=render)
+	panel = Label(rootimgv, image=render)
 	panel.image=render
+	panel.bind("<Button 1>",gettkinterxypos)
 	panel.pack(fill=BOTH, expand=YES)
 #================================FRAMES=========================================
-Top = Frame(rootimgv, width=600, bd=1, relief=SOLID)
-Top.pack(side=TOP)
-Mid = Frame(rootimgv, width=300, height=200, bd=1, relief=SOLID)
-Mid.pack_propagate(0)
-Mid.pack(pady=20)
+#Top = Frame(rootimgv, width=600, bd=1, relief=SOLID)
+#Top.pack(side=TOP)
+#Mid = Frame(rootimgv, width=300, height=200, bd=1, relief=SOLID)
+#Mid.pack_propagate(0)
+#Mid.pack(pady=20)
 #================================LABEL WIDGETS==================================
-lbl_title = Label(Top, text="Python: Simple Image Viewer", width=600, font=("arial", 20))
-lbl_title.pack(fill=X)
-lbl_text = Label(Mid, text="flower.jpg", font=("arial", 20))
-lbl_text.bind("<Button-1>", DisplayImage)
-lbl_text.pack()
-
-
+#lbl_title = Label(Top, text="Python: Simple Image Viewer", width=600, font=("arial", 20))
+#lbl_title.pack(fill=X)
+#lbl_text = Label(Mid, text="flower.jpg", font=("arial", 20))
+#lbl_text.bind("<Button-1>", DisplayImage)
+#lbl_text.pack()
 #https://stackoverflow.com/questions/5436810/adding-zooming-in-and-out-with-a-tkinter-canvas-widget
 class GUI:
     def __init__(self, root):
@@ -100,5 +97,5 @@ class GUI:
         self.canvas.scale(ALL, x, y, self.scale, self.scale)
 
 if __name__ == "__main__":
+	DisplayImage()
 	rootimgv.mainloop()
-	rootimgv.bind("<Button 1>",getorigin)
