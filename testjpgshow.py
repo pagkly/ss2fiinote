@@ -2,24 +2,45 @@ from tkinter import *
 from PIL import Image, ImageTk
 
 rootimgv = Tk()
-#rootimgv.title("Python: Simple Image Viewer")
-#width = 600
-#height = 300
-#screenw = rootimgv.winfo_screenwidth()
-#screenh = rootimgv.winfo_screenheight()
-#x = (screenw/2) - (width/2)
-#y = (screenh/2) - (height/2)
-#rootimgv.geometry("%dx%d+%d+%d" % (width, height, x, y))
-#rootimgv.resizable(0, 0)
-
+#https://stackoverflow.com/questions/17466561/best-way-to-structure-a-tkinter-application
 #https://www.sourcecodester.com/tutorials/python/12128/python-simple-image-viewer.html
 #================================METHODS========================================
-def gettkinterxypos():
-	return xpos,ypos
+
+def perccolor():
+	#https://stackoverflow.com/questions/43167867/color-percentage-in-image-python-opencv-using-histogram
+	import numpy as np
+	import cv2
+	img = cv2.imread('J9MbW.jpg')
+	brown = [145, 80, 40]  # RGB
+	diff = 20
+	boundaries = [([brown[2]-diff, brown[1]-diff, brown[0]-diff],
+	               [brown[2]+diff, brown[1]+diff, brown[0]+diff])]
+	# in order BGR as opencv represents images as numpy arrays in reverse order
+	for (lower, upper) in boundaries:
+	    lower = np.array(lower, dtype=np.uint8)
+	    upper = np.array(upper, dtype=np.uint8)
+	    mask = cv2.inRange(img, lower, upper)
+	    output = cv2.bitwise_and(img, img, mask=mask)
+
+	    ratio_brown = cv2.countNonZero(mask)/(img.size/3)
+	    print('brown pixel percentage:', np.round(ratio_brown*100, 2))
+
+	    cv2.imshow("images", np.hstack([img, output]))
+	    cv2.waitKey(0)
 def gettkinterxypos(eventorigin):
       global x,y
       x = eventorigin.x
       y = eventorigin.y
+	  ###bindkeyboardandmouse
+	  	###http://effbot.org/tkinterbook/tkinter-events-and-bindings.htm
+		##Example:http://www.java2s.com/Code/Python/Event/MouseeventsonaframeMouseclickedposition.htm
+		##https://www.daniweb.com/programming/software-development/threads/364829/mouse-position-tkinter
+		##class:https://stackoverflow.com/questions/3288047/how-do-i-get-mouse-position-relative-to-the-parent-widget-in-tkinter
+	  #https://www.reddit.com/r/learnpython/comments/gwrig/questions_about_getting_mouse_coordinates_in/
+	  #https://bytes.com/topic/python/answers/888796-how-get-x-coordinate-image
+	  #https://stackoverflow.com/questions/38428593/getting-the-absolute-position-of-cursor-in-tkinter
+	  #https://www.quora.com/In-Python-using-Tkinter-how-can-I-get-the-mouse-position-on-the-screen
+	  #print root.winfo_pointerxy()
       print(x,y)
 def DisplayImage(event=None):
 	import os,subprocess
@@ -28,8 +49,6 @@ def DisplayImage(event=None):
 	convpdfdirpc=dir0+os.path.sep+"ConvertedPDF"
 	imgdir=convpdfdirpc+os.path.sep+"29.pdf"+os.path.sep+"conv0001.jpg"
 	print(imgdir)
-
-	#Home = Toplevel()
 	rootimgv.title("Simple Image Viewer/Viewer")
 	load = Image.open(imgdir)
 	imgw, imgh = load.size
@@ -52,18 +71,7 @@ def DisplayImage(event=None):
 	panel.image=render
 	panel.bind("<Button 1>",gettkinterxypos)
 	panel.pack(fill=BOTH, expand=YES)
-#================================FRAMES=========================================
-#Top = Frame(rootimgv, width=600, bd=1, relief=SOLID)
-#Top.pack(side=TOP)
-#Mid = Frame(rootimgv, width=300, height=200, bd=1, relief=SOLID)
-#Mid.pack_propagate(0)
-#Mid.pack(pady=20)
-#================================LABEL WIDGETS==================================
-#lbl_title = Label(Top, text="Python: Simple Image Viewer", width=600, font=("arial", 20))
-#lbl_title.pack(fill=X)
-#lbl_text = Label(Mid, text="flower.jpg", font=("arial", 20))
-#lbl_text.bind("<Button-1>", DisplayImage)
-#lbl_text.pack()
+
 #https://stackoverflow.com/questions/5436810/adding-zooming-in-and-out-with-a-tkinter-canvas-widget
 class GUI:
     def __init__(self, root):

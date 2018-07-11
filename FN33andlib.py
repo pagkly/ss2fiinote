@@ -865,6 +865,7 @@ def runshowpdf(convpdfdirpc,pdfdir,pdfname,pagestart,pageend,ocvtype,continuenot
 	#image.show()
 	return True
 
+#https://stackoverflow.com/questions/17466561/best-way-to-structure-a-tkinter-application
 import tkinter as tk
 class MainApplication(tk.Frame):
 	def __init__(self, parent, *args, **kwargs):
