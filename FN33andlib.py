@@ -140,7 +140,7 @@ regexnote1=r'(0302010201)(.{2})'
 regexnote2=r'(0302010201)(.{2})(.{2})'
 thedir=dir0+os.path.sep+"ConvPDF"
 wsldir="/mnt/c/Windows"
-thedirw="C:\\Users\\SP3\\AppData\\Roaming\\FiiNote\\@pagkly\\notes"
+
 if sys.platform in ['linux', 'linux2']:
 	userid=subprocess.getoutput("awk -F: '!/root/ && /(\/bin\/bash)/ {print $1}' /etc/passwd")
 	userhomedir="/home/"+userid
@@ -157,6 +157,7 @@ if sys.platform in ['linux', 'linux2']:
 		fnnotesdirand=dirand+os.path.sep+dirand2[0]+"/Internal shared storage/fiinote/notes"
 		subprocess.call("nautilus file://"+schooldirpc,shell=True)
 	if os.path.exists(wsldir):
+		thedirw="C:\\Users\\"+userid+"\\AppData\\Roaming\\FiiNote\\@pagkly\\notes"
 		print(thedirw)
 		#thedir=subprocess.getoutput("echo "+thedirw+" | awk '{gsub(\"C:\",\"/mnt/c\");gsub(\"\\\\\",\"/\");print}'")
 		thedir=re.sub(r"C:","/mnt/c",thedirw)
@@ -909,6 +910,55 @@ def convertpdf2jpg(pdfdir,pdfname,quality,page,convpdfdirpc):
 			print(imgdir)
 			break
 	return convpname
+def convertpdf2jpg2(pdfdir,pdfname,quality,page,convpdfdirpc,ver):
+	##for i in range(int(pagestart),int(pageend)):
+	#ppmcommand2="convert -verbose -density "+str(quality)+" -trim "+pdfdir+os.path.sep+pdfname+"["+str(page)+"] -quality 100 -flatten -sharpen 0x1.0 "+convpdfdirpc+os.path.sep+convpname
+	ossep=os.path.sep
+	if not os.path.exists(convpdfdirpc):
+		os.makedirs(convpdfdirpc)
+	if sys.platform in ['linux', 'linux2']:
+		pdfinfocommand="pdfinfo"
+		pdftoppmcommand="pdftoppm"
+	if sys.platform in ['Windows', 'win32', 'cygwin']:
+		userid=subprocess.getoutput("echo %USERNAME%")
+		popplerver="poppler-0.51"
+		popplerdir="C:\\Users\\"+userid+"\\Downloads\\"+popplerver+"_x86\\"+popplerver+"\\bin"
+		pdfinfocommand=popplerdir+"\\pdfinfo.exe"
+		pdftoppmcommand=popplerdir+"\\pdftoppm.exe"
+		if ver=="wsl":
+			pdfdir0=conwindirtovwsldir(pdfdir)
+			convpdfdirpc0=conwindirtovwsldir(convpdfdirpc)
+			print("convertpdf2jpginwsl="+pdfdir)
+			##pdfpage=subprocess.getoutput("wsl pdfinfo \""+pdfdir0+"/"+pdfname+"\" | grep Pages: | awk '{print $2}'")
+			#ppmcommand="wsl pdftoppm \""+pdfdir0+"/"+pdfname+"\" \""+convpdfdirpc0+"/"+convpname+"\" -jpeg -f "+str(page)+" -singlefile"
+			imgdir=convpdfdirpc+os.path.sep+convpname+".jpg"
+	pdfpage=subprocess.getoutput(pdfinfocommand+" \""+pdfdir+os.path.sep+pdfname+"\" | grep Pages: | awk '{print $2}'")
+	pagez=str(page).zfill(4)
+	convpname="conv"+pagez
+	img0=convpdfdirpc+os.path.sep+convpname
+	imgdir=img0+".jpg"
+	ppmcommand=pdftoppmcommand+" \""+pdfdir+os.path.sep+pdfname+"\" \""+img0+"\" -jpeg -f "+str(page)+" -singlefile"
+	print(ppmcommand)
+	print(convpname)
+	subprocess.call(ppmcommand,shell=True)
+	while True:
+		if os.path.exists(imgdir):
+			print(imgdir)
+			break
+	return imgdir
+
+def conwindirtovwsldir(windir):
+	checkdir="C:\\Windows"
+	wsldir=""
+	#if os.path.exists(checkdir):
+		#userid=subprocess.getoutput("awk -F: '!/root/ && /(\/bin\/bash)/ {print $1}' /etc/passwd")
+		#userid=subprocess.getoutput("echo \"%USERNAME%\"")
+	print("wd="+windir)
+	wsldir=re.sub(r"C:","/mnt/c",windir)
+	wsldir=re.sub(r"\\","/",wsldir)
+	print("ad="+wsldir)
+	return wsldir
+
 def convertjpg2note(folderlocation,column,newdir1,objno2):
     print("runengine")
     objno2re=objno2

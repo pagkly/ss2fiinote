@@ -1,11 +1,21 @@
+import os,subprocess
 from tkinter import *
 from PIL import Image, ImageTk
-
+userhomedir=subprocess.getoutput("echo %USERPROFILE%")
+dir0=os.path.dirname(os.path.realpath(__file__))
+convpdfdirpc=dir0+os.path.sep+"ConvertedPDF"
 rootimgv = Tk()
+width = 600
+height = 300
+screen_width = rootimgv.winfo_screenwidth()
+screen_height = rootimgv.winfo_screenheight()
+x = (screen_width/2) - (width/2)
+y = (screen_height/2) - (height/2)
+rootimgv.geometry("%dx%d+%d+%d" % (width, height, x, y))
+rootimgv.resizable(0, 0)
 #https://stackoverflow.com/questions/17466561/best-way-to-structure-a-tkinter-application
 #https://www.sourcecodester.com/tutorials/python/12128/python-simple-image-viewer.html
 #================================METHODS========================================
-
 def prevpage():
 	return True
 def nextpage():
@@ -53,19 +63,20 @@ def gettkinterxypos(eventorigin):
 	  #https://www.quora.com/In-Python-using-Tkinter-how-can-I-get-the-mouse-position-on-the-screen
 	  #print root.winfo_pointerxy()
       print(x,y)
-def DisplayImage(event=None):
-	import os,subprocess
-	userhomedir=subprocess.getoutput("echo %USERPROFILE%")
-	dir0=os.path.dirname(os.path.realpath(__file__))
-	convpdfdirpc=dir0+os.path.sep+"ConvertedPDF"
-	imgdir=convpdfdirpc+os.path.sep+"29.pdf"+os.path.sep+"conv0001.jpg"
+
+from FN33andlib import conwindirtovwsldir,convertpdf2jpg2
+def DisplayImage(pdfdir,pdfname,*args,**kwargs):
+	#imgdir=convpdfdirpc+os.path.sep+"29.pdf"+os.path.sep+"conv0001.jpg"
+	#imgdir=convertpdf2jpginwsl(pdfdir,pdfname,120,1,convpdfdirpc+os.path.sep+pdfname)
+	imgdir=convertpdf2jpg2(pdfdir,pdfname,120,1,convpdfdirpc+os.path.sep+pdfname,"")
 	print(imgdir)
-	rootimgv.title("Simple Image Viewer/Viewer")
+	Home = Toplevel()
+	Home.title("Simple Image Viewer/Viewer")
 	load = Image.open(imgdir)
 	imgw, imgh = load.size
 	if sys.platform in ['linux', 'linux2'] :
-		screenw = rootimgv.winfo_screenwidth()
-		screenh = rootimgv.winfo_screenheight()
+		screenw = Home.winfo_screenwidth()
+		screenh = Home.winfo_screenheight()
 	if sys.platform in ['Windows', 'win32', 'cygwin']:
 		from win32api import GetSystemMetrics
 		screenw=GetSystemMetrics(0)
@@ -74,11 +85,11 @@ def DisplayImage(event=None):
 	showimgh=int(screenh)
 	x = (screenw/2) - (showimgw/2)
 	y = (screenh/2) - (showimgh/2)
-	rootimgv.geometry("%dx%d+%d+%d" % (showimgw, showimgh, x,y))
-	rootimgv.resizable(1, 1)
+	Home.geometry("%dx%d+%d+%d" % (showimgw, showimgh, x,y))
+	Home.resizable(1, 1)
 	load = load.resize((showimgw, showimgh), Image.ANTIALIAS)
 	render = ImageTk.PhotoImage(load)
-	panel = Label(rootimgv, image=render)
+	panel = Label(Home, image=render)
 	panel.image=render
 	panel.bind("<Button 1>",gettkinterxypos)
 	panel.pack(fill=BOTH, expand=YES)
@@ -115,6 +126,51 @@ class GUI:
         # tell the canvas to scale up/down the vector objects as well
         self.canvas.scale(ALL, x, y, self.scale, self.scale)
 
+
+#================================FRAMES=========================================
+mfwidth=500
+mfheight=200
+Top = Frame(rootimgv, width=mfwidth, bd=1, relief=SOLID)
+Top.pack(side=TOP)
+
+Mid = Frame(rootimgv, width=mfwidth, height=mfheight, bd=1, relief=SOLID)
+Mid.pack_propagate(0)
+Mid.pack(pady=20)
+#https://stackoverflow.com/questions/3964681/find-all-files-in-a-directory-with-extension-txt-in-python
+def listfilesext(dir,ext):
+	allfilesdir=[]
+	allfilesname=[]
+	allfilesfulldir=[]
+	for file in os.listdir(dir):
+		if file.endswith(ext):
+			#and os.path.isfile(os.path.join(dir, file))
+			#os.path.isdir("bob")
+			allfilesdir.append(dir)
+			allfilesname.append(file)
+			allfilesfulldir.append(os.path.join(dir, file))
+	print(allfilesfulldir)
+	return allfilesdir,allfilesname,allfilesfulldir
+
+#https://stackoverflow.com/questions/10927234/setting-the-position-on-a-button-in-python
+#https://stackoverflow.com/questions/10865116/python-tkinter-creating-buttons-in-for-loop-passing-command-arguments
+def placebutton(allfilesdir,allfilesname,allfilesfulldir):
+	from functools import partial
+	x=len(allfilesfulldir)
+	value=int(x)
+	bwidth=500
+	bheight=25
+	lbl_title = Label(Top, text="Python: Simple Image Viewer", width=mfwidth, font=("arial", 20))
+	lbl_title.pack(fill=X)
+	for i in range(value):
+		print(allfilesdir[i])
+		print(allfilesname[i])
+		#b=Button(Mid,text=allfilesfulldir[i],command=lambda: DisplayImage(allfilesdir[i],allfilesname[i]))
+		b=Button(Mid,text=allfilesfulldir[i],command=partial(DisplayImage,allfilesdir[i],allfilesname[i]))
+		b.place(x=mfwidth/2-bwidth/2, y=i*30, width=bwidth, height=bheight)
+
+
 if __name__ == "__main__":
-	DisplayImage()
+	#DisplayImage()
+	allfilesdir,allfilesname,allfilesfulldir=listfilesext(dir0,".pdf")
+	placebutton(allfilesdir,allfilesname,allfilesfulldir)
 	rootimgv.mainloop()
