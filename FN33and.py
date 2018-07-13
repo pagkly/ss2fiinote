@@ -78,7 +78,7 @@ if sys.platform in ['linux', 'linux2'] or sys.platform in ['Windows', 'win32', '
         pastek.pack()
         restartgui=Button(root, text="restart", command=restartguifn,height=3,width=3)
         restartgui.pack()
-        choosepdf=Button(root, text="choosepdf", command=restartguifn,height=3,width=3)
+        choosepdf=Button(root, text="choosepdf", command=choosepdfgui,height=3,width=3)
         choosepdf.pack()
         TT=Label(root, relief='raised')
         TT.pack()
@@ -168,6 +168,23 @@ if sys.platform in ['linux', 'linux2'] or sys.platform in ['Windows', 'win32', '
             subprocess.call(python_path+"python "+str(dir0)+"\\"+str(scriptn)+".py", shell=True)
             return True
 
+    def choosepdfgui():
+        import os,subprocess
+        from tkinter import *
+        from PIL import Image, ImageTk
+        if sys.platform in ['Windows', 'win32', 'cygwin']:
+            userhomedir=subprocess.getoutput("echo %USERPROFILE%")
+        dir0=os.path.dirname(os.path.realpath(__file__))
+        convpdfdirpc=dir0+os.path.sep+"ConvertedPDF"
+        rootimgv = Tk()
+        width = 600
+        height = 300
+        screen_width = rootimgv.winfo_screenwidth()
+        screen_height = rootimgv.winfo_screenheight()
+        x = (screen_width/2) - (width/2)
+        y = (screen_height/2) - (height/2)
+        rootimgv.geometry("%dx%d+%d+%d" % (width, height, x, y))
+        rootimgv.resizable(0, 0)
 
 
 if sys.platform in ['linux', 'linux2']:

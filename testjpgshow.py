@@ -217,6 +217,10 @@ def curpage(pdfname,convpdfdirpc):
 		lastpage=1
 	print("lp="+lastpage)
 	return lastpage
+def whitelistarea(imgdir,imgname,areacommand):
+	image = cv2.imread(imgdir+os.path.sep+imgname)
+	
+
 if __name__ == "__main__":
 	allfilesdir,allfilesname,allfilesfulldir=listfilesext(dir0,".pdf")
 	placebutton(allfilesdir,allfilesname,allfilesfulldir)
