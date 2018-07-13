@@ -17,8 +17,14 @@ rootimgv.resizable(0, 0)
 #https://www.sourcecodester.com/tutorials/python/12128/python-simple-image-viewer.html
 #================================METHODS========================================
 def prevpage():
+	global lastpage
+	choosepage=lastpage-1
+	DisplayImage(allfilesdir[i],allfilesname[i],choosepage)
 	return True
 def nextpage():
+	global lastpage
+	choosepage=lastpage+1
+	DisplayImage(allfilesdir[i],allfilesname[i],choosepage)
 	return True
 def whitelistpagearea(page,x,y):
 	import cv2
@@ -27,11 +33,11 @@ def progresspage(page):
 	return True
 def progresspagewhitelist():
 	return True
-def perccolor():
+def perccolor(imgdir):
 	#https://stackoverflow.com/questions/43167867/color-percentage-in-image-python-opencv-using-histogram
 	import numpy as np
 	import cv2
-	img = cv2.imread('J9MbW.jpg')
+	img = cv2.imread(imgdir)
 	brown = [145, 80, 40]  # RGB
 	diff = 20
 	boundaries = [([brown[2]-diff, brown[1]-diff, brown[0]-diff],
@@ -48,28 +54,32 @@ def perccolor():
 
 	    cv2.imshow("images", np.hstack([img, output]))
 	    cv2.waitKey(0)
-def gettkinterxypos(eventorigin):
-      global x,y
-      x = eventorigin.x
-      y = eventorigin.y
-	  ###bindkeyboardandmouse
-	  	###http://effbot.org/tkinterbook/tkinter-events-and-bindings.htm
-		##Example:http://www.java2s.com/Code/Python/Event/MouseeventsonaframeMouseclickedposition.htm
-		##https://www.daniweb.com/programming/software-development/threads/364829/mouse-position-tkinter
-		##class:https://stackoverflow.com/questions/3288047/how-do-i-get-mouse-position-relative-to-the-parent-widget-in-tkinter
-	  #https://www.reddit.com/r/learnpython/comments/gwrig/questions_about_getting_mouse_coordinates_in/
-	  #https://bytes.com/topic/python/answers/888796-how-get-x-coordinate-image
-	  #https://stackoverflow.com/questions/38428593/getting-the-absolute-position-of-cursor-in-tkinter
-	  #https://www.quora.com/In-Python-using-Tkinter-how-can-I-get-the-mouse-position-on-the-screen
-	  #print root.winfo_pointerxy()
-      print(x,y)
 
-from FN33andlib import conwindirtovwsldir,convertpdf2jpg2
-def DisplayImage(pdfdir,pdfname,*args,**kwargs):
+###bindkeyboardandmouse
+  ###http://effbot.org/tkinterbook/tkinter-events-and-bindings.htm
+  ##Example:http://www.java2s.com/Code/Python/Event/MouseeventsonaframeMouseclickedposition.htm
+  ##https://www.daniweb.com/programming/software-development/threads/364829/mouse-position-tkinter
+  ##class:https://stackoverflow.com/questions/3288047/how-do-i-get-mouse-position-relative-to-the-parent-widget-in-tkinter
+#https://www.reddit.com/r/learnpython/comments/gwrig/questions_about_getting_mouse_coordinates_in/
+#https://bytes.com/topic/python/answers/888796-how-get-x-coordinate-image
+#https://stackoverflow.com/questions/38428593/getting-the-absolute-position-of-cursor-in-tkinter
+#https://www.quora.com/In-Python-using-Tkinter-how-can-I-get-the-mouse-position-on-the-screen
+#print root.winfo_pointerxy()
+def gettkinterxypos(eventorigin):
+	global x,y
+	x = eventorigin.x
+	y = eventorigin.y
+	print(x,y)
+	return x,y
+def DisplayImage(pdfdir,pdfname,choosepage,*args,**kwargs):
+	global lastpage
+	from FN33andlib import conwindirtovwsldir,convertpdf2jpg2
 	#imgdir=convpdfdirpc+os.path.sep+"29.pdf"+os.path.sep+"conv0001.jpg"
-	#imgdir=convertpdf2jpginwsl(pdfdir,pdfname,120,1,convpdfdirpc+os.path.sep+pdfname)
-	imgdir=convertpdf2jpg2(pdfdir,pdfname,120,1,convpdfdirpc+os.path.sep+pdfname,"")
-	print(imgdir)
+	if not choosepage:
+		choosepage=1
+	imgdir=convertpdf2jpg2(pdfdir,pdfname,120,choosepage,convpdfdirpc+os.path.sep+pdfname,"")
+	lastpage=curpage(pdfname,convpdfdirpc+os.path.sep+pdfname)
+	print(imgdir+" "+lastpage)
 	Home = Toplevel()
 	Home.title("Simple Image Viewer/Viewer")
 	load = Image.open(imgdir)
@@ -105,16 +115,13 @@ class GUI:
         self.img_id = None
         # draw the initial image at 1x scale
         self.redraw()
-
         # ... rest of init, bind buttons, pack frame
-
     def zoom(self,event):
         if event.num == 4:
             self.scale *= 2
         elif event.num == 5:
             self.scale *= 0.5
         self.redraw(event.x, event.y)
-
     def redraw(self, x=0, y=0):
         if self.img_id:
             self.canvas.delete(self.img_id)
@@ -122,7 +129,6 @@ class GUI:
         size = int(iw * self.scale), int(ih * self.scale)
         self.img = ImageTk.PhotoImage(self.orig_img.resize(size))
         self.img_id = self.canvas.create_image(x, y, image=self.img)
-
         # tell the canvas to scale up/down the vector objects as well
         self.canvas.scale(ALL, x, y, self.scale, self.scale)
 
@@ -150,7 +156,6 @@ def listfilesext(dir,ext):
 			allfilesfulldir.append(os.path.join(dir, file))
 	print(allfilesfulldir)
 	return allfilesdir,allfilesname,allfilesfulldir
-
 #https://stackoverflow.com/questions/10927234/setting-the-position-on-a-button-in-python
 #https://stackoverflow.com/questions/10865116/python-tkinter-creating-buttons-in-for-loop-passing-command-arguments
 def placebutton(allfilesdir,allfilesname,allfilesfulldir):
@@ -165,12 +170,54 @@ def placebutton(allfilesdir,allfilesname,allfilesfulldir):
 		print(allfilesdir[i])
 		print(allfilesname[i])
 		#b=Button(Mid,text=allfilesfulldir[i],command=lambda: DisplayImage(allfilesdir[i],allfilesname[i]))
-		b=Button(Mid,text=allfilesfulldir[i],command=partial(DisplayImage,allfilesdir[i],allfilesname[i]))
+		b=Button(Mid,text=allfilesfulldir[i],command=partial(DisplayImage,allfilesdir[i],allfilesname[i],""))
 		b.place(x=mfwidth/2-bwidth/2, y=i*30, width=bwidth, height=bheight)
-
-
+def lastmodfile(num_files, directory):
+	import os
+	import stat
+	import datetime as dt
+	import argparse
+	from pprint import pprint
+	"""gets a list of files sorted by modified time
+	keyword args:
+	num_files -- the n number of files you want to print
+	directory -- the starting root directory of the search"""
+	modified = []
+	accessed = []
+	rootdir = os.path.join(os.getcwd(), directory)
+	print("dir="+ directory)
+	for root, sub_folders, files in os.walk(rootdir):
+		for file in files:
+			try:
+				unix_modified_time = os.stat(os.path.join(root, file))[stat.ST_MTIME]
+				unix_accessed_time = os.stat(os.path.join(root, file))[stat.ST_ATIME]
+				human_modified_time = dt.datetime.fromtimestamp(unix_modified_time).strftime('%Y-%m-%d %H:%M:%S')
+				human_accessed_time = dt.datetime.fromtimestamp(unix_accessed_time).strftime('%Y-%m-%d %H:%M:%S')
+				filename = os.path.join(root, file)
+				modified.append((human_modified_time, filename))
+				accessed.append((human_accessed_time, filename))
+			except:
+				pass
+	modified.sort(key=lambda a: a[0], reverse=True)
+	accessed.sort(key=lambda a: a[0], reverse=True)
+	print('Modified')
+	print(modified[0][1])
+	#print('Accessed')
+	#pprint(accessed[:num_files])
+	return modified[0][1]
+def curpage(pdfname,convpdfdirpc):
+	print("curcpdfpc="+convpdfdirpc)
+	if os.path.exists(convpdfdirpc):
+		lastimg=lastmodfile(1, convpdfdirpc)
+		print("li="+str(lastimg))
+		lastimg0=lastimg.rsplit("\\",1)[1]
+		lastpage=re.sub(r"(conv)(0)*","",lastimg0)
+		lastpage=re.sub(r"(.jpg)","",lastpage)
+	if not os.path.exists(convpdfdirpc):
+		lastpage=1
+	print("lp="+lastpage)
+	return lastpage
 if __name__ == "__main__":
-	#DisplayImage()
 	allfilesdir,allfilesname,allfilesfulldir=listfilesext(dir0,".pdf")
 	placebutton(allfilesdir,allfilesname,allfilesfulldir)
 	rootimgv.mainloop()
