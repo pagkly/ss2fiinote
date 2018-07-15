@@ -118,6 +118,7 @@ if sys.platform in ['linux', 'linux2'] or sys.platform in ['Windows', 'win32', '
         return True
     def choosepdfguiinit():
         _thread.start_new_thread(choosepdfgui,())
+        #choosepdfgui()
         return True
     def ClearTT():
         TT.config(text="")
@@ -174,7 +175,7 @@ if sys.platform in ['linux', 'linux2'] or sys.platform in ['Windows', 'win32', '
             subprocess.call(python_path+"python "+str(dir0)+"\\"+str(scriptn)+".py", shell=True)
             return True
 
-def choosepdfgui():
+def choosepdfgui0():
     global rootimgv,Top,Mid,mfwidth,mfheight
     if sys.platform in ['Windows', 'win32', 'cygwin']:
         userhomedir=subprocess.getoutput("echo %USERPROFILE%")
@@ -200,6 +201,31 @@ def choosepdfgui():
     allfilesdir,allfilesname,allfilesfulldir=listfilesext(dir0,".pdf")
     placebutton(allfilesdir,allfilesname,allfilesfulldir)
     rootimgv.mainloop()
+def choosepdfgui():
+    global rootimgv,Top,Mid,mfwidth,mfheight
+    if sys.platform in ['Windows', 'win32', 'cygwin']:
+        userhomedir=subprocess.getoutput("echo %USERPROFILE%")
+    Home1=Toplevel()
+    width = 600
+    height = 300
+    screen_width = root.winfo_screenwidth()
+    screen_height = root.winfo_screenheight()
+    x = (screen_width/2) - (width/2)
+    y = (screen_height/2) - (height/2)
+    Home1.geometry("%dx%d+%d+%d" % (width, height, x, y))
+    Home1.resizable(0, 0)
+    #================================FRAMES=========================================
+    mfwidth=500
+    mfheight=200
+    Top = Frame(Home1, width=mfwidth, bd=1, relief=SOLID)
+    Top.pack(side=TOP)
+    Mid = Frame(Home1, width=mfwidth, height=mfheight, bd=1, relief=SOLID)
+    Mid.pack_propagate(0)
+    Mid.pack(pady=20)
+    lbl_title = Label(Top, text="Python: Simple Image Viewer", width=mfwidth, font=("arial", 20))
+    lbl_title.pack(fill=X)
+    allfilesdir,allfilesname,allfilesfulldir=listfilesext(dir0,".pdf")
+    placebutton(allfilesdir,allfilesname,allfilesfulldir)
 #https://stackoverflow.com/questions/17466561/best-way-to-structure-a-tkinter-application
 #https://www.sourcecodester.com/tutorials/python/12128/python-simple-image-viewer.html
 #================================METHODS========================================
@@ -275,7 +301,7 @@ def gettkinterxypos(eventorigin,*,convimgdir,pdfdir,pdfname,lastpage):
         #print(wledimgdir)
         #print(newdir1+" "+str(objno2))
         if not os.path.exists(wledimgdir):
-            shutil.copy(imgdir,wledimgdir)
+            shutil.copy(convimgdir,wledimgdir)
         if os.path.exists(wledimgdir):
             imgw,imgh=imgsize(wledimgdir)
             actxp1=int(imgw/showimgw*xpos1)
@@ -400,6 +426,7 @@ Home=""
 choosepdfpagenext=""
 choosepdfpageprev=""
 undowlarea=""
+rootimgv=""
 def DisplayImage(pdfdir,pdfname,choosepage,*args,**kwargs):
     global root,rootimgv,choosepdfpagenext,choosepdfpageprev,undowlarea
     global Home
