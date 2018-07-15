@@ -6,6 +6,8 @@
 import os, sys, threading
 import _thread
 from FN33andlib import *
+from functools import partial
+
 dir0 = os.path.dirname(os.path.realpath(__file__))
 textclick=0
 pause=0
@@ -28,8 +30,8 @@ def MouseGetPos():
         pass
 if sys.platform in ['linux', 'linux2'] or sys.platform in ['Windows', 'win32', 'cygwin']:
     def mouselu(event):
-        global textclick, clickStartX, clickStopX, clickStartY, clickStopY, objno2
-        if pause==0 :
+        global textclick, clickStartX, clickStopX, clickStartY, clickStopY, objno2, Home
+        if pause==0 and not Home:
             if sys.platform in ['linux', 'linux2']:
                 clickX, clickY=MouseGetPos()
             if sys.platform in ['Windows', 'win32', 'cygwin']:
@@ -49,7 +51,8 @@ if sys.platform in ['linux', 'linux2'] or sys.platform in ['Windows', 'win32', '
                 clickStopX=int(clickStopX)
                 clickStopY=int(clickStopY)
                 if clickStartX<clickStopX :
-                    SS=SS1(clickStartX,clickStartY,clickStopX,clickStopY)
+                    global curattachdirpc
+                    SS=SS1(clickStartX,clickStartY,clickStopX,clickStopY,curattachdirpc)
                     print(SS)
                     objno2,curattachdirpc=appendnewpic(SS[0],SS[1],SS[2],SS[3],SS[4],"nearlatest")
                     imgdir=curattachdirpc+os.path.sep+SS[2]
@@ -66,7 +69,7 @@ if sys.platform in ['linux', 'linux2'] or sys.platform in ['Windows', 'win32', '
                     TT.config(text="Rep")
                 textclick=0
     def task2():
-        global TT,TT2,root
+        global root,TT,TT2
         root = tk.Tk()
         m = Button(root, text="Pause R", command=Suspend1,height=3,width=3)
         m.pack()
@@ -78,7 +81,7 @@ if sys.platform in ['linux', 'linux2'] or sys.platform in ['Windows', 'win32', '
         pastek.pack()
         restartgui=Button(root, text="restart", command=restartguifn,height=3,width=3)
         restartgui.pack()
-        choosepdf=Button(root, text="choosepdf", command=choosepdfgui,height=3,width=3)
+        choosepdf=Button(root, text="choosepdf", command=choosepdfguiinit,height=3,width=3)
         choosepdf.pack()
         TT=Label(root, relief='raised')
         TT.pack()
@@ -112,6 +115,9 @@ if sys.platform in ['linux', 'linux2'] or sys.platform in ['Windows', 'win32', '
         #if sys.platform in ['linux', 'linux2'] :
         if sys.platform in ['Windows', 'win32', 'cygwin']:
             subprocess.call("%USERPROFILE%\\Documents\\GitHub\\FN35OCVbside\\fn33andguistart.bat",shell=True)
+        return True
+    def choosepdfguiinit():
+        _thread.start_new_thread(choosepdfgui,())
         return True
     def ClearTT():
         TT.config(text="")
@@ -168,24 +174,402 @@ if sys.platform in ['linux', 'linux2'] or sys.platform in ['Windows', 'win32', '
             subprocess.call(python_path+"python "+str(dir0)+"\\"+str(scriptn)+".py", shell=True)
             return True
 
-    def choosepdfgui():
-        import os,subprocess
-        from tkinter import *
-        from PIL import Image, ImageTk
-        if sys.platform in ['Windows', 'win32', 'cygwin']:
-            userhomedir=subprocess.getoutput("echo %USERPROFILE%")
-        dir0=os.path.dirname(os.path.realpath(__file__))
-        convpdfdirpc=dir0+os.path.sep+"ConvertedPDF"
-        rootimgv = Tk()
-        width = 600
-        height = 300
-        screen_width = rootimgv.winfo_screenwidth()
-        screen_height = rootimgv.winfo_screenheight()
-        x = (screen_width/2) - (width/2)
-        y = (screen_height/2) - (height/2)
-        rootimgv.geometry("%dx%d+%d+%d" % (width, height, x, y))
-        rootimgv.resizable(0, 0)
+def choosepdfgui():
+    global rootimgv,Top,Mid,mfwidth,mfheight
+    if sys.platform in ['Windows', 'win32', 'cygwin']:
+        userhomedir=subprocess.getoutput("echo %USERPROFILE%")
+    rootimgv = tk.Tk()
+    width = 600
+    height = 300
+    screen_width = rootimgv.winfo_screenwidth()
+    screen_height = rootimgv.winfo_screenheight()
+    x = (screen_width/2) - (width/2)
+    y = (screen_height/2) - (height/2)
+    rootimgv.geometry("%dx%d+%d+%d" % (width, height, x, y))
+    rootimgv.resizable(0, 0)
+    #================================FRAMES=========================================
+    mfwidth=500
+    mfheight=200
+    Top = Frame(rootimgv, width=mfwidth, bd=1, relief=SOLID)
+    Top.pack(side=TOP)
+    Mid = Frame(rootimgv, width=mfwidth, height=mfheight, bd=1, relief=SOLID)
+    Mid.pack_propagate(0)
+    Mid.pack(pady=20)
+    lbl_title = Label(Top, text="Python: Simple Image Viewer", width=mfwidth, font=("arial", 20))
+    lbl_title.pack(fill=X)
+    allfilesdir,allfilesname,allfilesfulldir=listfilesext(dir0,".pdf")
+    placebutton(allfilesdir,allfilesname,allfilesfulldir)
+    rootimgv.mainloop()
+#https://stackoverflow.com/questions/17466561/best-way-to-structure-a-tkinter-application
+#https://www.sourcecodester.com/tutorials/python/12128/python-simple-image-viewer.html
+#================================METHODS========================================
+def changepage(pdfdir,pdfname,lastpage,type):
+    global Home
+    Home.destroy()
+    if type=="prev":
+        choosepage=int(lastpage)-1
+    elif type=="next":
+        choosepage=int(lastpage)+1
+    print("lpcp="+str(choosepage))
+    DisplayImage(pdfdir,pdfname,choosepage)
+    return True
+def whitelistpagearea(page,x,y):
+	import cv2
+	return True
+def progresspage(page):
+	return True
+def progresspagewhitelist():
+	return True
+def perccolor(imgdir):
+	#https://stackoverflow.com/questions/43167867/color-percentage-in-image-python-opencv-using-histogram
+	import numpy as np
+	import cv2
+	img = cv2.imread(imgdir)
+	brown = [145, 80, 40]  # RGB
+	diff = 20
+	boundaries = [([brown[2]-diff, brown[1]-diff, brown[0]-diff],
+	               [brown[2]+diff, brown[1]+diff, brown[0]+diff])]
+	# in order BGR as opencv represents images as numpy arrays in reverse order
+	for (lower, upper) in boundaries:
+	    lower = np.array(lower, dtype=np.uint8)
+	    upper = np.array(upper, dtype=np.uint8)
+	    mask = cv2.inRange(img, lower, upper)
+	    output = cv2.bitwise_and(img, img, mask=mask)
 
+	    ratio_brown = cv2.countNonZero(mask)/(img.size/3)
+	    print('brown pixel percentage:', np.round(ratio_brown*100, 2))
+
+	    cv2.imshow("images", np.hstack([img, output]))
+	    cv2.waitKey(0)
+
+###bindkeyboardandmouse
+  ###http://effbot.org/tkinterbook/tkinter-events-and-bindings.htm
+  ##Example:http://www.java2s.com/Code/Python/Event/MouseeventsonaframeMouseclickedposition.htm
+  ##https://www.daniweb.com/programming/software-development/threads/364829/mouse-position-tkinter
+  ##class:https://stackoverflow.com/questions/3288047/how-do-i-get-mouse-position-relative-to-the-parent-widget-in-tkinter
+#https://www.reddit.com/r/learnpython/comments/gwrig/questions_about_getting_mouse_coordinates_in/
+#https://bytes.com/topic/python/answers/888796-how-get-x-coordinate-image
+#https://stackoverflow.com/questions/38428593/getting-the-absolute-position-of-cursor-in-tkinter
+#https://www.quora.com/In-Python-using-Tkinter-how-can-I-get-the-mouse-position-on-the-screen
+#print root.winfo_pointerxy()
+xpos1=""
+ypos1=""
+xpos2=""
+ypos2=""
+def gettkinterxypos(eventorigin,*,convimgdir,pdfdir,pdfname,lastpage):
+    global textclick,x,y,xpos1,ypos1,xpos2,ypos2
+    global root,TT,TT2
+    global showimgw,showimgh
+    global newdir1,objno2,curattachdirpc
+    wledimgdir=re.sub(r"conv","wled",convimgdir)
+    x = eventorigin.x
+    y = eventorigin.y
+    print(x,y)
+    if pause==0 and textclick==0:
+        xpos1,ypos1=x,y
+        textclick=1
+    elif pause==0 and textclick==1:
+        global Home
+        Home.destroy()
+        xpos2,ypos2=x,y
+        #print(wledimgdir)
+        #print(newdir1+" "+str(objno2))
+        if not os.path.exists(wledimgdir):
+            shutil.copy(imgdir,wledimgdir)
+        if os.path.exists(wledimgdir):
+            imgw,imgh=imgsize(wledimgdir)
+            actxp1=int(imgw/showimgw*xpos1)
+            actyp1=int(imgh/showimgh*ypos1)+20
+            actxp2=int(imgw/showimgw*xpos2)
+            actyp2=int(imgh/showimgh*ypos2)+20
+        if actxp1<actxp2 :
+            SS=cutarea(pdfdir,pdfname,lastpage,actxp1,actyp1,actxp2,actyp2,convimgdir)
+            print(SS)
+            objno2,curattachdirpc=appendnewpic(SS[0],SS[1],SS[2],SS[3],SS[4],"nearlatest")
+            imgdir=curattachdirpc+os.path.sep+SS[2]
+            if (linuxpc==0) and os.path.exists("/run/user/1000/gvfs/*/Internal"):
+                subprocess.call("adb push -p "+imgdir+" "+fnnotesanddirint+newdir1+".notz/attach",shell=True)
+                ##subprocess.call("adb shell su -c 'monkey -p com.fiistudio.fiinote -c android.intent.category.LAUNCHER 1'", shell=True)
+                ## \"su -c 'killall com.fiistudio.fiinote'\"
+                #except :
+                ##TT.config(text="try")
+                ##monkey -p com.fiistudio.fiinote.editor.Fiinote -c android.intent.category.LAUNCHER 1
+            #TT.config(text="P")
+            #TT2.config(text=str(objno2))
+            whitelistarea(pdfdir,pdfname,lastpage,actxp1,actyp1,actxp2,actyp2,wledimgdir)
+            DisplayImage(pdfdir,pdfname,lastpage)
+        else:
+            #TT.config(text="Rep")
+            pass
+        textclick=0
+    return x,y
+def cutarea(pdfdir,pdfname,lastpage,actxp1,actyp1,actxp2,actyp2,convimgdir):
+    global curattachdirpc,newdir1,objno2
+    picname=strftime("%Y%m%d%H%M%S")+'abcdefghijklmno.jpg'
+    imgdir=curattachdirpc+os.path.sep+picname
+    print(convimgdir)
+    print(imgdir)
+    print(str(actyp1)+" "+str(actyp2)+","+str(actxp1)+":"+str(actxp2))
+    temp=cv2.imread(convimgdir)
+    img=temp[actyp1:actyp2,actxp1:actxp2]
+    cv2.imwrite(imgdir,img)
+    w,h=imgsize(imgdir)
+    print(str(w)+" "+str(h))
+    print(newdir1+" "+str(objno2))
+    return w,h,picname,newdir1,objno2
+def whitelistarea(pdfdir,pdfname,lastpage,actxp1,actyp1,actxp2,actyp2,wledimgdir):
+    #from FN33andlib import appendtext
+    convimgdir=re.sub(r"wled","conv",wledimgdir)
+    image=cv2.imread(wledimgdir)
+    cv2.rectangle(image, (actxp1, actyp1), (actxp2, actyp2), (255, 255, 255), -1)
+    cv2.imwrite(wledimgdir, image)
+    print("donewlarea="+wledimgdir)
+    wledposfile=re.sub(r"wled","wledpos",wledimgdir)
+    wledposfile=re.sub(r".jpg","",wledposfile)
+    appendpos=str(actxp1)+","+str(actyp1)+","+str(actxp2)+","+str(actyp2)
+    print(appendpos)
+    appendtext(wledposfile,appendpos,"a")
+
+def removelastlinefromfile(thefile):
+    #sys.argv[1]
+    file = open(thefile, "r+", encoding = "utf-8")
+    #Move the pointer (similar to a cursor in a text editor) to the end of the file.
+    file.seek(0, os.SEEK_END)
+    #This code means the following code skips the very last character in the file -
+    #i.e. in the case the last line is null we delete the last line
+    #and the penultimate one
+    pos = file.tell() - 1
+    #Read each character in the file one at a time from the penultimate
+    #character going backwards, searching for a newline character
+    #If we find a new line, exit the search
+    while pos > 0 and file.read(1) != "\n":
+        pos -= 1
+        file.seek(pos, os.SEEK_SET)
+    #So long as we're not at the start of the file, delete all the characters ahead of this position
+    if pos > 0:
+        file.seek(pos, os.SEEK_SET)
+        file.truncate()
+    file.close()
+#https://mail.python.org/pipermail/python-list/2005-January/315395.html
+def awk_it(instring,index,delimiter):
+  try:
+    return [instring,instring.split(delimiter)[index-1]][max(0,min(1,index))]
+  except:
+    return ""
+#https://docs.opencv.org/3.0-beta/doc/py_tutorials/py_core/py_basic_ops/py_basic_ops.html
+#https://stackoverflow.com/questions/14063070/overlay-a-smaller-image-on-a-larger-image-python-opencv
+def undolatestwl(pdfdir,pdfname,convimgdir,lastpage):
+    global Home
+    Home.destroy()
+    wledimgdir=re.sub(r"conv","wled",convimgdir)
+    wledposfile=re.sub(r"conv","wledpos",convimgdir)
+    wledposfile=re.sub(r".jpg","",wledposfile)
+    with open(wledposfile, 'r') as f:
+        try:
+            lines = f.read().splitlines()
+            last_line = lines[-1]
+            print("lastline="+last_line)
+        except:
+            last_line=""
+    if last_line!="" :
+        temp = cv2.imread(convimgdir)
+        ypos1=int(awk_it(last_line,2,","))
+        ypos2=int(awk_it(last_line,4,","))
+        xpos1=int(awk_it(last_line,1,","))
+        xpos2=int(awk_it(last_line,3,","))
+        img=temp[ypos1:ypos2+3,xpos1:xpos2+3]
+        target=cv2.imread(wledimgdir)
+        target[ypos1:ypos2+3,xpos1:xpos2+3]=img
+        #imgwled=re.sub("wled","img",wledimgdir)
+        #newwled=re.sub("wled","newwled",wledimgdir)
+        #cv2.imwrite(imgwled,img)
+        #cv2.imwrite(newwled, target)
+        cv2.imwrite(wledimgdir, target)
+
+        file = open(wledposfile)
+        filetext=file.read()
+        print("readf="+str(filetext))
+        newwledpos=re.sub("\n"+last_line,"",str(filetext))
+        print("nwwpos="+newwledpos)
+        appendtext(wledposfile,newwledpos,"w+")
+        #removelastlinefromfile(wledposfile)
+    DisplayImage(pdfdir,pdfname,lastpage)
+    return True
+
+Home=""
+choosepdfpagenext=""
+choosepdfpageprev=""
+undowlarea=""
+def DisplayImage(pdfdir,pdfname,choosepage,*args,**kwargs):
+    global root,rootimgv,choosepdfpagenext,choosepdfpageprev,undowlarea
+    global Home
+    from FN33andlib import conwindirtovwsldir,convertpdf2jpg2
+    #imgdir=convpdfdirpc+os.path.sep+"29.pdf"+os.path.sep+"conv0001.jpg"
+    #================================FRAMES=========================================
+    if sys.platform in ['linux', 'linux2'] :
+        screenw = Home.winfo_screenwidth()
+        screenh = Home.winfo_screenheight()
+    if sys.platform in ['Windows', 'win32', 'cygwin']:
+        from win32api import GetSystemMetrics
+        screenw=GetSystemMetrics(0)
+        screenh=GetSystemMetrics(1)
+    if rootimgv:
+        rootimgv.destroy()
+        rootimgv=""
+    if Home:
+        Home.destroy()
+    if choosepdfpagenext:
+        choosepdfpagenext.destroy()
+    if choosepdfpageprev:
+        choosepdfpageprev.destroy()
+    if undowlarea:
+        undowlarea.destroy()
+
+    convpdfdirpcwithpdf=convpdfdirpc+os.path.sep+pdfname
+    if not choosepage:
+        if os.path.exists(convpdfdirpcwithpdf):
+            choosepage=curpage(pdfname,convpdfdirpcwithpdf)
+            if not choosepage:
+                choosepage=1
+        else:
+            choosepage=1
+    lastpage=choosepage
+    prevpage=lastpage-1
+    nextpage=lastpage+1
+    if prevpage>0:
+        previmgdir=convertpdf2jpg2(pdfdir,pdfname,120,prevpage,convpdfdirpcwithpdf,"")
+    nextimgdir=convertpdf2jpg2(pdfdir,pdfname,120,nextpage,convpdfdirpcwithpdf,"")
+    
+    convimgdir=convertpdf2jpg2(pdfdir,pdfname,120,choosepage,convpdfdirpcwithpdf,"")
+    wledimgdir=re.sub(r"conv","wled",convimgdir)
+    imgdir=convimgdir
+    if os.path.exists(wledimgdir):
+        imgdir=wledimgdir
+    print(imgdir+" "+str(lastpage))
+    Home = Toplevel()
+    Home.title(imgdir)
+    load = PIL.Image.open(open(imgdir, 'rb'))
+    imgw, imgh = load.size
+    global showimgw,showimgh
+    showimgw=int((screenh/imgh)*imgw)
+    showimgh=int(screenh)
+    x = (screenw/2) - (showimgw/2)
+    y = (screenh/2) - (showimgh/2)
+    Home.geometry("%dx%d+%d+%d" % (showimgw, showimgh, x,y))
+    Home.resizable(1, 1)
+    load = load.resize((showimgw, showimgh), PIL.Image.ANTIALIAS)
+    render = PIL.ImageTk.PhotoImage(load)
+    panel = Label(Home, image=render)
+    panel.image=render
+    panel.bind("<Button 1>",partial(gettkinterxypos,convimgdir=convimgdir,pdfdir=pdfdir,pdfname=pdfname,lastpage=lastpage))
+    panel.pack(fill=BOTH, expand=YES)
+    choosepdfpagenext=Button(root, text="choosepdf", command=partial(changepage,pdfdir,pdfname,lastpage,"next"),height=1,width=3)
+    choosepdfpagenext.pack()
+    choosepdfpageprev=Button(root, text="choosepdf", command=partial(changepage,pdfdir,pdfname,lastpage,"prev"),height=1,width=3)
+    choosepdfpageprev.pack()
+    undowlarea=Button(root, text="undolwl", command=partial(undolatestwl,pdfdir,pdfname,convimgdir,lastpage),height=1,width=3)
+    undowlarea.pack() 
+    return True
+
+#https://stackoverflow.com/questions/5436810/adding-zooming-in-and-out-with-a-tkinter-canvas-widget
+class GUI:
+    def __init__(self, root):
+        # ... omitted rest of initialization code
+        self.canvas.config(scrollregion=self.canvas.bbox(ALL))
+        self.scale = 1.0
+        self.orig_img = PIL.Image.open(File)
+        self.img = None
+        self.img_id = None
+        # draw the initial image at 1x scale
+        self.redraw()
+        # ... rest of init, bind buttons, pack frame
+    def zoom(self,event):
+        if event.num == 4:
+            self.scale *= 2
+        elif event.num == 5:
+            self.scale *= 0.5
+        self.redraw(event.x, event.y)
+    def redraw(self, x=0, y=0):
+        if self.img_id:
+            self.canvas.delete(self.img_id)
+        iw, ih = self.orig_img.size
+        size = int(iw * self.scale), int(ih * self.scale)
+        self.img = PIL.ImageTk.PhotoImage(self.orig_img.resize(size))
+        self.img_id = self.canvas.create_image(x, y, image=self.img)
+        # tell the canvas to scale up/down the vector objects as well
+        self.canvas.scale(ALL, x, y, self.scale, self.scale)
+
+#https://stackoverflow.com/questions/3964681/find-all-files-in-a-directory-with-extension-txt-in-python
+def listfilesext(dir,ext):
+	allfilesdir=[]
+	allfilesname=[]
+	allfilesfulldir=[]
+	for file in os.listdir(dir):
+		if file.endswith(ext):
+			#and os.path.isfile(os.path.join(dir, file))
+			#os.path.isdir("bob")
+			allfilesdir.append(dir)
+			allfilesname.append(file)
+			allfilesfulldir.append(os.path.join(dir, file))
+	print(allfilesfulldir)
+	return allfilesdir,allfilesname,allfilesfulldir
+#https://stackoverflow.com/questions/10927234/setting-the-position-on-a-button-in-python
+#https://stackoverflow.com/questions/10865116/python-tkinter-creating-buttons-in-for-loop-passing-command-arguments
+def placebutton(allfilesdir,allfilesname,allfilesfulldir):
+    global rootimgv,Top,Mid,mfwidth,mfheight
+    x=len(allfilesfulldir)
+    value=int(x)
+    bwidth=500
+    bheight=25
+    for i in range(value):
+        print(allfilesdir[i])
+        print(allfilesname[i])
+        #b=Button(Mid,text=allfilesfulldir[i],command=lambda: DisplayImage(allfilesdir[i],allfilesname[i]))
+        b=Button(Mid,text=allfilesfulldir[i],command=partial(DisplayImage,allfilesdir[i],allfilesname[i],""))
+        b.place(x=mfwidth/2-bwidth/2, y=i*30, width=bwidth, height=bheight)
+def lastmodfile(num_files, directory):
+	import os,stat
+	import datetime as dt
+	from pprint import pprint
+	"""gets a list of files sorted by modified time
+	keyword args:
+	num_files -- the n number of files you want to print
+	directory -- the starting root directory of the search"""
+	modified = []
+	accessed = []
+	rootdir = os.path.join(os.getcwd(), directory)
+	print("dir="+ directory)
+	for root, sub_folders, files in os.walk(rootdir):
+		for file in files:
+			try:
+				unix_modified_time = os.stat(os.path.join(root, file))[stat.ST_MTIME]
+				unix_accessed_time = os.stat(os.path.join(root, file))[stat.ST_ATIME]
+				human_modified_time = dt.datetime.fromtimestamp(unix_modified_time).strftime('%Y-%m-%d %H:%M:%S')
+				human_accessed_time = dt.datetime.fromtimestamp(unix_accessed_time).strftime('%Y-%m-%d %H:%M:%S')
+				filename = os.path.join(root, file)
+				modified.append((human_modified_time, filename))
+				accessed.append((human_accessed_time, filename))
+			except:
+				pass
+	modified.sort(key=lambda a: a[0], reverse=True)
+	accessed.sort(key=lambda a: a[0], reverse=True)
+	print('Modified')
+	print(modified[0][1])
+	#print('Accessed')
+	#pprint(accessed[:num_files])
+	return modified[0][1]
+def curpage(pdfname,convpdfdirpc):
+	print("curcpdfpc="+convpdfdirpc)
+	if os.path.exists(convpdfdirpc):
+		lastimg=lastmodfile(1, convpdfdirpc)
+		print("li="+str(lastimg))
+		lastimg0=lastimg.rsplit("\\",1)[1]
+		lastpage=re.sub(r"(conv|wledpos|wled)(0)*","",lastimg0)
+		lastpage=re.sub(r"(.jpg)","",lastpage)
+	if not os.path.exists(convpdfdirpc):
+		lastpage=1
+	print("lp="+str(lastpage))
+	return int(lastpage)
 
 if sys.platform in ['linux', 'linux2']:
     # Adapted from http://stackoverflow.com/questions/22367358/
@@ -501,10 +885,15 @@ Default()
 CN=checknotz(curnotelocpc)
 newdir1=CN[0]
 objno2=CN[1]
+curnotzpc=CN[2]
+curnotefpc=CN[3]
+curattachdirpc=CN[4]
+curnotzand=CN[5]
+curattachdirand=CN[6]
 _thread.start_new_thread(task2, ())
 print(newdir1)
 print(objno2)
-
+print(curattachdirpc)
 if __name__=='__main__':
     if sys.platform in ['linux', 'linux2']:
         while 1:

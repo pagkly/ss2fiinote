@@ -16,8 +16,9 @@ from tkinter import *
 from tkinter import Tk
 import pyscreenshot
 import argparse
-from PIL import Image
-#import Image
+#from PIL import Image
+import PIL.Image
+import PIL.ImageTk
 def pythoninstall():
 	subprocess.call("",shell=True)
 def parse_args():
@@ -82,11 +83,17 @@ def appendtext(filedir,text,textformat):
         f = open(filedir,'w+')
         f.write(text)
         f.close()
+    if textformat=="a":
+        #f=open(filedir,"a")
+        #f.write("\n"+text)
+        with open(filedir,"a") as f:
+            f.write("\n"+text)
+            f.close()
     if textformat=="wb":
-        with open(filedir,"wb") as fout:
+        with open(filedir,"wb") as f:
             append=bytes(bytearray.fromhex(text))
-            fout.write(append)
-            fout.close()
+            f.write(append)
+            f.close()
 def getdateinhex0():
     my_date="05/11/2009"
     b_date = datetime.strptime(my_date, '%d/%m/%Y')
@@ -103,13 +110,13 @@ def getdateinhex():
     print(difftime)
     return difftime
 def imgsize(imgdir):
-    im = Image.open(imgdir)
+    im = PIL.Image.open(imgdir)
     w, h = im.size
     return w,h
 def grabimg(startx,starty,stopx,stopy):
     im=pyscreenshot.grab(bbox=(startx,starty,stopx,stopy),childprocess=False)
     return im
-def SS1(clickStartX,clickStartY,clickStopX,clickStopY):
+def SS1(clickStartX,clickStartY,clickStopX,clickStopY,curattachdirpc):
     picname=strftime("%Y%m%d%H%M%S")+'abcdefghijklmno.jpg'
     imgdir=curattachdirpc+os.path.sep+picname
     im=grabimg(clickStartX,clickStartY,clickStopX,clickStopY)
@@ -195,6 +202,11 @@ pagestart=1
 ocvtype=0
 #os.remove(curnotelocpc)
 #####pdf2note
+def dependencies():
+    if sys.platform in ['linux', 'linux2']:
+        subprocess.call("",shell=True)
+    if sys.platform in ['Windows', 'win32', 'cygwin']:
+        subprocess.call("",shell=True)
 def setvarnotz(thedir,newdir1):
 	global notzdn,notefn,curindexpc,curindexoldpc,curnotzpc,curnotefpc,curattachdirpc,curnotzand,curattachdirand,convpdfdirpc
 	notzdn=newdir1+".notz"
@@ -254,7 +266,7 @@ def checknotz(curnotelocpc):
     elif not os.path.exists(curnotelocpc) or (not os.path.exists(curnotzpc)) :
         newdir1,objno2=newnotz(fnnotesdirpc,fnnotesdirpc)
     print(str(objno2))
-    return newdir1,objno2
+    return newdir1,objno2,curnotzpc,curnotefpc,curattachdirpc,curnotzand,curattachdirand
 
 def newnotz(thedir1,thedir2):
     objno2=1
@@ -862,12 +874,12 @@ def runshowpdf(convpdfdirpc,pdfdir,pdfname,pagestart,pageend,ocvtype,continuenot
 	imgplot=plt.imshow(img)
 	#countarea
 	plt.show()
-	image = Image.open(open(imgdir, 'rb'))
+	image = PIL.Image.open(open(imgdir, 'rb'))
 	#image.show()
 	return True
 
 #https://stackoverflow.com/questions/17466561/best-way-to-structure-a-tkinter-application
-import tkinter as tk
+#import tkinter as tk
 class MainApplication(tk.Frame):
 	def __init__(self, parent, *args, **kwargs):
 		tk.Frame.__init__(self, parent, *args, **kwargs)
@@ -875,7 +887,7 @@ class MainApplication(tk.Frame):
 
 	if __name__ == "__main__":
 		rootimgv = tk.Tk()
-		MainApplication(root).pack(side="top", fill="both", expand=True)
+		#aMainApplication(root).pack(side="top", fill="both", expand=True)
 		rootimgv.mainloop()
 def prevpage(pdfdir,page):
 	page+=1
@@ -919,8 +931,11 @@ def convertpdf2jpg2(pdfdir,pdfname,quality,page,convpdfdirpc,ver):
 	if sys.platform in ['linux', 'linux2']:
 		pdfinfocommand="pdfinfo"
 		pdftoppmcommand="pdftoppm"
+		pdfpage=subprocess.getoutput(pdfinfocommand+" \""+pdfdir+os.path.sep+pdfname+"\" | grep Pages: | awk '{print $2}'")
+		pdfpage=int(pdfpage)
 	if sys.platform in ['Windows', 'win32', 'cygwin']:
 		userid=subprocess.getoutput("echo %USERNAME%")
+		userhomedir=subprocess.getoutput("echo %USERPROFILE%")
 		popplerver="poppler-0.51"
 		popplerdir="C:\\Users\\"+userid+"\\Downloads\\"+popplerver+"_x86\\"+popplerver+"\\bin"
 		pdfinfocommand=popplerdir+"\\pdfinfo.exe"
@@ -932,15 +947,36 @@ def convertpdf2jpg2(pdfdir,pdfname,quality,page,convpdfdirpc,ver):
 			##pdfpage=subprocess.getoutput("wsl pdfinfo \""+pdfdir0+"/"+pdfname+"\" | grep Pages: | awk '{print $2}'")
 			#ppmcommand="wsl pdftoppm \""+pdfdir0+"/"+pdfname+"\" \""+convpdfdirpc0+"/"+convpname+"\" -jpeg -f "+str(page)+" -singlefile"
 			imgdir=convpdfdirpc+os.path.sep+convpname+".jpg"
-	pdfpage=subprocess.getoutput(pdfinfocommand+" \""+pdfdir+os.path.sep+pdfname+"\" | grep Pages: | awk '{print $2}'")
-	pagez=str(page).zfill(4)
+		pdfpage0=subprocess.getoutput(pdfinfocommand+" \""+pdfdir+os.path.sep+pdfname+"\"")
+		#print("pp0="+pdfpage0)
+		#https://stackoverflow.com/questions/15422144/how-to-read-a-long-multiline-string-line-by-line-in-python
+		for line in pdfpage0.splitlines():
+			#print(line)
+			#lineResult = libLAPFF.parseLine(line)
+			lineResult=line
+			pdfpage1=lineResult
+			#print("pp1="+pdfpage1)
+			if re.search(r"Pages:",str(line)):
+				pdfpage1=line
+				print("pp1="+pdfpage1)
+				pdfpage2 = re.sub(r"(Pages:)([ ])*", '', pdfpage1)
+				print("pp2="+pdfpage2)
+				pdfpage=int(pdfpage2)
+	print("totalp="+str(pdfpage))
+	if page<0:
+                page=1
+	if page<=pdfpage:
+		pagez=str(page).zfill(4)
+	if page>pdfpage:
+		pagez=str(pdfpage).zfill(4)
 	convpname="conv"+pagez
 	img0=convpdfdirpc+os.path.sep+convpname
 	imgdir=img0+".jpg"
-	ppmcommand=pdftoppmcommand+" \""+pdfdir+os.path.sep+pdfname+"\" \""+img0+"\" -jpeg -f "+str(page)+" -singlefile"
-	print(ppmcommand)
-	print(convpname)
-	subprocess.call(ppmcommand,shell=True)
+	if not os.path.exists(imgdir):
+		ppmcommand=pdftoppmcommand+" \""+pdfdir+os.path.sep+pdfname+"\" \""+img0+"\" -jpeg -f "+str(page)+" -singlefile"
+		print(ppmcommand)
+		subprocess.call(ppmcommand,shell=True)
+		time.sleep(5)
 	while True:
 		if os.path.exists(imgdir):
 			print(imgdir)
@@ -981,7 +1017,6 @@ def convertjpg2note(folderlocation,column,newdir1,objno2):
             appendnewpic(w,h,picname,newdir1,objno2re,"nearlatest")
             runadbcommand("adb push -p \""+picdirnew+"\" \""+attachfnanddir+"\"")
             objno2re+=1
-        #setvarnotz(newdir)
         runadbcommand("adb push \""+curnotefpc+"\" \""+curnotzand+"\"")
     return objno2re
 
