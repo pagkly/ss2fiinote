@@ -70,7 +70,7 @@ if sys.platform in ['linux', 'linux2'] or sys.platform in ['Windows', 'win32', '
                 textclick=0
     def task2():
         global root,TT,TT2
-        root = tk.Tk()
+        root=tk.Tk()
         m = Button(root, text="Pause R", command=Suspend1,height=3,width=3)
         m.pack()
         newf = Button(root, text="New F", command=newnotz,height=3,width=3)
@@ -83,6 +83,8 @@ if sys.platform in ['linux', 'linux2'] or sys.platform in ['Windows', 'win32', '
         restartgui.pack()
         choosepdf=Button(root, text="choosepdf", command=choosepdfguiinit,height=3,width=3)
         choosepdf.pack()
+        exitall=Button(root, text="exitsc", command=quit,height=1,width=3)
+        exitall.pack()
         TT=Label(root, relief='raised')
         TT.pack()
         TT2=Label(root)
@@ -108,7 +110,11 @@ if sys.platform in ['linux', 'linux2'] or sys.platform in ['Windows', 'win32', '
         root.mainloop()
     def quit():
         global root
-        root.destroy()
+        root.quit()
+        sys.exit()
+        #exit()
+        #quit()
+        #os.exit(0)
         #root.quit()
     def restartguifn():
         quit()
@@ -152,12 +158,14 @@ if sys.platform in ['linux', 'linux2'] or sys.platform in ['Windows', 'win32', '
             TT.config(text="Suspended")
             fiinotew10pcdir=userhomedir+"\\Documents\\Docs\\Automate\\FiiNoteWINE\\FiiNote.exe"
             if sys.platform in ['Windows', 'win32', 'cygwin']:
-                subprocess.call("start \"fiinote\" \""+fiinotew10pcdir+"\"",shell=True)
+                #subprocess.call("start \"fiinote\" \""+fiinotew10pcdir+"\"",shell=True)
+                pass
         elif pause==1:
             pause=0
             TT.config(text="Resume")
             if sys.platform in ['Windows', 'win32', 'cygwin']:
-                subprocess.call("taskkill /F /IM FiiNote.exe /T",shell=True)
+                #subprocess.call("taskkill /F /IM FiiNote.exe /T",shell=True)
+                pass
     def newnotz():
         global newdir1, objno2
         os.remove(curnotelocpc)
@@ -202,7 +210,7 @@ def choosepdfgui0():
     placebutton(allfilesdir,allfilesname,allfilesfulldir)
     rootimgv.mainloop()
 def choosepdfgui():
-    global rootimgv,Top,Mid,mfwidth,mfheight
+    global Top,Mid,mfwidth,mfheight
     if sys.platform in ['Windows', 'win32', 'cygwin']:
         userhomedir=subprocess.getoutput("echo %USERPROFILE%")
     Home1=Toplevel()
@@ -225,7 +233,7 @@ def choosepdfgui():
     lbl_title = Label(Top, text="Python: Simple Image Viewer", width=mfwidth, font=("arial", 20))
     lbl_title.pack(fill=X)
     allfilesdir,allfilesname,allfilesfulldir=listfilesext(dir0,".pdf")
-    placebutton(allfilesdir,allfilesname,allfilesfulldir)
+    placebutton(allfilesdir,allfilesname,allfilesfulldir,Top,Mid)
 #https://stackoverflow.com/questions/17466561/best-way-to-structure-a-tkinter-application
 #https://www.sourcecodester.com/tutorials/python/12128/python-simple-image-viewer.html
 #================================METHODS========================================
@@ -428,21 +436,12 @@ choosepdfpageprev=""
 undowlarea=""
 rootimgv=""
 def DisplayImage(pdfdir,pdfname,choosepage,*args,**kwargs):
-    global root,rootimgv,choosepdfpagenext,choosepdfpageprev,undowlarea
+    global root,choosepdfpagenext,choosepdfpageprev,undowlarea
     global Home
     from FN33andlib import conwindirtovwsldir,convertpdf2jpg2
     #imgdir=convpdfdirpc+os.path.sep+"29.pdf"+os.path.sep+"conv0001.jpg"
     #================================FRAMES=========================================
-    if sys.platform in ['linux', 'linux2'] :
-        screenw = Home.winfo_screenwidth()
-        screenh = Home.winfo_screenheight()
-    if sys.platform in ['Windows', 'win32', 'cygwin']:
-        from win32api import GetSystemMetrics
-        screenw=GetSystemMetrics(0)
-        screenh=GetSystemMetrics(1)
-    if rootimgv:
-        rootimgv.destroy()
-        rootimgv=""
+    
     if Home:
         Home.destroy()
     if choosepdfpagenext:
@@ -473,9 +472,16 @@ def DisplayImage(pdfdir,pdfname,choosepage,*args,**kwargs):
     if os.path.exists(wledimgdir):
         imgdir=wledimgdir
     print(imgdir+" "+str(lastpage))
-    Home = Toplevel()
+    Home=Toplevel()
     Home.title(imgdir)
-    load = PIL.Image.open(open(imgdir, 'rb'))
+    if sys.platform in ['linux', 'linux2'] :
+        screenw = Home.winfo_screenwidth()
+        screenh = Home.winfo_screenheight()
+    if sys.platform in ['Windows', 'win32', 'cygwin']:
+        from win32api import GetSystemMetrics
+        screenw=GetSystemMetrics(0)
+        screenh=GetSystemMetrics(1)
+    load=PIL.Image.open(open(imgdir, 'rb'))
     imgw, imgh = load.size
     global showimgw,showimgh
     showimgw=int((screenh/imgh)*imgw)
@@ -542,8 +548,7 @@ def listfilesext(dir,ext):
 	return allfilesdir,allfilesname,allfilesfulldir
 #https://stackoverflow.com/questions/10927234/setting-the-position-on-a-button-in-python
 #https://stackoverflow.com/questions/10865116/python-tkinter-creating-buttons-in-for-loop-passing-command-arguments
-def placebutton(allfilesdir,allfilesname,allfilesfulldir):
-    global rootimgv,Top,Mid,mfwidth,mfheight
+def placebutton(allfilesdir,allfilesname,allfilesfulldir,Top,Mid):
     x=len(allfilesfulldir)
     value=int(x)
     bwidth=500
@@ -688,7 +693,14 @@ if sys.platform in ['linux', 'linux2']:
             if keys == "['Button1']":
                mouselu("")
 
-
+#pip install --upgrade setuptools
+#pip install psutil pymouse pyautogui pillow pyscreenshot numpy scipy matplotlib opencv-python pypiwin32
+#win32gui pillow
+#pip install %USERPROFILE%\Downloads\PyHook3-1.6.1-cp35-none-win_amd64.whl
+#pip install %USERPROFILE%\Downloads\pyhook-1.6.1-cp37-cp37m-amd64.whl
+#pip install %USERPROFILE%\Downloads\pyhook-1.6.1-cp35-cp35m-win32.whl
+#pip install %USERPROFILE%\Downloads\pyhook-1.6.1-cp35-none-win_amd64.whl
+#Pillow-5.2.0-cp37-cp37m-win_amd64.whl
 if sys.platform in ['Windows', 'win32', 'cygwin']:
     from tkinter import *
     from tkinter import Tk
@@ -703,12 +715,10 @@ if sys.platform in ['Windows', 'win32', 'cygwin']:
     import psutil
     from pymouse import PyMouse
     from PyHook3 import HookManager, GetKeyState, HookConstants
-
-    m = PyMouse()
+    m=PyMouse()
     w=win32gui
     wingui=w.GetWindowText(w.GetForegroundWindow())
     wsh= comclt.Dispatch("WScript.Shell")
-
     def eventmessage():
         print ('MessageName:',event.MessageName )
         print ('Message:',event.Message)
@@ -724,7 +734,6 @@ if sys.platform in ['Windows', 'win32', 'cygwin']:
         print ('Alt', event.Alt)
         print ('Transition', event.Transition)
         print ('---')
-
     def OnKeyboardEventA(event):
         global is_recording
         if event.KeyID == HookConstants.VKeyToID('VK_RSHIFT'):
@@ -806,8 +815,6 @@ if sys.platform in ['Windows', 'win32', 'cygwin']:
 
     def windowEnumerationHandler(hwnd, top_windows):
         top_windows.append((hwnd, win32gui.GetWindowText(hwnd)))
-
-
     def focusprog(appname):
             results = []
             top_windows = []
@@ -820,8 +827,6 @@ if sys.platform in ['Windows', 'win32', 'cygwin']:
                     j=os.getpid()
                     print(j)
                     break
-
-
     def closeprog(appname):
             results = []
             top_windows = []
@@ -835,9 +840,6 @@ if sys.platform in ['Windows', 'win32', 'cygwin']:
                     j=os.getpid()
                     print(j)
                     break
-        #if __name__ == "__main__":
-
-
     def runfn():
         PROCNAME = "FiiNote.exe"
         for proc in psutil.process_iter():
@@ -851,7 +853,6 @@ if sys.platform in ['Windows', 'win32', 'cygwin']:
                 break
 
         pass
-
     def focusfn(hwnd, lParam):
         if win32gui.IsWindowVisible(hwnd):
             if 'Notes\\' in win32gui.GetWindowText(hwnd):
@@ -859,13 +860,11 @@ if sys.platform in ['Windows', 'win32', 'cygwin']:
                 win32gui.ShowWindow(hwnd,win32con.SW_MAXIMIZE)
                 win32gui.SetForegroundWindow(hwnd)
                 pass
-
     def focusfn2(hwnd, lParam):
         if win32gui.IsWindowVisible(hwnd):
             if 'Untitled' in win32gui.GetWindowText(hwnd):
                 win32gui.SetForegroundWindow(hwnd)
                 win32gui.PostMessage(hwnd,win32con.WM_CLOSE,0,0)
-
     def spdfhandler(hwnd, lParam):
         for proc in psutil.process_iter():
             if proc.name() == "SumatraPDF.exe":
