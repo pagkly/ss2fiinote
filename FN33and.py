@@ -290,15 +290,15 @@ xpos1=""
 ypos1=""
 xpos2=""
 ypos2=""
-def gettkinterxypos(eventorigin,*,convimgdir,pdfdir,pdfname,lastpage):
-    global textclick,x,y,xpos1,ypos1,xpos2,ypos2
+def gettkinterxypos(eventorigin,*,convimgdir,wledimgdir,pdfdir,pdfname,lastpage):
+    global textclick,xpos1,ypos1,xpos2,ypos2
     global root,TT,TT2
     global showimgw,showimgh
     global newdir1,objno2,curattachdirpc
-    wledimgdir=re.sub(r"conv","wled",convimgdir)
-    x = eventorigin.x
-    y = eventorigin.y
-    print(x,y)
+    if pause==0:
+        x = eventorigin.x
+        y = eventorigin.y
+        print(x,y)
     if pause==0 and textclick==0:
         xpos1,ypos1=x,y
         textclick=1
@@ -336,7 +336,7 @@ def gettkinterxypos(eventorigin,*,convimgdir,pdfdir,pdfname,lastpage):
             #TT.config(text="Rep")
             pass
         textclick=0
-    return x,y
+    return True
 def cutarea(pdfdir,pdfname,lastpage,actxp1,actyp1,actxp2,actyp2,convimgdir):
     global curattachdirpc,newdir1,objno2
     picname=strftime("%Y%m%d%H%M%S")+'abcdefghijklmno.jpg'
@@ -494,7 +494,7 @@ def DisplayImage(pdfdir,pdfname,choosepage,*args,**kwargs):
     render = PIL.ImageTk.PhotoImage(load)
     panel = Label(Home, image=render)
     panel.image=render
-    panel.bind("<Button 1>",partial(gettkinterxypos,convimgdir=convimgdir,pdfdir=pdfdir,pdfname=pdfname,lastpage=lastpage))
+    panel.bind("<Button 1>",partial(gettkinterxypos,convimgdir=convimgdir,wledimgdir=wledimgdir,pdfdir=pdfdir,pdfname=pdfname,lastpage=lastpage))
     panel.pack(fill=BOTH, expand=YES)
     choosepdfpagenext=Button(root, text="choosepdf", command=partial(changepage,pdfdir,pdfname,lastpage,"next"),height=1,width=3)
     choosepdfpagenext.pack()
