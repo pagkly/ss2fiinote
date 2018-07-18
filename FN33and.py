@@ -158,13 +158,13 @@ if sys.platform in ['linux', 'linux2'] or sys.platform in ['Windows', 'win32', '
             TT.config(text="Suspended")
             fiinotew10pcdir=userhomedir+"\\Documents\\Docs\\Automate\\FiiNoteWINE\\FiiNote.exe"
             if sys.platform in ['Windows', 'win32', 'cygwin']:
-                #subprocess.call("start \"fiinote\" \""+fiinotew10pcdir+"\"",shell=True)
+                subprocess.call("start \"fiinote\" \""+fiinotew10pcdir+"\"",shell=True)
                 pass
         elif pause==1:
             pause=0
             TT.config(text="Resume")
             if sys.platform in ['Windows', 'win32', 'cygwin']:
-                #subprocess.call("taskkill /F /IM FiiNote.exe /T",shell=True)
+                subprocess.call("taskkill /F /IM FiiNote.exe /T",shell=True)
                 pass
     def newnotz():
         global newdir1, objno2
@@ -617,17 +617,21 @@ def lastmodfile(num_files, directory):
 	#pprint(accessed[:num_files])
 	return modified[0][1]
 def curpage(pdfname,convpdfdirpc):
-	print("curcpdfpc="+convpdfdirpc)
-	if os.path.exists(convpdfdirpc):
-		lastimg=lastmodfile(1, convpdfdirpc)
-		print("li="+str(lastimg))
-		lastimg0=lastimg.rsplit("\\",1)[1]
-		lastpage=re.sub(r"(conv|wledpos|wled)(0)*","",lastimg0)
-		lastpage=re.sub(r"(.jpg)","",lastpage)
-	if not os.path.exists(convpdfdirpc):
-		lastpage=1
-	print("lp="+str(lastpage))
-	return int(lastpage)
+    print("curcpdfpc="+convpdfdirpc)
+    if os.path.exists(convpdfdirpc):
+        lastimg=lastmodfile(1, convpdfdirpc)
+        print("li="+str(lastimg))
+        if sys.platform in ['Windows', 'win32', 'cygwin']:
+            lastimg0=lastimg.rsplit("\\",1)[1]
+        if sys.platform in ['linux', 'linux2']:
+            lastimg0=lastimg.rsplit("/",1)[1]
+        lastimg0=lastimg.rsplit("\\",1)[1]
+        lastpage=re.sub(r"(conv|wledpos|wled)(0)*","",lastimg0)
+        lastpage=re.sub(r"(.jpg)","",lastpage)
+    if not os.path.exists(convpdfdirpc):
+        lastpage=1
+    print("lp="+str(lastpage))
+    return int(lastpage)
 
 if sys.platform in ['linux', 'linux2']:
     # Adapted from http://stackoverflow.com/questions/22367358/
@@ -762,17 +766,17 @@ if sys.platform in ['Windows', 'win32', 'cygwin']:
         print ('Transition', event.Transition)
         print ('---')
     def OnKeyboardEventA(event):
-        global is_recording
+        global is_recording,pause
         global Home,pdfdir0,pdfname0,lastpage
         if event.KeyID == HookConstants.VKeyToID('VK_RSHIFT'):
             #print("Paused")
             Suspend1()
             return True
-        elif event.KeyID == HookConstants.VKeyToID('VK_LEFT') and Home:
+        elif event.KeyID == HookConstants.VKeyToID('VK_LEFT') and Home and pause==0:
             print("pn0="+pdfname0)
             changepage(pdfdir0,pdfname0,lastpage,"prev")
             return True
-        elif event.KeyID == HookConstants.VKeyToID('VK_RIGHT') and Home:
+        elif event.KeyID == HookConstants.VKeyToID('VK_RIGHT') and Home and pause==0:
             print("pn0="+pdfname0)
             changepage(pdfdir0,pdfname0,lastpage,"next")
             return True
