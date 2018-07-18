@@ -976,7 +976,7 @@ def convertpdf2jpg2(pdfdir,pdfname,quality,page,convpdfdirpc,ver):
 		ppmcommand=pdftoppmcommand+" \""+pdfdir+os.path.sep+pdfname+"\" \""+img0+"\" -jpeg -f "+str(page)+" -singlefile"
 		print(ppmcommand)
 		subprocess.call(ppmcommand,shell=True)
-		time.sleep(5)
+		#time.sleep(5)
 	while True:
 		if os.path.exists(imgdir):
 			print(imgdir)
