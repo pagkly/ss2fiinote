@@ -99,7 +99,8 @@ if sys.platform in ['linux', 'linux2'] or sys.platform in ['Windows', 'win32', '
         x = w-70
         y = h-(h*1300/1440)
         wn=50
-        hn=770
+        #hn=800
+        hn=int(0.7*h)
         root.wm_attributes('-alpha',0.50,'-topmost',1)
         root.geometry('%dx%d+%d+%d' % (wn, hn, x,y))
         root.resizable(False, False)
@@ -112,10 +113,9 @@ if sys.platform in ['linux', 'linux2'] or sys.platform in ['Windows', 'win32', '
         global root
         root.quit()
         sys.exit()
-        #exit()
-        #quit()
-        #os.exit(0)
-        #root.quit()
+        exit()
+        quit()
+        os.exit(0)
     def restartguifn():
         quit()
         #if sys.platform in ['linux', 'linux2'] :
@@ -158,13 +158,13 @@ if sys.platform in ['linux', 'linux2'] or sys.platform in ['Windows', 'win32', '
             TT.config(text="Suspended")
             fiinotew10pcdir=userhomedir+"\\Documents\\Docs\\Automate\\FiiNoteWINE\\FiiNote.exe"
             if sys.platform in ['Windows', 'win32', 'cygwin']:
-                #subprocess.call("start \"fiinote\" \""+fiinotew10pcdir+"\"",shell=True)
+                subprocess.call("start \"fiinote\" \""+fiinotew10pcdir+"\"",shell=True)
                 pass
         elif pause==1:
             pause=0
             TT.config(text="Resume")
             if sys.platform in ['Windows', 'win32', 'cygwin']:
-                #subprocess.call("taskkill /F /IM FiiNote.exe /T",shell=True)
+                subprocess.call("taskkill /F /IM FiiNote.exe /T",shell=True)
                 pass
     def newnotz():
         global newdir1, objno2
@@ -210,7 +210,7 @@ def choosepdfgui0():
     placebutton(allfilesdir,allfilesname,allfilesfulldir)
     rootimgv.mainloop()
 def choosepdfgui():
-    global Top,Mid,mfwidth,mfheight
+    global Top,Mid,mfwidth,mfheight,Home1
     if sys.platform in ['Windows', 'win32', 'cygwin']:
         userhomedir=subprocess.getoutput("echo %USERPROFILE%")
     Home1=Toplevel()
@@ -237,12 +237,12 @@ def choosepdfgui():
 #https://stackoverflow.com/questions/17466561/best-way-to-structure-a-tkinter-application
 #https://www.sourcecodester.com/tutorials/python/12128/python-simple-image-viewer.html
 #================================METHODS========================================
-def changepage(pdfdir,pdfname,lastpage,type):
+def changepage(pdfdir,pdfname,lastpage,ptype):
     global Home
     Home.destroy()
-    if type=="prev":
+    if ptype=="prev":
         choosepage=int(lastpage)-1
-    elif type=="next":
+    elif ptype=="next":
         choosepage=int(lastpage)+1
     print("lpcp="+str(choosepage))
     DisplayImage(pdfdir,pdfname,choosepage)
@@ -290,52 +290,62 @@ xpos1=""
 ypos1=""
 xpos2=""
 ypos2=""
-def gettkinterxypos(eventorigin,*,convimgdir,pdfdir,pdfname,lastpage):
-    global textclick,x,y,xpos1,ypos1,xpos2,ypos2
-    global root,TT,TT2
-    global showimgw,showimgh
-    global newdir1,objno2,curattachdirpc
-    wledimgdir=re.sub(r"conv","wled",convimgdir)
-    x = eventorigin.x
-    y = eventorigin.y
-    print(x,y)
-    if pause==0 and textclick==0:
-        xpos1,ypos1=x,y
-        textclick=1
-    elif pause==0 and textclick==1:
+def gettkinterxypos(eventorigin,convimgdir,wledimgdir,pdfdir,pdfname,lastpage):
+    def callback():
+        global root
+        global textclick,xpos1,ypos1,xpos2,ypos2
+        global showimgw,showimgh
+        global newdir1,objno2,curattachdirpc
         global Home
-        Home.destroy()
-        xpos2,ypos2=x,y
-        #print(wledimgdir)
-        #print(newdir1+" "+str(objno2))
-        if not os.path.exists(wledimgdir):
-            shutil.copy(convimgdir,wledimgdir)
-        if os.path.exists(wledimgdir):
-            imgw,imgh=imgsize(wledimgdir)
-            actxp1=int(imgw/showimgw*xpos1)
-            actyp1=int(imgh/showimgh*ypos1)+20
-            actxp2=int(imgw/showimgw*xpos2)
-            actyp2=int(imgh/showimgh*ypos2)+20
-        if actxp1<actxp2 :
-            SS=cutarea(pdfdir,pdfname,lastpage,actxp1,actyp1,actxp2,actyp2,convimgdir)
-            print(SS)
-            objno2,curattachdirpc=appendnewpic(SS[0],SS[1],SS[2],SS[3],SS[4],"nearlatest")
-            imgdir=curattachdirpc+os.path.sep+SS[2]
-            if (linuxpc==0) and os.path.exists("/run/user/1000/gvfs/*/Internal"):
-                subprocess.call("adb push -p "+imgdir+" "+fnnotesanddirint+newdir1+".notz/attach",shell=True)
-                ##subprocess.call("adb shell su -c 'monkey -p com.fiistudio.fiinote -c android.intent.category.LAUNCHER 1'", shell=True)
-                ## \"su -c 'killall com.fiistudio.fiinote'\"
-                #except :
-                ##TT.config(text="try")
-                ##monkey -p com.fiistudio.fiinote.editor.Fiinote -c android.intent.category.LAUNCHER 1
-            #TT.config(text="P")
-            #TT2.config(text=str(objno2))
-            whitelistarea(pdfdir,pdfname,lastpage,actxp1,actyp1,actxp2,actyp2,wledimgdir)
-            DisplayImage(pdfdir,pdfname,lastpage)
+        #if pause==0:
+        #    x = eventorigin.x
+        #    y = eventorigin.y
+        #else:
+        #    pass
+        if pause==0 and textclick==0:
+            xpos1=eventorigin.x
+            ypos1=eventorigin.y
+            print(str(xpos1)+" "+str(ypos1))
+            textclick=1
+        elif pause==0 and textclick==1:
+            xpos2=eventorigin.x
+            ypos2=eventorigin.y
+            print(str(xpos2)+" "+str(ypos2))
+            if os.path.exists(wledimgdir):
+                imgw,imgh=imgsize(wledimgdir)
+                actxp1=int(imgw/showimgw*xpos1)
+                actyp1=int(imgh/showimgh*ypos1)+20
+                actxp2=int(imgw/showimgw*xpos2)
+                actyp2=int(imgh/showimgh*ypos2)+20
+            if actxp1<actxp2 :
+                if Home:
+                    Home.destroy()
+                SS=cutarea(pdfdir,pdfname,lastpage,actxp1,actyp1,actxp2,actyp2,convimgdir)
+                print(SS)
+                objno2,curattachdirpc=appendnewpic(SS[0],SS[1],SS[2],SS[3],SS[4],"nearlatest")
+                imgdir=curattachdirpc+os.path.sep+SS[2]
+                if (linuxpc==0) and os.path.exists("/run/user/1000/gvfs/*/Internal"):
+                    subprocess.call("adb push -p "+imgdir+" "+fnnotesanddirint+newdir1+".notz/attach",shell=True)
+                    ##subprocess.call("adb shell su -c 'monkey -p com.fiistudio.fiinote -c android.intent.category.LAUNCHER 1'", shell=True)
+                    ## \"su -c 'killall com.fiistudio.fiinote'\"
+                    #except :
+                    ##TT.config(text="try")
+                    ##monkey -p com.fiistudio.fiinote.editor.Fiinote -c android.intent.category.LAUNCHER 1
+                #TT.config(text="P")
+                #TT2.config(text=str(objno2))
+                whitelistarea(pdfdir,pdfname,lastpage,actxp1,actyp1,actxp2,actyp2,wledimgdir)
+                DisplayImage(pdfdir,pdfname,lastpage)
+            else:
+                #TT.config(text="Rep")
+                pass
+            textclick=0
         else:
-            #TT.config(text="Rep")
             pass
+<<<<<<< HEAD
         textclick=0
+=======
+    root.after_idle(callback)
+>>>>>>> d6e4e1f8370d26ec41bdda8e7f33c62a5adb144f
     return True
 def cutarea(pdfdir,pdfname,lastpage,actxp1,actyp1,actxp2,actyp2,convimgdir):
     global curattachdirpc,newdir1,objno2
@@ -435,22 +445,30 @@ choosepdfpagenext=""
 choosepdfpageprev=""
 undowlarea=""
 rootimgv=""
+pdfdir=""
+pdfname=""
+pdfdir0=""
+pdfname0=""
+lastpage=""
 def DisplayImage(pdfdir,pdfname,choosepage,*args,**kwargs):
-    global root,choosepdfpagenext,choosepdfpageprev,undowlarea
-    global Home
+    global root,hm
+    global Home,panel,pdfdir0,pdfname0,lastpage
     from FN33andlib import conwindirtovwsldir,convertpdf2jpg2
     #imgdir=convpdfdirpc+os.path.sep+"29.pdf"+os.path.sep+"conv0001.jpg"
     #================================FRAMES=========================================
-    
+    pdfdir0=pdfdir
+    pdfname0=pdfname
+    def callbackh1d():
+        global Home1
+        if Home1:
+            Home1.destroy()
+            Home1=""
+    root.after_idle(callbackh1d)
     if Home:
+        panel.destroy()
         Home.destroy()
-    if choosepdfpagenext:
-        choosepdfpagenext.destroy()
-    if choosepdfpageprev:
-        choosepdfpageprev.destroy()
-    if undowlarea:
-        undowlarea.destroy()
-
+        Home=""
+        panel=""
     convpdfdirpcwithpdf=convpdfdirpc+os.path.sep+pdfname
     if not choosepage:
         if os.path.exists(convpdfdirpcwithpdf):
@@ -469,6 +487,8 @@ def DisplayImage(pdfdir,pdfname,choosepage,*args,**kwargs):
     convimgdir=convertpdf2jpg2(pdfdir,pdfname,120,choosepage,convpdfdirpcwithpdf,"")
     wledimgdir=re.sub(r"conv","wled",convimgdir)
     imgdir=convimgdir
+    if not os.path.exists(wledimgdir):
+        shutil.copy(convimgdir,wledimgdir)
     if os.path.exists(wledimgdir):
         imgdir=wledimgdir
     print(imgdir+" "+str(lastpage))
@@ -481,6 +501,7 @@ def DisplayImage(pdfdir,pdfname,choosepage,*args,**kwargs):
         from win32api import GetSystemMetrics
         screenw=GetSystemMetrics(0)
         screenh=GetSystemMetrics(1)
+        hm.UnhookMouse()
     load=PIL.Image.open(open(imgdir, 'rb'))
     imgw, imgh = load.size
     global showimgw,showimgh
@@ -494,14 +515,23 @@ def DisplayImage(pdfdir,pdfname,choosepage,*args,**kwargs):
     render = PIL.ImageTk.PhotoImage(load)
     panel = Label(Home, image=render)
     panel.image=render
-    panel.bind("<Button 1>",partial(gettkinterxypos,convimgdir=convimgdir,pdfdir=pdfdir,pdfname=pdfname,lastpage=lastpage))
+    panel.bind("<Button 1>",partial(gettkinterxypos,convimgdir=convimgdir,wledimgdir=wledimgdir,pdfdir=pdfdir,pdfname=pdfname,lastpage=lastpage))
     panel.pack(fill=BOTH, expand=YES)
-    choosepdfpagenext=Button(root, text="choosepdf", command=partial(changepage,pdfdir,pdfname,lastpage,"next"),height=1,width=3)
-    choosepdfpagenext.pack()
-    choosepdfpageprev=Button(root, text="choosepdf", command=partial(changepage,pdfdir,pdfname,lastpage,"prev"),height=1,width=3)
-    choosepdfpageprev.pack()
-    undowlarea=Button(root, text="undolwl", command=partial(undolatestwl,pdfdir,pdfname,convimgdir,lastpage),height=1,width=3)
-    undowlarea.pack() 
+    def callback():
+        global choosepdfpagenext,choosepdfpageprev,undowlarea
+        if choosepdfpagenext:
+            choosepdfpagenext.destroy()
+        if choosepdfpageprev:
+            choosepdfpageprev.destroy()
+        if undowlarea:
+            undowlarea.destroy()
+        choosepdfpagenext=Button(root, text="choosepdf", command=partial(changepage,pdfdir,pdfname,lastpage,"next"),height=1,width=3)
+        choosepdfpagenext.pack()
+        choosepdfpageprev=Button(root, text="choosepdf", command=partial(changepage,pdfdir,pdfname,lastpage,"prev"),height=1,width=3)
+        choosepdfpageprev.pack()
+        undowlarea=Button(root, text="undolwl", command=partial(undolatestwl,pdfdir,pdfname,convimgdir,lastpage),height=1,width=3)
+        undowlarea.pack()
+    root.after_idle(callback)
     return True
 
 #https://stackoverflow.com/questions/5436810/adding-zooming-in-and-out-with-a-tkinter-canvas-widget
@@ -591,17 +621,21 @@ def lastmodfile(num_files, directory):
 	#pprint(accessed[:num_files])
 	return modified[0][1]
 def curpage(pdfname,convpdfdirpc):
-	print("curcpdfpc="+convpdfdirpc)
-	if os.path.exists(convpdfdirpc):
-		lastimg=lastmodfile(1, convpdfdirpc)
-		print("li="+str(lastimg))
-		lastimg0=lastimg.rsplit("\\",1)[1]
-		lastpage=re.sub(r"(conv|wledpos|wled)(0)*","",lastimg0)
-		lastpage=re.sub(r"(.jpg)","",lastpage)
-	if not os.path.exists(convpdfdirpc):
-		lastpage=1
-	print("lp="+str(lastpage))
-	return int(lastpage)
+    print("curcpdfpc="+convpdfdirpc)
+    if os.path.exists(convpdfdirpc):
+        lastimg=lastmodfile(1, convpdfdirpc)
+        print("li="+str(lastimg))
+        if sys.platform in ['Windows', 'win32', 'cygwin']:
+            lastimg0=lastimg.rsplit("\\",1)[1]
+        if sys.platform in ['linux', 'linux2']:
+            lastimg0=lastimg.rsplit("/",1)[1]
+        lastimg0=lastimg.rsplit("\\",1)[1]
+        lastpage=re.sub(r"(conv|wledpos|wled)(0)*","",lastimg0)
+        lastpage=re.sub(r"(.jpg)","",lastpage)
+    if not os.path.exists(convpdfdirpc):
+        lastpage=1
+    print("lp="+str(lastpage))
+    return int(lastpage)
 
 if sys.platform in ['linux', 'linux2']:
     # Adapted from http://stackoverflow.com/questions/22367358/
@@ -685,11 +719,12 @@ if sys.platform in ['linux', 'linux2']:
         while True:
             event = root.display.next_event()
       def EventL(self):
+        global Home
         keys = str(list(self.keys_down))
         #print(keys)
         if keys == "['Shift']" or keys == "['Button2']":
             Suspend1()
-        if pause==0 :
+        if pause==0 and not Home:
             if keys == "['Button1']":
                mouselu("")
 
@@ -735,10 +770,19 @@ if sys.platform in ['Windows', 'win32', 'cygwin']:
         print ('Transition', event.Transition)
         print ('---')
     def OnKeyboardEventA(event):
-        global is_recording
+        global is_recording,pause
+        global Home,pdfdir0,pdfname0,lastpage
         if event.KeyID == HookConstants.VKeyToID('VK_RSHIFT'):
             #print("Paused")
             Suspend1()
+            return True
+        elif event.KeyID == HookConstants.VKeyToID('VK_LEFT') and Home and pause==0:
+            print("pn0="+pdfname0)
+            changepage(pdfdir0,pdfname0,lastpage,"prev")
+            return True
+        elif event.KeyID == HookConstants.VKeyToID('VK_RIGHT') and Home and pause==0:
+            print("pn0="+pdfname0)
+            changepage(pdfdir0,pdfname0,lastpage,"next")
             return True
         elif GetKeyState(HookConstants.VKeyToID('VK_CONTROL')) and event.KeyID == HookConstants.VKeyToID('VK_ESCAPE'):
             sys.exit()
@@ -794,8 +838,9 @@ if sys.platform in ['Windows', 'win32', 'cygwin']:
                 return True
 
     def onclicka(event):
+        global Home
         X, Y=event.Position
-        if (event.MessageName=='mouse left up'):
+        if (event.MessageName=='mouse left up') and not Home:
             #mouselu(event)
             mouselu(event)
             return True
@@ -925,6 +970,7 @@ if __name__=='__main__':
         while 1:
             Listener().run()
     if sys.platform in ['Windows', 'win32', 'cygwin']:
+        global hm
         #https://www.lfd.uci.edu/~gohlke/pythonlibs/#pyhook
         #https://stackoverflow.com/questions/43417601/using-pyhook-to-detect-key-up-and-down
         ##https://stackoverflow.com/questions/45113813/check-if-mouse-up-or-mouse-down-with-pyhook
