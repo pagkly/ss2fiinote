@@ -336,7 +336,7 @@ def gettkinterxypos(eventorigin,*,convimgdir,pdfdir,pdfname,lastpage):
             #TT.config(text="Rep")
             pass
         textclick=0
-    return x,y
+    return True
 def cutarea(pdfdir,pdfname,lastpage,actxp1,actyp1,actxp2,actyp2,convimgdir):
     global curattachdirpc,newdir1,objno2
     picname=strftime("%Y%m%d%H%M%S")+'abcdefghijklmno.jpg'
