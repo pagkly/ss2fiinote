@@ -291,9 +291,11 @@ ypos1=""
 xpos2=""
 ypos2=""
 def gettkinterxypos(eventorigin,convimgdir,wledimgdir,pdfdir,pdfname,lastpage):
+    global pause,textclick
+    print(str(pause)+" "+str(textclick))
     def callback():
         global root
-        global textclick,xpos1,ypos1,xpos2,ypos2
+        global textclick,pause,xpos1,ypos1,xpos2,ypos2
         global showimgw,showimgh
         global newdir1,objno2,curattachdirpc
         global Home
@@ -341,11 +343,7 @@ def gettkinterxypos(eventorigin,convimgdir,wledimgdir,pdfdir,pdfname,lastpage):
             textclick=0
         else:
             pass
-<<<<<<< HEAD
-        textclick=0
-=======
-    root.after_idle(callback)
->>>>>>> d6e4e1f8370d26ec41bdda8e7f33c62a5adb144f
+    callback()
     return True
 def cutarea(pdfdir,pdfname,lastpage,actxp1,actyp1,actxp2,actyp2,convimgdir):
     global curattachdirpc,newdir1,objno2
@@ -748,9 +746,9 @@ if sys.platform in ['Windows', 'win32', 'cygwin']:
     import pythoncom,PyHook3
     import pyautogui
     import psutil
-    from pymouse import PyMouse
+    #from pymouse import PyMouse
     from PyHook3 import HookManager, GetKeyState, HookConstants
-    m=PyMouse()
+    #m=PyMouse()
     w=win32gui
     wingui=w.GetWindowText(w.GetForegroundWindow())
     wsh= comclt.Dispatch("WScript.Shell")
