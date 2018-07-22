@@ -392,13 +392,13 @@ def appendnewpic(w,h,picname,newdir1,objno2,column):
 					prefixposyhex=mo1.group(6);
 					objnohex=mo1.group(7);
 					objnonow=(int(objnohex,16));
-					posy=(int(mo1.group(8),16))+5;
+					posy=(int(mo1.group(8),16))+20;
 					#bf
 					if posy<=191:
 						posyhex="%0.2X" % posy
 					if posy>191:
 						objnonow=objnonow+1
-						posy=129+5;
+						posy=129+20;
 						posyhex="%0.2X" % posy
 				else:
 					pass

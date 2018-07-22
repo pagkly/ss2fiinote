@@ -158,13 +158,13 @@ if sys.platform in ['linux', 'linux2'] or sys.platform in ['Windows', 'win32', '
             TT.config(text="Suspended")
             fiinotew10pcdir=userhomedir+"\\Documents\\Docs\\Automate\\FiiNoteWINE\\FiiNote.exe"
             if sys.platform in ['Windows', 'win32', 'cygwin']:
-                subprocess.call("start \"fiinote\" \""+fiinotew10pcdir+"\"",shell=True)
+               #subprocess.call("start \"fiinote\" \""+fiinotew10pcdir+"\"",shell=True)
                 pass
         elif pause==1:
             pause=0
             TT.config(text="Resume")
             if sys.platform in ['Windows', 'win32', 'cygwin']:
-                subprocess.call("taskkill /F /IM FiiNote.exe /T",shell=True)
+                #subprocess.call("taskkill /F /IM FiiNote.exe /T",shell=True)
                 pass
     def newnotz():
         global newdir1, objno2
@@ -240,6 +240,7 @@ def choosepdfgui():
 def changepage(pdfdir,pdfname,lastpage,ptype):
     global Home
     Home.destroy()
+    Home=""
     if ptype=="prev":
         choosepage=int(lastpage)-1
     elif ptype=="next":
@@ -247,6 +248,19 @@ def changepage(pdfdir,pdfname,lastpage,ptype):
     print("lpcp="+str(choosepage))
     DisplayImage(pdfdir,pdfname,choosepage)
     return True
+def choosepageguiinit(pdfdir,pdfname):
+    _thread.start_new_thread(partial(choosepagegui,pdfdir,pdfname),())
+def choosepagegui(pdfdir,pdfname):
+    def show_entry_fields():
+        print("First Name: %s" % (e1.get()))
+        choosepage=int(e1.get())
+        DisplayImage(pdfdir,pdfname,choosepage)
+    print(pdfdir+" "+pdfname)
+    Home2=Toplevel()
+    Label(Home2, text="Page").grid(row=0)
+    e1 = Entry(Home2)
+    e1.grid(row=0, column=1)
+    Button(Home2, text='Show', command=show_entry_fields).grid(row=3, column=0, sticky=W, pady=4)
 def whitelistpagearea(page,x,y):
 	import cv2
 	return True
@@ -442,6 +456,7 @@ Home=""
 choosepdfpagenext=""
 choosepdfpageprev=""
 undowlarea=""
+cpageg=""
 rootimgv=""
 pdfdir=""
 pdfname=""
@@ -450,23 +465,23 @@ pdfname0=""
 lastpage=""
 def DisplayImage(pdfdir,pdfname,choosepage,*args,**kwargs):
     global root,hm
-    global Home,panel,pdfdir0,pdfname0,lastpage
+    global Home,panel,pdfdir0,pdfname0,lastpage,convimgdir
     from FN33andlib import conwindirtovwsldir,convertpdf2jpg2
     #imgdir=convpdfdirpc+os.path.sep+"29.pdf"+os.path.sep+"conv0001.jpg"
     #================================FRAMES=========================================
     pdfdir0=pdfdir
     pdfname0=pdfname
     def callbackh1d():
-        global Home1
+        global Home1,Home,panel
         if Home1:
             Home1.destroy()
             Home1=""
+        if Home:
+            panel.destroy()
+            Home.destroy()
+            Home=""
+            panel=""
     root.after_idle(callbackh1d)
-    if Home:
-        panel.destroy()
-        Home.destroy()
-        Home=""
-        panel=""
     convpdfdirpcwithpdf=convpdfdirpc+os.path.sep+pdfname
     if not choosepage:
         if os.path.exists(convpdfdirpcwithpdf):
@@ -490,46 +505,53 @@ def DisplayImage(pdfdir,pdfname,choosepage,*args,**kwargs):
     if os.path.exists(wledimgdir):
         imgdir=wledimgdir
     print(imgdir+" "+str(lastpage))
-    Home=Toplevel()
-    Home.title(imgdir)
-    if sys.platform in ['linux', 'linux2'] :
-        screenw = Home.winfo_screenwidth()
-        screenh = Home.winfo_screenheight()
-    if sys.platform in ['Windows', 'win32', 'cygwin']:
-        from win32api import GetSystemMetrics
-        screenw=GetSystemMetrics(0)
-        screenh=GetSystemMetrics(1)
-        hm.UnhookMouse()
-    load=PIL.Image.open(open(imgdir, 'rb'))
-    imgw, imgh = load.size
-    global showimgw,showimgh
-    showimgw=int((screenh/imgh)*imgw)
-    showimgh=int(screenh)
-    x = (screenw/2) - (showimgw/2)
-    y = (screenh/2) - (showimgh/2)
-    Home.geometry("%dx%d+%d+%d" % (showimgw, showimgh, x,y))
-    Home.resizable(1, 1)
-    load = load.resize((showimgw, showimgh), PIL.Image.ANTIALIAS)
-    render = PIL.ImageTk.PhotoImage(load)
-    panel = Label(Home, image=render)
-    panel.image=render
-    panel.bind("<Button 1>",partial(gettkinterxypos,convimgdir=convimgdir,wledimgdir=wledimgdir,pdfdir=pdfdir,pdfname=pdfname,lastpage=lastpage))
-    panel.pack(fill=BOTH, expand=YES)
-    def callback():
-        global choosepdfpagenext,choosepdfpageprev,undowlarea
+    def callbackhome():
+        global Home,panel
+        Home=Toplevel()
+        Home.title(imgdir)
+        if sys.platform in ['linux', 'linux2'] :
+            screenw = Home.winfo_screenwidth()
+            screenh = Home.winfo_screenheight()
+        if sys.platform in ['Windows', 'win32', 'cygwin']:
+            from win32api import GetSystemMetrics
+            screenw=GetSystemMetrics(0)
+            screenh=GetSystemMetrics(1)
+            hm.UnhookMouse()
+        load=PIL.Image.open(open(imgdir, 'rb'))
+        imgw, imgh = load.size
+        global showimgw,showimgh
+        showimgw=int((screenh/imgh)*imgw)
+        showimgh=int(screenh)
+        x = (screenw/2) - (showimgw/2)
+        y = (screenh/2) - (showimgh/2)
+        Home.geometry("%dx%d+%d+%d" % (showimgw, showimgh, x,y))
+        Home.resizable(1, 1)
+        load = load.resize((showimgw, showimgh), PIL.Image.ANTIALIAS)
+        render = PIL.ImageTk.PhotoImage(load)
+        panel = Label(Home, image=render)
+        panel.image=render
+        panel.bind("<Button 1>",partial(gettkinterxypos,convimgdir=convimgdir,wledimgdir=wledimgdir,pdfdir=pdfdir,pdfname=pdfname,lastpage=lastpage))
+        panel.pack(fill=BOTH, expand=YES)
+    def callbackhome1():
+        global choosepdfpagenext,choosepdfpageprev,undowlarea,cpageg,lastpage,convimgdir
         if choosepdfpagenext:
             choosepdfpagenext.destroy()
         if choosepdfpageprev:
             choosepdfpageprev.destroy()
         if undowlarea:
             undowlarea.destroy()
+        if cpageg:
+            cpageg.destroy()
         choosepdfpagenext=Button(root, text="choosepdf", command=partial(changepage,pdfdir,pdfname,lastpage,"next"),height=1,width=3)
         choosepdfpagenext.pack()
         choosepdfpageprev=Button(root, text="choosepdf", command=partial(changepage,pdfdir,pdfname,lastpage,"prev"),height=1,width=3)
         choosepdfpageprev.pack()
         undowlarea=Button(root, text="undolwl", command=partial(undolatestwl,pdfdir,pdfname,convimgdir,lastpage),height=1,width=3)
         undowlarea.pack()
-    root.after_idle(callback)
+        cpageg=Button(root, text="choosepage", command=partial(choosepageguiinit,pdfdir,pdfname),height=1,width=3)
+        cpageg.pack()
+    root.after_idle(callbackhome)
+    root.after_idle(callbackhome1)
     return True
 
 #https://stackoverflow.com/questions/5436810/adding-zooming-in-and-out-with-a-tkinter-canvas-widget
@@ -776,11 +798,11 @@ if sys.platform in ['Windows', 'win32', 'cygwin']:
             return True
         elif event.KeyID == HookConstants.VKeyToID('VK_LEFT') and Home and pause==0:
             print("pn0="+pdfname0)
-            changepage(pdfdir0,pdfname0,lastpage,"prev")
+            #changepage(pdfdir0,pdfname0,lastpage,"prev")
             return True
         elif event.KeyID == HookConstants.VKeyToID('VK_RIGHT') and Home and pause==0:
             print("pn0="+pdfname0)
-            changepage(pdfdir0,pdfname0,lastpage,"next")
+            #changepage(pdfdir0,pdfname0,lastpage,"next")
             return True
         elif GetKeyState(HookConstants.VKeyToID('VK_CONTROL')) and event.KeyID == HookConstants.VKeyToID('VK_ESCAPE'):
             sys.exit()
