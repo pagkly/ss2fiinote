@@ -328,11 +328,16 @@ def gettkinterxypos(eventorigin,convimgdir,wledimgdir,pdfdir,pdfname,lastpage):
             ypos2=eventorigin.y
             print(str(xpos2)+" "+str(ypos2))
             if os.path.exists(wledimgdir):
+                global screenw,screenh
                 imgw,imgh=imgsize(wledimgdir)
+                if screenw==1920 and screenh==1080:
+                    correction=10
+                else:
+                    correction=20
                 actxp1=int(imgw/showimgw*xpos1)
-                actyp1=int(imgh/showimgh*ypos1)+20
+                actyp1=int(imgh/showimgh*ypos1)+correction
                 actxp2=int(imgw/showimgw*xpos2)
-                actyp2=int(imgh/showimgh*ypos2)+20
+                actyp2=int(imgh/showimgh*ypos2)+correction
             if actxp1<actxp2 :
                 if Home:
                     Home.destroy()
@@ -506,7 +511,7 @@ def DisplayImage(pdfdir,pdfname,choosepage,*args,**kwargs):
         imgdir=wledimgdir
     print(imgdir+" "+str(lastpage))
     def callbackhome():
-        global Home,panel
+        global Home,panel,screenw,screenh
         Home=Toplevel()
         Home.title(imgdir)
         if sys.platform in ['linux', 'linux2'] :

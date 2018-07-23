@@ -398,7 +398,8 @@ def appendnewpic(w,h,picname,newdir1,objno2,column):
 						posyhex="%0.2X" % posy
 					if posy>191:
 						objnonow=objnonow+1
-						posy=129+20;
+						objnohex=format(math.trunc(objnonow), 'x')
+						posy=129+10;
 						posyhex="%0.2X" % posy
 				else:
 					pass
