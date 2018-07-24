@@ -333,7 +333,7 @@ def gettkinterxypos(eventorigin,convimgdir,wledimgdir,pdfdir,pdfname,lastpage):
                 if screenw==1920 and screenh==1080:
                     correction=10
                 else:
-                    correction=20
+                    correction=10
                 actxp1=int(imgw/showimgw*xpos1)
                 actyp1=int(imgh/showimgh*ypos1)+correction
                 actxp2=int(imgw/showimgw*xpos2)

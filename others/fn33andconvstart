@@ -1,0 +1,68 @@
+#!/bin/bash
+commandex() {
+#29
+python3 ~/Documents/Docs/Tech/Automate/FN35AOCV/startpdf2note.py -p "29.pdf" -d 120 -t 1 -nc 2
+#alltopics(math)
+python3 ~/Documents/Docs/Tech/Automate/FN35AOCV/startpdf2note.py -p "29.pdf" -d 120 -t 1 -nc 2
+#Summary4, lecture1-2
+python3 ~/Documents/Docs/Tech/Automate/FN35AOCV/startpdf2note.py -p "29.pdf" -d 120 -t 3 -nc 2
+#Physics workbook
+python3 ~/Documents/Docs/Tech/Automate/FN35AOCV/startpdf2note.py -p "29.pdf" -d 120 -t 2 -nc 2
+
+python3 /mnt/c/Users/SP3/Documents/Docs/Tech/Automate/FN35AOCV/startpdf2note.py -p "29.pdf" -d 120 -t 1 -nc 2
+python3 /mnt/c/Users/SP3/Documents/GitHub/FN35OCVbside/FN33andlib.py -p "29.pdf" -ps 1 -pe 1 -d 120 -t 1 -nc 2
+
+python3 /mnt/c/Users/user/Documents/GitHub/FN35OCVbside/FN33andlib.py -p "29.pdf" -ps 1 -pe 1 -d 120 -t 1 -nc 2 -shpdf 1
+export DISPLAY=:0.0 && python3 /mnt/c/Users/user/Documents/GitHub/FN35OCVbside/FN33andlib.py -p "29.pdf" -ps 1 -pe 1 -d 120 -t 1 -nc 2 -shpdf 1 
+%USERPROFILE%\Documents\Docs\Automate\3WinPython-32bit-3.5.3.1Qt5\scripts\python %USERPROFILE%\Documents\GitHub\FN35OCVbside\FN33andlib.py -p "29.pdf" -ps 1 -pe 1 -d 120 -t 1 -nc 2 -shpdf 1
+#pip3 install /mnt/c/Users/user/Downloads/pyhook*
+#sudo apt install python3-pip python3 python3-psutil python3-tk python3-xlib
+#pip3 install numpy pillow pyscreenshot opencv-python matplotlib
+#sudo apt-get install poppler-utils
+}
+
+installpdftoppm() {
+#https://askubuntu.com/questions/983716/installing-poppler-0-62-0-on-ubuntu-16-04
+sudo apt-get install -y cmake \
+libopenjp2-7-dev \
+libgdk-pixbuf2.0-dev \
+checkinstall
+
+popplerencfn="poppler-data-0.4.9"
+popplerfn="poppler-0.66.0"
+cd /tmp
+wget https://poppler.freedesktop.org/$popplerencfn.tar.gz &&\
+tar -xf $popplerencfn.tar.gz &&\
+cd $popplerencfn &&\
+sudo make install
+
+wget https://poppler.freedesktop.org/$popplerfn.tar.xz &&\
+tar -xf $popplerfn.tar.xz &&\
+cd $popplerfn
+mkdir build
+cd build
+cmake ..
+sudo checkinstall make install
+sudo make install &&\
+sudo ln -s /usr/local/bin/pdftotext /usr/bin/pdftotext &&\
+sudo ln -s /usr/local/bin/pdftoppm /usr/bin/pdftoppm &&\
+ls /usr/local/lib | grep libpoppler
+sudo ln -s /usr/local/lib/libpoppler.so.77 /usr/lib/libpoppler.so.77
+echo "Done"
+}
+installpython3() {
+installpdftoppm
+sudo apt-get install python3 \
+python3-pip \
+idle3 \
+python3-xlib \
+python3-psutil \
+android-tools-adb
+#xdotool wmctrl thunar
+sudo -H pip3 install pyscreenshot
+pip3 install opencv-python \
+imutils \
+scipy \
+numpy \
+pillow
+}

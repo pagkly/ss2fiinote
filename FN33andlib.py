@@ -390,6 +390,7 @@ def appendnewpic(w,h,picname,newdir1,objno2,column):
 					mo1= re.search(patternpic,cihx)
 					xlochex=mo1.group(4);
 					prefixposyhex=mo1.group(6);
+					prefixposy=(int(prefixposyhex,16));
 					objnohex=mo1.group(7);
 					objnonow=(int(objnohex,16));
 					posy=(int(mo1.group(8),16))+20;
@@ -398,6 +399,10 @@ def appendnewpic(w,h,picname,newdir1,objno2,column):
 						posyhex="%0.2X" % posy
 					if posy>191:
 						objnonow=objnonow+1
+						if objnonow>231:
+							objnonow=225
+							prefixposy=prefixposy+1
+							prefixposyhex=format(math.trunc(prefixposy), 'x')
 						objnohex=format(math.trunc(objnonow), 'x')
 						posy=129+10;
 						posyhex="%0.2X" % posy
@@ -924,65 +929,65 @@ def convertpdf2jpg(pdfdir,pdfname,quality,page,convpdfdirpc):
 			break
 	return convpname
 def convertpdf2jpg2(pdfdir,pdfname,quality,page,convpdfdirpc,ver):
-	##for i in range(int(pagestart),int(pageend)):
-	#ppmcommand2="convert -verbose -density "+str(quality)+" -trim "+pdfdir+os.path.sep+pdfname+"["+str(page)+"] -quality 100 -flatten -sharpen 0x1.0 "+convpdfdirpc+os.path.sep+convpname
-	ossep=os.path.sep
-	if not os.path.exists(convpdfdirpc):
-		os.makedirs(convpdfdirpc)
-	if sys.platform in ['linux', 'linux2']:
-		pdfinfocommand="pdfinfo"
-		pdftoppmcommand="pdftoppm"
-		pdfpage=subprocess.getoutput(pdfinfocommand+" \""+pdfdir+os.path.sep+pdfname+"\" | grep Pages: | awk '{print $2}'")
-		pdfpage=int(pdfpage)
-	if sys.platform in ['Windows', 'win32', 'cygwin']:
-		userid=subprocess.getoutput("echo %USERNAME%")
-		userhomedir=subprocess.getoutput("echo %USERPROFILE%")
-		popplerver="poppler-0.51"
-		popplerdir="C:\\Users\\"+userid+"\\Downloads\\"+popplerver+"_x86\\"+popplerver+"\\bin"
-		pdfinfocommand=popplerdir+"\\pdfinfo.exe"
-		pdftoppmcommand=popplerdir+"\\pdftoppm.exe"
-		if ver=="wsl":
-			pdfdir0=conwindirtovwsldir(pdfdir)
-			convpdfdirpc0=conwindirtovwsldir(convpdfdirpc)
-			print("convertpdf2jpginwsl="+pdfdir)
-			##pdfpage=subprocess.getoutput("wsl pdfinfo \""+pdfdir0+"/"+pdfname+"\" | grep Pages: | awk '{print $2}'")
-			#ppmcommand="wsl pdftoppm \""+pdfdir0+"/"+pdfname+"\" \""+convpdfdirpc0+"/"+convpname+"\" -jpeg -f "+str(page)+" -singlefile"
-			imgdir=convpdfdirpc+os.path.sep+convpname+".jpg"
-		pdfpage0=subprocess.getoutput(pdfinfocommand+" \""+pdfdir+os.path.sep+pdfname+"\"")
-		#print("pp0="+pdfpage0)
-		#https://stackoverflow.com/questions/15422144/how-to-read-a-long-multiline-string-line-by-line-in-python
-		for line in pdfpage0.splitlines():
-			#print(line)
-			#lineResult = libLAPFF.parseLine(line)
-			lineResult=line
-			pdfpage1=lineResult
-			#print("pp1="+pdfpage1)
-			if re.search(r"Pages:",str(line)):
-				pdfpage1=line
-				print("pp1="+pdfpage1)
-				pdfpage2 = re.sub(r"(Pages:)([ ])*", '', pdfpage1)
-				print("pp2="+pdfpage2)
-				pdfpage=int(pdfpage2)
-	print("totalp="+str(pdfpage))
-	if page<0:
+        ##for i in range(int(pagestart),int(pageend)):
+        #ppmcommand2="convert -verbose -density "+str(quality)+" -trim "+pdfdir+os.path.sep+pdfname+"["+str(page)+"] -quality 100 -flatten -sharpen 0x1.0 "+convpdfdirpc+os.path.sep+convpname
+        ossep=os.path.sep
+        if not os.path.exists(convpdfdirpc):
+                os.makedirs(convpdfdirpc)
+        if sys.platform in ['linux', 'linux2']:
+                pdfinfocommand="pdfinfo"
+                pdftoppmcommand="pdftoppm"
+                pdfpage=subprocess.getoutput(pdfinfocommand+" \""+pdfdir+os.path.sep+pdfname+"\" | grep Pages: | awk '{print $2}'")
+                pdfpage=int(pdfpage)
+        if sys.platform in ['Windows', 'win32', 'cygwin']:
+                userid=subprocess.getoutput("echo %USERNAME%")
+                userhomedir=subprocess.getoutput("echo %USERPROFILE%")
+                popplerver="poppler-0.51"
+                popplerdir="C:\\Users\\"+userid+"\\Downloads\\"+popplerver+"_x86\\"+popplerver+"\\bin"
+                pdfinfocommand=popplerdir+"\\pdfinfo.exe"
+                pdftoppmcommand=popplerdir+"\\pdftoppm.exe"
+                if ver=="wsl":
+                        pdfdir0=conwindirtovwsldir(pdfdir)
+                        convpdfdirpc0=conwindirtovwsldir(convpdfdirpc)
+                        print("convertpdf2jpginwsl="+pdfdir)
+                        ##pdfpage=subprocess.getoutput("wsl pdfinfo \""+pdfdir0+"/"+pdfname+"\" | grep Pages: | awk '{print $2}'")
+                        #ppmcommand="wsl pdftoppm \""+pdfdir0+"/"+pdfname+"\" \""+convpdfdirpc0+"/"+convpname+"\" -jpeg -f "+str(page)+" -singlefile"
+                        imgdir=convpdfdirpc+os.path.sep+convpname+".jpg"
+                pdfpage0=subprocess.getoutput(pdfinfocommand+" \""+pdfdir+os.path.sep+pdfname+"\"")
+                #print("pp0="+pdfpage0)
+                #https://stackoverflow.com/questions/15422144/how-to-read-a-long-multiline-string-line-by-line-in-python
+                for line in pdfpage0.splitlines():
+                        #print(line)
+                        #lineResult = libLAPFF.parseLine(line)
+                        lineResult=line
+                        pdfpage1=lineResult
+                        #print("pp1="+pdfpage1)
+                        if re.search(r"Pages:",str(line)):
+                                pdfpage1=line
+                                print("pp1="+pdfpage1)
+                                pdfpage2 = re.sub(r"(Pages:)([ ])*", '', pdfpage1)
+                                print("pp2="+pdfpage2)
+                                pdfpage=int(pdfpage2)
+        print("totalp="+str(pdfpage))
+        if page<0:
                 page=1
-	if page<=pdfpage:
-		pagez=str(page).zfill(4)
-	if page>pdfpage:
-		pagez=str(pdfpage).zfill(4)
-	convpname="conv"+pagez
-	img0=convpdfdirpc+os.path.sep+convpname
-	imgdir=img0+".jpg"
-	if not os.path.exists(imgdir):
-		ppmcommand=pdftoppmcommand+" \""+pdfdir+os.path.sep+pdfname+"\" \""+img0+"\" -jpeg -f "+str(page)+" -singlefile"
-		print(ppmcommand)
-		subprocess.call(ppmcommand,shell=True)
-		#time.sleep(5)
-	while True:
-		if os.path.exists(imgdir):
-			print(imgdir)
-			break
-	return imgdir
+        if page<=pdfpage:
+                pagez=str(page).zfill(4)
+        if page>pdfpage:
+                pagez=str(pdfpage).zfill(4)
+        convpname="conv"+pagez
+        img0=convpdfdirpc+os.path.sep+convpname
+        imgdir=img0+".jpg"
+        if not os.path.exists(imgdir):
+                ppmcommand=pdftoppmcommand+" \""+pdfdir+os.path.sep+pdfname+"\" \""+img0+"\" -jpeg -f "+str(page)+" -singlefile"
+                print(ppmcommand)
+                subprocess.call(ppmcommand,shell=True)
+                #time.sleep(5)
+        while True:
+                if os.path.exists(imgdir):
+                        print(imgdir)
+                        break
+        return imgdir
 
 def conwindirtovwsldir(windir):
 	checkdir="C:\\Windows"
