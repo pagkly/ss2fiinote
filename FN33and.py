@@ -73,7 +73,7 @@ if sys.platform in ['linux', 'linux2'] or sys.platform in ['Windows', 'win32', '
         root=tk.Tk()
         m = Button(root, text="Pause R", command=Suspend1,height=3,width=3)
         m.pack()
-        newf = Button(root, text="New F", command=newnotz,height=3,width=3)
+        newf = Button(root, text="New F", command=newnotz1,height=3,width=3)
         newf.pack()
         copyk = Button(root, text="copy", command=copykey,height=3,width=3)
         copyk.pack()
@@ -166,12 +166,10 @@ if sys.platform in ['linux', 'linux2'] or sys.platform in ['Windows', 'win32', '
             if sys.platform in ['Windows', 'win32', 'cygwin']:
                 #subprocess.call("taskkill /F /IM FiiNote.exe /T",shell=True)
                 pass
-    def newnotz():
-        global newdir1, objno2
-        os.remove(curnotelocpc)
-        CN=checknotz(curnotelocpc)
-        newdir1=CN[0]
-        objno2=CN[1]
+    def newnotz1():
+        global newdir1,objno2
+        #newnotz0()
+        newdir1,objno2=newnotz(fnnotesdirpc,fnnotesdirpc)
         TT2.config(text="NEW")
     def term(scriptn):
         if sys.platform in ['linux', 'linux2'] :
@@ -304,20 +302,24 @@ xpos1=""
 ypos1=""
 xpos2=""
 ypos2=""
-def gettkinterxypos(eventorigin,convimgdir,wledimgdir,pdfdir,pdfname,lastpage):
+def gettkinterxypos(eventorigin,convimgdir,wledimgdir,pdfdir,pdfname,lastpage,anglecorrection,imgw,imgh,showimgw,showimgh):
     global pause,textclick
     print(str(pause)+" "+str(textclick))
     def callback():
         global root
         global textclick,pause,xpos1,ypos1,xpos2,ypos2
-        global showimgw,showimgh
+        #global showimgw,showimgh
         global newdir1,objno2,curattachdirpc
         global Home
+        global xcorrection,ycorrection
         #if pause==0:
         #    x = eventorigin.x
         #    y = eventorigin.y
         #else:
         #    pass
+        xcorrection=0
+        ycorrection=0
+        xandy=False
         if pause==0 and textclick==0:
             xpos1=eventorigin.x
             ypos1=eventorigin.y
@@ -329,26 +331,65 @@ def gettkinterxypos(eventorigin,convimgdir,wledimgdir,pdfdir,pdfname,lastpage):
             print(str(xpos2)+" "+str(ypos2))
             if os.path.exists(wledimgdir):
                 global screenw,screenh
-                imgw,imgh=imgsize(wledimgdir)
+                #imgw,imgh=imgsize(wledimgdir)
                 if screenw==1920 and screenh==1080:
-                    correction=10
+                    ycorrection=10
                 else:
-                    correction=10
-                actxp1=int(imgw/showimgw*xpos1)
-                actyp1=int(imgh/showimgh*ypos1)+correction
-                actxp2=int(imgw/showimgw*xpos2)
-                actyp2=int(imgh/showimgh*ypos2)+correction
-            if actxp1<actxp2 :
+                    ycorrection=20
+                if anglecorrection==270:
+                    if ypos1>ypos2 and xpos2>xpos1:
+                        #xpos1ac=screenw-ypos1
+                        #xpos2ac=xpos1ac+(ypos1-ypos2)
+                        xpos1ac=imgw-ypos1
+                        xpos2ac=imgw-ypos2
+                        ypos1ac=xpos1
+                        ypos2ac=xpos2
+                        xcorrection=130
+                        xcorrection=60
+                        ycorrection=0
+                        xandy=True
+                        
+                    elif ypos2>ypos1 and xpos2>xpos1:
+                        #xpos1ac=screenw-ypos1
+                        #xpos2ac=xpos1ac+(ypos1-ypos2)
+                        xpos1ac=imgw-ypos2
+                        xpos2ac=imgw-ypos1
+                        ypos1ac=xpos1
+                        ypos2ac=xpos2
+                        xcorrection=130
+                        xcorrection=60
+                        ycorrection=0
+                    else:
+                        print("trya")
+                        return True
+                    actxp1=int(imgw/showimgw*xpos1ac)+xcorrection
+                    actyp1=int(imgh/showimgh*ypos1ac)+ycorrection
+                    actxp2=int(imgw/showimgw*xpos2ac)+xcorrection
+                    actyp2=int(imgh/showimgh*ypos2ac)+ycorrection
+                else:
+                    if screenh>screenw:
+                        ycorrection=0
+                    print(ycorrection)
+                    xpos1ac=xpos1
+                    xpos2ac=xpos2
+                    ypos1ac=ypos1
+                    ypos2ac=ypos2
+                    actxp1=int(imgw/showimgw*xpos1ac)
+                    actyp1=int(imgh/showimgh*ypos1ac)+ycorrection
+                    actxp2=int(imgw/showimgw*xpos2ac)
+                    actyp2=int(imgh/showimgh*ypos2ac)+ycorrection
+                print(actxp1,actxp2,actyp1,actyp2)
+            if (actxp2>actxp1 and actyp2>actyp1) or xandy:
                 if Home:
                     Home.destroy()
-                SS=cutarea(pdfdir,pdfname,lastpage,actxp1,actyp1,actxp2,actyp2,convimgdir)
+                SS=cutarea(pdfdir,pdfname,lastpage,actxp1,actyp1,actxp2,actyp2,convimgdir,anglecorrection)
                 print(SS)
                 objno2,curattachdirpc=appendnewpic(SS[0],SS[1],SS[2],SS[3],SS[4],"nearlatest")
                 imgdir=curattachdirpc+os.path.sep+SS[2]
                 if (linuxpc==0) and os.path.exists("/run/user/1000/gvfs/*/Internal"):
                     subprocess.call("adb push -p "+imgdir+" "+fnnotesanddirint+newdir1+".notz/attach",shell=True)
                     ##subprocess.call("adb shell su -c 'monkey -p com.fiistudio.fiinote -c android.intent.category.LAUNCHER 1'", shell=True)
-                    ## \"su -c 'killall com.fiistudio.fiinote'\"
+                    ## \"su -c 'killall com.fiistudio.fiinote'\"w
                     #except :
                     ##TT.config(text="try")
                     ##monkey -p com.fiistudio.fiinote.editor.Fiinote -c android.intent.category.LAUNCHER 1
@@ -364,7 +405,7 @@ def gettkinterxypos(eventorigin,convimgdir,wledimgdir,pdfdir,pdfname,lastpage):
             pass
     callback()
     return True
-def cutarea(pdfdir,pdfname,lastpage,actxp1,actyp1,actxp2,actyp2,convimgdir):
+def cutarea(pdfdir,pdfname,lastpage,actxp1,actyp1,actxp2,actyp2,convimgdir,anglecorrection):
     global curattachdirpc,newdir1,objno2
     picname=strftime("%Y%m%d%H%M%S")+'abcdefghijklmno.jpg'
     imgdir=curattachdirpc+os.path.sep+picname
@@ -468,6 +509,7 @@ pdfname=""
 pdfdir0=""
 pdfname0=""
 lastpage=""
+import imutils
 def DisplayImage(pdfdir,pdfname,choosepage,*args,**kwargs):
     global root,hm
     global Home,panel,pdfdir0,pdfname0,lastpage,convimgdir
@@ -523,19 +565,54 @@ def DisplayImage(pdfdir,pdfname,choosepage,*args,**kwargs):
             screenh=GetSystemMetrics(1)
             hm.UnhookMouse()
         load=PIL.Image.open(open(imgdir, 'rb'))
-        imgw, imgh = load.size
+        #imgw, imgh = load.size
+        load=cv2.imread(imgdir)
+        imgh, imgw, channels = load.shape
+        print(imgw,imgh)
+        #imageROI = load[0:imgh, 0:imgw]
         global showimgw,showimgh
         showimgw=int((screenh/imgh)*imgw)
         showimgh=int(screenh)
-        x = (screenw/2) - (showimgw/2)
-        y = (screenh/2) - (showimgh/2)
-        Home.geometry("%dx%d+%d+%d" % (showimgw, showimgh, x,y))
+        if imgh>imgw and screenw>screenh and screenw==2160 and screenh==1440:
+            anglecorrection=270
+            load=imutils.rotate_bound(load, anglecorrection)
+            screenh=screenh-100
+            showimgwb=int((screenh/imgw)*imgh)
+            showimghb=int(screenh)
+            showimgw=showimghb
+            showimgh=showimgwb
+            x = (screenw/2) - (showimgwb/2)
+            y = (screenh/2) - (showimghb/2)
+        else:
+            anglecorrection=0
+            showimgwb=showimgw
+            showimghb=showimgh
+            x = (screenw/2) - (showimgwb/2)
+            y = (screenh/2) - (showimghb/2)
+        if screenh>screenw and imgh>imgw:
+            anglecorrection=0
+            #screenh=2160-100
+            #screenw=1440-100
+            screenh=screenh-100
+            screenw=screenw-100
+            showimgw=int(screenw)
+            showimgh=int((screenw/imgw)*imgh)
+            showimgwb=showimgw
+            showimghb=showimgh
+            x = (screenw/2) - (showimgwb/2)
+            y = (screenh/2) - (showimghb/2)
+            print(screenw,screenh)
+            print(showimgw,showimgh)
+        Home.geometry("%dx%d+%d+%d" % (showimgwb, showimghb, x,y))
         Home.resizable(1, 1)
-        load = load.resize((showimgw, showimgh), PIL.Image.ANTIALIAS)
-        render = PIL.ImageTk.PhotoImage(load)
+        #render = PIL.ImageTk.PhotoImage(load)
+        # Convert the Image object into a TkPhoto object
+        im = PIL.Image.fromarray(load)
+        load = im.resize((showimgwb, showimghb), PIL.Image.ANTIALIAS)
+        render = PIL.ImageTk.PhotoImage(image=load)
         panel = Label(Home, image=render)
         panel.image=render
-        panel.bind("<Button 1>",partial(gettkinterxypos,convimgdir=convimgdir,wledimgdir=wledimgdir,pdfdir=pdfdir,pdfname=pdfname,lastpage=lastpage))
+        panel.bind("<Button 1>",partial(gettkinterxypos,convimgdir=convimgdir,wledimgdir=wledimgdir,pdfdir=pdfdir,pdfname=pdfname,lastpage=lastpage,anglecorrection=anglecorrection,imgw=imgw,imgh=imgh,showimgw=showimgw,showimgh=showimgh))
         panel.pack(fill=BOTH, expand=YES)
     def callbackhome1():
         global choosepdfpagenext,choosepdfpageprev,undowlarea,cpageg,lastpage,convimgdir

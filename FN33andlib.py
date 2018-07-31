@@ -20,21 +20,21 @@ import argparse
 import PIL.Image
 import PIL.ImageTk
 def pythoninstall():
-	subprocess.call("",shell=True)
+    subprocess.call("",shell=True)
 def parse_args():
-	parser = argparse.ArgumentParser()
-	parser.add_argument("-pdir","--pdfdir",help="Loc of PDF. Example: -pdir /home/")
-	parser.add_argument("-p","--pdfname",help="Name of PDF. Example: -p ABC.pdf")
-	parser.add_argument("-ps","--pagestart",help="Starting Page. Example: -ps 1")
-	parser.add_argument("-pe","--pageend",help="End Page. Example: -pe 6")
-	parser.add_argument("-d","--density",help="DPI. Example: -d 100")
-	parser.add_argument("-t","--type",help="OCV Type. Example: -t 1")
-	parser.add_argument("-nc","--noconversion",help="OCV Type. Example: -nc 1")
-	parser.add_argument("-pmdir","--pdfmdir",help="Loc of PDFs. Example: -pdir /home/user")
-	parser.add_argument("-cont","--continuenote",help="continue previous note.")
-	parser.add_argument("-test","--testing",help="Testing mode")
-	parser.add_argument("-shpdf","--showpdf",help="Testing mode")
-	return parser.parse_args()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-pdir","--pdfdir",help="Loc of PDF. Example: -pdir /home/")
+    parser.add_argument("-p","--pdfname",help="Name of PDF. Example: -p ABC.pdf")
+    parser.add_argument("-ps","--pagestart",help="Starting Page. Example: -ps 1")
+    parser.add_argument("-pe","--pageend",help="End Page. Example: -pe 6")
+    parser.add_argument("-d","--density",help="DPI. Example: -d 100")
+    parser.add_argument("-t","--type",help="OCV Type. Example: -t 1")
+    parser.add_argument("-nc","--noconversion",help="OCV Type. Example: -nc 1")
+    parser.add_argument("-pmdir","--pdfmdir",help="Loc of PDFs. Example: -pdir /home/user")
+    parser.add_argument("-cont","--continuenote",help="continue previous note.")
+    parser.add_argument("-test","--testing",help="Testing mode")
+    parser.add_argument("-shpdf","--showpdf",help="Testing mode")
+    return parser.parse_args()
 def checkfile(filename):
     if not os.path.exists(filename):
         f = open(filename,'w')
@@ -149,39 +149,39 @@ thedir=dir0+os.path.sep+"ConvPDF"
 wsldir="/mnt/c/Windows"
 
 if sys.platform in ['linux', 'linux2']:
-	userid=subprocess.getoutput("awk -F: '!/root/ && /(\/bin\/bash)/ {print $1}' /etc/passwd")
-	userhomedir="/home/"+userid
-	from Xlib.display import Display
-	import Xlib.display as display
-	from Xlib import X, XK
-	from Xlib.ext import record
-	from Xlib.protocol import rq
-	import signal
-	dirand="/run/"+userid+"/1000/gvfs"
-	dirandcheck=dirand+"*/Internal shared storage"
-	if os.path.exists(dirandcheck):
-		dirand2=os.listdir(dirand)
-		fnnotesdirand=dirand+os.path.sep+dirand2[0]+"/Internal shared storage/fiinote/notes"
-		subprocess.call("nautilus file://"+schooldirpc,shell=True)
-	if os.path.exists(wsldir):
-		thedirw="C:\\Users\\"+userid+"\\AppData\\Roaming\\FiiNote\\@pagkly\\notes"
-		print(thedirw)
-		#thedir=subprocess.getoutput("echo "+thedirw+" | awk '{gsub(\"C:\",\"/mnt/c\");gsub(\"\\\\\",\"/\");print}'")
-		thedir=re.sub(r"C:","/mnt/c",thedirw)
-		thedir=re.sub(r"\\","/",thedir)
-		print(thedir)
+    userid=subprocess.getoutput("awk -F: '!/root/ && /(\/bin\/bash)/ {print $1}' /etc/passwd")
+    userhomedir="/home/"+userid
+    from Xlib.display import Display
+    import Xlib.display as display
+    from Xlib import X, XK
+    from Xlib.ext import record
+    from Xlib.protocol import rq
+    import signal
+    dirand="/run/"+userid+"/1000/gvfs"
+    dirandcheck=dirand+"*/Internal shared storage"
+    if os.path.exists(dirandcheck):
+        dirand2=os.listdir(dirand)
+        fnnotesdirand=dirand+os.path.sep+dirand2[0]+"/Internal shared storage/fiinote/notes"
+        subprocess.call("nautilus file://"+schooldirpc,shell=True)
+    if os.path.exists(wsldir):
+        thedirw="C:\\Users\\"+userid+"\\AppData\\Roaming\\FiiNote\\@pagkly\\notes"
+        print(thedirw)
+        #thedir=subprocess.getoutput("echo "+thedirw+" | awk '{gsub(\"C:\",\"/mnt/c\");gsub(\"\\\\\",\"/\");print}'")
+        thedir=re.sub(r"C:","/mnt/c",thedirw)
+        thedir=re.sub(r"\\","/",thedir)
+        print(thedir)
 if sys.platform in ['Windows', 'win32', 'cygwin']:
-	print("Windows10")
-	userid=subprocess.getoutput("echo %USERNAME%")
-	userhomedir=subprocess.getoutput("echo %USERPROFILE%")
-	dirand="Z:"
-	dirand2=userhomedir+os.path.sep+"AppData"+os.path.sep+"Roaming"+os.path.sep+"FiiNote"+os.path.sep+"@pagkly"+os.path.sep+"notes"
+    print("Windows10")
+    userid=subprocess.getoutput("echo %USERNAME%")
+    userhomedir=subprocess.getoutput("echo %USERPROFILE%")
+    dirand="Z:"
+    dirand2=userhomedir+os.path.sep+"AppData"+os.path.sep+"Roaming"+os.path.sep+"FiiNote"+os.path.sep+"@pagkly"+os.path.sep+"notes"
 
-	#time.sleep(3600)
-	if os.path.exists(dirand):
-		fnnotesdirand=dirand+os.path.sep+"fiinote"+os.path.sep+"notes"+os.path.sep
-	if os.path.exists(dirand2):
-		thedir=dirand2
+    #time.sleep(3600)
+    if os.path.exists(dirand):
+        fnnotesdirand=dirand+os.path.sep+"fiinote"+os.path.sep+"notes"+os.path.sep
+    if os.path.exists(dirand2):
+        thedir=dirand2
 
 autodirpc=userhomedir+os.path.sep+"Documents"+os.path.sep+"Docs"+os.path.sep+"Tech"+os.path.sep+"Automate"
 schooldirpc=autodirpc+os.path.sep+"PDF"+os.path.sep+"Sem2"
@@ -208,28 +208,28 @@ def dependencies():
     if sys.platform in ['Windows', 'win32', 'cygwin']:
         subprocess.call("",shell=True)
 def setvarnotz(thedir,newdir1):
-	global notzdn,notefn,curindexpc,curindexoldpc,curnotzpc,curnotefpc,curattachdirpc,curnotzand,curattachdirand,convpdfdirpc
-	notzdn=newdir1+".notz"
-	notefn=newdir1+".note"
-	curindexpc=thedir+os.path.sep+"index.nti"
-	curindexoldpc=thedir+os.path.sep+"index.ntiold"
-	curnotzpc=thedir+os.path.sep+notzdn
-	curnotefpc=curnotzpc+os.path.sep+notefn
-	curattachdirpc=curnotzpc+os.path.sep+"attach"
-	curnotefpc1=thedir+os.path.sep+"ConvertedPDF"+os.path.sep+notefn
-	curnotzand=fnnotesdirandint+os.path.sep+notzdn
-	curattachdirand=curnotzand+os.path.sep+"attach"
-	checkdir(curnotzpc,"")
-	checkdir(curattachdirpc,"")
-	if not os.path.exists(curnotefpc):
-		checkfile(curnotefpc)
-		##subprocess.call("adb shell touch "+curnotefand,shell=True)
-		firstlineappend(newdir1,curnotefpc)
-		runadbcommand("adb push "+curnotefpc+" "+curnotzand)
-		print("appendfline")
-	appendtext(curnotelocpc,newdir1+".notz","w+")
-	runadbcommand("adb push "+curnotzpc+" "+fnnotesdirandint)
-	return curnotzpc,curnotefpc,curattachdirpc,curnotzand,curattachdirand
+    global notzdn,notefn,curindexpc,curindexoldpc,curnotzpc,curnotefpc,curattachdirpc,curnotzand,curattachdirand,convpdfdirpc
+    notzdn=newdir1+".notz"
+    notefn=newdir1+".note"
+    curindexpc=thedir+os.path.sep+"index.nti"
+    curindexoldpc=thedir+os.path.sep+"index.ntiold"
+    curnotzpc=thedir+os.path.sep+notzdn
+    curnotefpc=curnotzpc+os.path.sep+notefn
+    curattachdirpc=curnotzpc+os.path.sep+"attach"
+    curnotefpc1=thedir+os.path.sep+"ConvertedPDF"+os.path.sep+notefn
+    curnotzand=fnnotesdirandint+os.path.sep+notzdn
+    curattachdirand=curnotzand+os.path.sep+"attach"
+    checkdir(curnotzpc,"")
+    checkdir(curattachdirpc,"")
+    if not os.path.exists(curnotefpc):
+        checkfile(curnotefpc)
+        ##subprocess.call("adb shell touch "+curnotefand,shell=True)
+        firstlineappend(newdir1,curnotefpc)
+        runadbcommand("adb push "+curnotefpc+" "+curnotzand)
+        print("appendfline")
+    appendtext(curnotelocpc,newdir1+".notz","w+")
+    runadbcommand("adb push "+curnotzpc+" "+fnnotesdirandint)
+    return curnotzpc,curnotefpc,curattachdirpc,curnotzand,curattachdirand
 def checknotz(curnotelocpc):
     global objno2,newdir1
     runadbcommand("adb shell \"su -c 'input keyevent KEYCODE_ESCAPE && sleep 0.1 && killall com.fiistudio.fiinote'\"")
@@ -263,18 +263,28 @@ def checknotz(curnotelocpc):
                 f.close()
         if (not os.path.exists(curnotzpc) or not os.path.exists(curnotefpc) or not os.path.exists(curattachdirpc)) :
             newdir1,objno2=newnotz(fnnotesdirpc,fnnotesdirpc)
-    elif not os.path.exists(curnotelocpc) or (not os.path.exists(curnotzpc)) :
+    elif not os.path.exists(curnotelocpc) or (not os.path.exists(curnotzpc)):
         newdir1,objno2=newnotz(fnnotesdirpc,fnnotesdirpc)
     print(str(objno2))
+    if (objno2>=350):
+        newdir1,objno2=newnotz(fnnotesdirpc,fnnotesdirpc)
     return newdir1,objno2,curnotzpc,curnotefpc,curattachdirpc,curnotzand,curattachdirand
 
 def newnotz(thedir1,thedir2):
+    global newdir1, objno2
+    os.remove(curnotelocpc)
     objno2=1
     newdir1="AOWNLPC00000"+strftime("%Y%m%d%H%M%S")
     #setvarnotz(fnnotesdirandint,newdir1)
     setvarnotz(thedir1,newdir1)
     appendnewnote(newdir1,curindexpc,curindexoldpc)
     return newdir1,objno2
+def newnotz0():
+    global newdir1, objno2
+    os.remove(curnotelocpc)
+    CN=checknotz(curnotelocpc)
+    newdir1=CN[0]
+    objno2=CN[1]
 
 def firstlineappendindex(newdir1,curindexpc):
     return True
@@ -299,261 +309,263 @@ def firstlineappend(newdir1,curnotef):
 
 
 def appendnewpic(w,h,picname,newdir1,objno2,column):
-	objno2=int(objno2)
-	w=int(w)
-	h=int(h)
-	newlinehex="0AC480C391C391C39101";
-	secondobjhex="C88A";
+    objno2=int(objno2)
+    w=int(w)
+    h=int(h)
+    newlinehex="0AC480C391C391C39101";
+    secondobjhex="C88A";
 
-	objno2c1=int(objno2/14);
-	objno2c2=int(objno2/28);
-	objno2c21=int(objno2%28);
+    objno2c1=int(objno2/14);
+    objno2c2=int(objno2/28);
+    objno2c21=int(objno2%28);
 
-	#if (objno2c1<32):
-	#	prefixposy=169
-	#elif (objno2c1>=32):
-	#	prefixposy=(int(objno2c1)/34)+169
+    #if (objno2c1<32):
+    #    prefixposy=169
+    #elif (objno2c1>=32):
+    #    prefixposy=(int(objno2c1)/34)+169
 
-	if (objno2c1==0):
-		prefixposy=169
-	elif (objno2c1>0):
-		prefixposy=int(objno2c1)+169
+    if (objno2c1==0):
+        prefixposy=169
+    elif (objno2c1>0):
+        prefixposy=int(objno2c1)+169
 
-	quot=objno2/2;
-	rem=objno2%2;
-	objnonowc1=objno2/28
-	objnonowc2=objno2%28
-	objnonowquot14=objnonowc2/2;
+    quot=objno2/2;
+    rem=objno2%2;
+    objnonowc1=objno2/28
+    objnonowc2=objno2%28
+    objnonowquot14=objnonowc2/2;
 
-	objnonowrem=objnonowc2%2;
-	#if (quot>=31):
-	#	quotc1=objno2%31;
-	#	objnonow=224+quotc1+1;
-	#else:
-	#	objnonow=224+quot+1;
-	#C:\Users\SP3\Documents\GitHub\2.3.OCV\app\src\main\java\com\example\user\ocv
-	##export DISPLAY=:0.0 && python3 /mnt/c/Users/SP3/Documents/GitHub/FN35OCVbside/FN33and.py
-	if objnonowc2==0:
-		if objnonowc1>0:
-			prefixposy=int(objnonowc1)+169
-		objnonow=224+1
-	elif objnonowc2>0:
-		objnonow=224+objnonowquot14+1
-	prefixposyhex=format(math.trunc(prefixposy), 'x')
-	objnohex=format(math.trunc(objnonow), 'x')
+    objnonowrem=objnonowc2%2;
+    #if (quot>=31):
+    #    quotc1=objno2%31;
+    #    objnonow=224+quotc1+1;
+    #else:
+    #    objnonow=224+quot+1;
+    #C:\Users\SP3\Documents\GitHub\2.3.OCV\app\src\main\java\com\example\user\ocv
+    ##export DISPLAY=:0.0 && python3 /mnt/c/Users/SP3/Documents/GitHub/FN35OCVbside/FN33and.py
+    if objnonowc2==0:
+        if objnonowc1>0:
+            prefixposy=int(objnonowc1)+169
+        objnonow=224+1
+    elif objnonowc2>0:
+        objnonow=224+objnonowquot14+1
+    prefixposyhex=format(math.trunc(prefixposy), 'x')
+    objnohex=format(math.trunc(objnonow), 'x')
 
-	if (quot==0):
-		if (rem>0):
-			posyhex="9E"
-		else:
-			posyhex="81"
-	else:
-		if (rem!=0):
-			posyhex="9E"
-		if(rem==0):
-			posyhex="81"
+    if (quot==0):
+        if (rem>0):
+            posyhex="9E"
+        else:
+            posyhex="81"
+    else:
+        if (rem!=0):
+            posyhex="9E"
+        if(rem==0):
+            posyhex="81"
 
-	if column=="nearlatest":
-		print("picnearlatest;"+str(objno2))
-		if objno2<=2:
-			print("picnearlatest1")
-			column=1
-			column=int(column)
-			columnc1=int(column/8);
-			columnc2=int(column%8);
-			if (columnc1==0):
-				prefixposx=169
-				posx=224+columnc2
-			if (columnc1>0):
-				prefixposx=169+columnc1
-				if (columnc2==0):
-					posx=225
-				else:
-					posx=225+columnc2
-			posxhex=format(posx, 'x')
-			prefixposxhex=format(prefixposx, 'x')
-			xlochex="E5A5AA"+\
-			"E5AB81"+\
-			"E5A5A9"+\
-			"E19E81"+\
-			"E5A5"+prefixposxhex+\
-			posxhex+"9E81"
-		if objno2>2:
-			with open(curnotefpc, 'rb') as f:
-				content = f.read()
-				cihx=str(binascii.hexlify(content).decode('utf-8'))
-				regexc1=re.compile(patternpic)
-				#mo1= re.search(patternpic,cihx)
-				print("findpatternpic1")
-				if regexc1.search(cihx):
-					print("findpatternpic2")
-					mo1= re.search(patternpic,cihx)
-					xlochex=mo1.group(4);
-					prefixposyhex=mo1.group(6);
-					prefixposy=(int(prefixposyhex,16));
-					objnohex=mo1.group(7);
-					objnonow=(int(objnohex,16));
-					posy=(int(mo1.group(8),16))+20;
-					#bf
-					if posy<=191:
-						posyhex="%0.2X" % posy
-					if posy>191:
-						objnonow=objnonow+1
-						if objnonow>231:
-							objnonow=225
-							prefixposy=prefixposy+1
-							prefixposyhex=format(math.trunc(prefixposy), 'x')
-						objnohex=format(math.trunc(objnonow), 'x')
-						posy=129+10;
-						posyhex="%0.2X" % posy
-				else:
-					pass
-	ylochex="E5A5A9"+\
-	"E19E81"+\
-	"E5A5AA"+\
-	"E5AB81"+\
-	"E5A5"+prefixposyhex+\
-	objnohex+posyhex+"81"
-	zlochex="E5A5A9"+\
-	"E19E81"+\
-	"E5A5A9"+\
-	"E19E81"+\
-	"E5A5AA"+\
-	"E5AB81"
-	#print(xlochex)
-	#print(ylochex)
-	#print(zlochex)
-	if (w<128):
-		xpixshex=format(w,'x')
-		xpixshex=str(xpixshex).zfill(2)
-	if (w>=128):
-		xquothexint=int(math.trunc(192+(w/64)));
-		xremhexint=int(math.trunc(128+(w%64)));
-		xquothexs=format(xquothexint,'x')
-		xremhexs=format(xremhexint,'x')
-		xpixshex=xquothexs+xremhexs;
+    if column=="nearlatest":
+        print("picnearlatest;"+str(objno2))
+        if objno2<=2:
+            print("picnearlatest1")
+            column=1
+            column=int(column)
+            columnc1=int(column/8);
+            columnc2=int(column%8);
+            if (columnc1==0):
+                prefixposx=169
+                posx=224+columnc2
+            if (columnc1>0):
+                prefixposx=169+columnc1
+                if (columnc2==0):
+                    posx=225
+                else:
+                    posx=225+columnc2
+            posxhex=format(posx, 'x')
+            prefixposxhex=format(prefixposx, 'x')
+            xlochex="E5A5AA"+\
+            "E5AB81"+\
+            "E5A5A9"+\
+            "E19E81"+\
+            "E5A5"+prefixposxhex+\
+            posxhex+"9E81"
+        if objno2>2:
+            with open(curnotefpc, 'rb') as f:
+                content = f.read()
+                cihx=str(binascii.hexlify(content).decode('utf-8'))
+                regexc1=re.compile(patternpic)
+                #mo1= re.search(patternpic,cihx)
+                print("findpatternpic1")
+                if regexc1.search(cihx):
+                    print("findpatternpic2")
+                    mo1= re.search(patternpic,cihx)
+                    xlochex=mo1.group(4);
+                    prefixposyhex=mo1.group(6);
+                    prefixposy=(int(prefixposyhex,16));
+                    objnohex=mo1.group(7);
+                    objnonow=(int(objnohex,16));
+                    posy=(int(mo1.group(8),16))+20;
+                    #bf
+                    if posy<=191:
+                        posyhex="%0.2X" % posy
+                    if posy>191:
+                        objnonow=objnonow+1
+                        if objnonow>231:
+                            objnonow=225
+                            prefixposy=prefixposy+1
+                            prefixposyhex=format(math.trunc(prefixposy), 'x')
+                        objnohex=format(math.trunc(objnonow), 'x')
+                        posy=129+10;
+                        posyhex="%0.2X" % posy
+                else:
+                    pass
+    ylochex="E5A5A9"+\
+    "E19E81"+\
+    "E5A5AA"+\
+    "E5AB81"+\
+    "E5A5"+prefixposyhex+\
+    objnohex+posyhex+"81"
+    zlochex="E5A5A9"+\
+    "E19E81"+\
+    "E5A5A9"+\
+    "E19E81"+\
+    "E5A5AA"+\
+    "E5AB81"
+    #print(xlochex)
+    #print(ylochex)
+    #print(zlochex)
+    if (w<128):
+        xpixshex=format(w,'x')
+        xpixshex=str(xpixshex).zfill(2)
+    if (w>=128):
+        xquothexint=int(math.trunc(192+(w/64)));
+        xremhexint=int(math.trunc(128+(w%64)));
+        xquothexs=format(xquothexint,'x')
+        xremhexs=format(xremhexint,'x')
+        xpixshex=xquothexs+xremhexs;
 
-	if (h<128):
-		ypixshex=format(h,'x')
-		ypixshex=str(ypixshex).zfill(2)
-	if (h>=128):
-		yquothexint=int(math.trunc(192+(h/64)));
-		yremhexint=int(math.trunc(128+(h%64)));
-		yquothexs=format(yquothexint,'x')
-		yremhexs=format(yremhexint,'x')
-		ypixshex=yquothexs+yremhexs;
+    if (h<128):
+        ypixshex=format(h,'x')
+        ypixshex=str(ypixshex).zfill(2)
+    if (h>=128):
+        yquothexint=int(math.trunc(192+(h/64)));
+        yremhexint=int(math.trunc(128+(h%64)));
+        yquothexs=format(yquothexint,'x')
+        yremhexs=format(yremhexint,'x')
+        ypixshex=yquothexs+yremhexs;
 
-	yscalehexs="";
-	xscalehexs="";
-	ysuffix="";
-	if (w<h):
-		a=2717*w;
-		div=h*64;
-		xscalequotinta=int(math.trunc(a/div));
-		xscalequotint=148+xscalequotinta;
-		xscalequothexs=format(xscalequotint,'x')
-		xrem=(((a/div)-xscalequotinta)*64);
-		xscaleremint=int(128+xrem);
-		xscaleremhexs=format(xscaleremint,'x')
-		xscalehexs="E2"+xscalequothexs+xscaleremhexs;
-		yscalehexs="E2BE9D";
-	elif (w>h):
-		xscalehexs="E38EBF";
-		a=3711*h;
-		div=w*64;
-		yscalequotint=0;
-		yscalequotinta=int(math.trunc(a/div));
-		if (yscalequotinta>=43):
-			ysuffix="E3";
-			yscalequotint=int(math.trunc(128+(((3711*h)/(w*64))-43)));
-		if (yscalequotinta<43):
-			ysuffix="E2";
-			yscalequotint=int(math.trunc(148+((3711*h)/(w*64))));
-		yscalequothexs=format(yscalequotint,'x')
-		yrem=int(math.trunc((((a/div)-yscalequotinta)*64)));
-		yscaleremint=int(128+yrem);
-		yscaleremhexs=format(yscaleremint,'x')
-		yscalehexs=ysuffix+yscalequothexs+yscaleremhexs;
-	elif (w==h):
-		xscalehexs="E2BAA3";
-		yscalehexs="E2BAA3";
-	objscalehex="0303E293B903E293B903"+xscalehexs+"03"+yscalehexs+"22";
-	picnamehex=convasciitohex(picname,1)
-	hexc = newlinehex+secondobjhex+xlochex+ylochex+zlochex+objscalehex+picnamehex+xpixshex+ypixshex+"01"
+    yscalehexs="";
+    xscalehexs="";
+    ysuffix="";
+    if (w<h):
+        a=2717*w;
+        div=h*64;
+        xscalequotinta=int(math.trunc(a/div));
+        xscalequotint=148+xscalequotinta;
+        xscalequothexs=format(xscalequotint,'x')
+        xrem=(((a/div)-xscalequotinta)*64);
+        xscaleremint=int(128+xrem);
+        xscaleremhexs=format(xscaleremint,'x')
+        xscalehexs="E2"+xscalequothexs+xscaleremhexs;
+        yscalehexs="E2BE9D";
+    elif (w>h):
+        xscalehexs="E38EBF";
+        a=3711*h;
+        div=w*64;
+        yscalequotint=0;
+        yscalequotinta=int(math.trunc(a/div));
+        if (yscalequotinta>=43):
+            ysuffix="E3";
+            yscalequotint=int(math.trunc(128+(((3711*h)/(w*64))-43)));
+        if (yscalequotinta<43):
+            ysuffix="E2";
+            yscalequotint=int(math.trunc(148+((3711*h)/(w*64))));
+        yscalequothexs=format(yscalequotint,'x')
+        yrem=int(math.trunc((((a/div)-yscalequotinta)*64)));
+        yscaleremint=int(128+yrem);
+        yscaleremhexs=format(yscaleremint,'x')
+        yscalehexs=ysuffix+yscalequothexs+yscaleremhexs;
+    elif (w==h):
+        xscalehexs="E2BAA3";
+        yscalehexs="E2BAA3";
+    objscalehex="0303E293B903E293B903"+xscalehexs+"03"+yscalehexs+"22";
+    picnamehex=convasciitohex(picname,1)
+    hexc = newlinehex+secondobjhex+xlochex+ylochex+zlochex+objscalehex+picnamehex+xpixshex+ypixshex+"01"
 
-	print("number"+str(objno2))
-	print("column"+str(column))
-	print("w="+str(w))
-	print("h="+str(h))
-	print(str(objnonow)+"check")
-	print(objnohex)
-	print(newlinehex)
-	print(xlochex)
-	print(ylochex)
-	print(zlochex)
-	if os.path.exists(curnotefpc) and objno2>=1:
-		with open(curnotefpc,"rb") as f:
-			content=f.read()
-			cihx=str(binascii.hexlify(content).decode('utf-8'))
-			mo1=re.search(regexnote1,cihx)
-			mo2=re.compile(regexnote1)
-			if mo2.search(cihx):
-				print("found")
-				objno2=int(mo1.group(2), 16)
-				objno2+=1
-				prefixhex=""
-				if objno2==2:
-					print("found")
-					totalobjhex=str(format(objno2,'x')).zfill(2)
-					print(totalobjhex)
-					replace1 = re.sub(regexnote1, mo1.group(1)+totalobjhex, cihx)
-					##append=replace1+newlinehex+secondobjhex+objscalehex+picnamehex+xpixshex+ypixshex+"01"
-					append=replace1+hexc
-				if objno2>2 and objno2<128:
-					print("found2")
-					totalobjhex=str(format(objno2,'x')).zfill(2)
-					print(totalobjhex)
-					replace1 = re.sub(regexnote1, mo1.group(1)+totalobjhex, cihx)
-					append=replace1+hexc
-				if objno2==128:
-					print("found3")
-					prefix=194;
-					prefixhex=format(prefix,'x')
-					print(prefixhex)
-					totalobjhex=str(format(objno2,'x')).zfill(2)
-					print(totalobjhex)
-					replace1 = re.sub(regexnote1, mo1.group(1)+prefixhex+totalobjhex, cihx)
-					append=replace1+hexc
-				if objno2>128:
-					print("found4")
-					mo1=re.search(regexnote2,cihx)
-					mo2=re.compile(regexnote2)
-					if mo2.search(cihx):
-						print("found5")
-						objno2=int(mo1.group(3), 16)
-						objno2+=1
-						##prefix=int((objno2-128)/64);
-						##prefix=mo1.group(2)
-						prefix=int(mo1.group(2), 16)
-						##prefix=194+prefix;
-						prefix=prefix+int((objno2-128)/64);
-						#if (objno2<192):
-							#prefix=int((objno2-128)/64);
-							#prefix=194+prefix;
-						#if (objno2>=192):
-							#prefix=int((objno2-192)/64);
-							#prefix=195+prefix;
-						prefixhex=format(prefix,'x')
-						print(prefixhex)
-						if (objno2<192):
-							totalobjhex=str(format(objno2,'x')).zfill(2)
-						if (objno2>=192):
-							totalobjhex=str(format((128+int((objno2-192)%64)),'x')).zfill(2)
-						print(totalobjhex)
-						replace1 = re.sub(regexnote2, mo1.group(1)+prefixhex+totalobjhex, cihx)
-						append=replace1+hexc
-	appendtext(curnotefpc,append,"wb")
-	return objno2,curattachdirpc
+    print("number"+str(objno2))
+    print("column"+str(column))
+    print("w="+str(w))
+    print("h="+str(h))
+    print(str(objnonow)+"check")
+    print(objnohex)
+    print(newlinehex)
+    print(xlochex)
+    print(ylochex)
+    print(zlochex)
+    append=""
+    if os.path.exists(curnotefpc) and objno2>=0:
+        with open(curnotefpc,"rb") as f:
+            content=f.read()
+            cihx=str(binascii.hexlify(content).decode('utf-8'))
+            mo1=re.search(regexnote1,cihx)
+            mo2=re.compile(regexnote1)
+            if mo2.search(cihx):
+                print("found")
+                objno2=int(mo1.group(2), 16)
+                objno2+=1
+                prefixhex=""
+                if objno2<=2:
+                    print("found")
+                    totalobjhex=str(format(objno2,'x')).zfill(2)
+                    print(totalobjhex)
+                    replace1 = re.sub(regexnote1, mo1.group(1)+totalobjhex, cihx)
+                    ##append=replace1+newlinehex+secondobjhex+objscalehex+picnamehex+xpixshex+ypixshex+"01"
+                    append=replace1+hexc
+                if objno2>2 and objno2<128:
+                    print("found2")
+                    totalobjhex=str(format(objno2,'x')).zfill(2)
+                    print(totalobjhex)
+                    replace1 = re.sub(regexnote1, mo1.group(1)+totalobjhex, cihx)
+                    append=replace1+hexc
+                if objno2==128:
+                    print("found3")
+                    prefix=194;
+                    prefixhex=format(prefix,'x')
+                    print(prefixhex)
+                    totalobjhex=str(format(objno2,'x')).zfill(2)
+                    print(totalobjhex)
+                    replace1 = re.sub(regexnote1, mo1.group(1)+prefixhex+totalobjhex, cihx)
+                    append=replace1+hexc
+                if objno2>128:
+                    print("found4")
+                    mo1=re.search(regexnote2,cihx)
+                    mo2=re.compile(regexnote2)
+                    if mo2.search(cihx):
+                        print("found5")
+                        objno2=int(mo1.group(3), 16)
+                        objno2+=1
+                        ##prefix=int((objno2-128)/64);
+                        ##prefix=mo1.group(2)
+                        prefix=int(mo1.group(2), 16)
+                        ##prefix=194+prefix;
+                        prefix=prefix+int((objno2-128)/64);
+                        #if (objno2<192):
+                            #prefix=int((objno2-128)/64);
+                            #prefix=194+prefix;
+                        #if (objno2>=192):
+                            #prefix=int((objno2-192)/64);
+                            #prefix=195+prefix;
+                        prefixhex=format(prefix,'x')
+                        print(prefixhex)
+                        if (objno2<192):
+                            totalobjhex=str(format(objno2,'x')).zfill(2)
+                        if (objno2>=192):
+                            totalobjhex=str(format((128+int((objno2-192)%64)),'x')).zfill(2)
+                        print(totalobjhex)
+                        replace1 = re.sub(regexnote2, mo1.group(1)+prefixhex+totalobjhex, cihx)
+                        append=replace1+hexc
+    if append:
+        appendtext(curnotefpc,append,"wb")
+    return objno2,curattachdirpc
 
 def appendnewnote(newdir1,curindexpc,curindexoldpc):
     global replace1, replace2
@@ -608,130 +620,130 @@ import cv2
 import numpy as np
 a=1000
 def convertrest(imgdir,imgname,afterimg,a,ocvtype):
-	##a=0
-	print(imgname)
-	#time.sleep(3600)
-	if ocvtype==2 or ocvtype==21:
-		image = cv2.imread(imgdir+os.path.sep+imgname)
-	if ocvtype==1 or ocvtype==3:
-		image = cv2.imread(imgdir+os.path.sep+imgname)
-	imgw,imgh=imgsize(imgdir+os.path.sep+imgname)
-	timgh=0.10*imgw
-	bimgh=0.90*imgw
-	gray = cv2.cvtColor(image,cv2.COLOR_BGR2GRAY) # grayscale
-	_,thresh = cv2.threshold(gray,150,255,cv2.THRESH_BINARY_INV) # threshold
-	kernel = cv2.getStructuringElement(cv2.MORPH_CROSS,(3,3))
-	dilated = cv2.dilate(thresh,kernel,iterations = 13) # dilate
-	_, contours, hierarchy = cv2.findContours(dilated,cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_NONE) # get contours
-	# for each contour found, draw a rectangle around it on original image
-	print(contours)
-	for contour in contours:
-		a-=1
-		# get rectangle bounding contour
-		[x,y,w,h] = cv2.boundingRect(contour)
-		# discard areas that are too large
-		img=image[y-5:y+h+5, x-5:x+w+5]
-		if h>10 and w>10 and y>timgh and y<bimgh:
-			##cv2.rectangle(image,(x,y),(x+w,y+h),(255,0,255),2)
-			img=image[y-5:y+h+5, x-5:x+w+5]
-			cv2.imwrite(imgdir+os.path.sep+str(a)+"t2"+imgname, img)
-			cv2.rectangle(image, (x, y), (x+w, y+h), (255, 255, 255), -1)
-	# write original image with added contours to disk
-	cv2.imwrite(imgdir+os.path.sep+"contouredc2"+afterimg, image)
-	#ocv1/3
+    ##a=0
+    print(imgname)
+    #time.sleep(3600)
+    if ocvtype==2 or ocvtype==21:
+        image = cv2.imread(imgdir+os.path.sep+imgname)
+    if ocvtype==1 or ocvtype==3:
+        image = cv2.imread(imgdir+os.path.sep+imgname)
+    imgw,imgh=imgsize(imgdir+os.path.sep+imgname)
+    timgh=0.10*imgw
+    bimgh=0.90*imgw
+    gray = cv2.cvtColor(image,cv2.COLOR_BGR2GRAY) # grayscale
+    _,thresh = cv2.threshold(gray,150,255,cv2.THRESH_BINARY_INV) # threshold
+    kernel = cv2.getStructuringElement(cv2.MORPH_CROSS,(3,3))
+    dilated = cv2.dilate(thresh,kernel,iterations = 13) # dilate
+    _, contours, hierarchy = cv2.findContours(dilated,cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_NONE) # get contours
+    # for each contour found, draw a rectangle around it on original image
+    print(contours)
+    for contour in contours:
+        a-=1
+        # get rectangle bounding contour
+        [x,y,w,h] = cv2.boundingRect(contour)
+        # discard areas that are too large
+        img=image[y-5:y+h+5, x-5:x+w+5]
+        if h>10 and w>10 and y>timgh and y<bimgh:
+            ##cv2.rectangle(image,(x,y),(x+w,y+h),(255,0,255),2)
+            img=image[y-5:y+h+5, x-5:x+w+5]
+            cv2.imwrite(imgdir+os.path.sep+str(a)+"t2"+imgname, img)
+            cv2.rectangle(image, (x, y), (x+w, y+h), (255, 255, 255), -1)
+    # write original image with added contours to disk
+    cv2.imwrite(imgdir+os.path.sep+"contouredc2"+afterimg, image)
+    #ocv1/3
     ##converttext(dir_path,"13.jpg",1000)
     #ocv2
     ##converttext(dir_path,"conv0003.jpg",1000)
 
 def converttext(imgdir,imgname,afterimg,a,ocvtype,colour,testing):
-	large=cv2.imread(imgdir+os.path.sep+imgname)
-	imgw,imgh=imgsize(imgdir+os.path.sep+imgname)
-	timgh=0.10*imgw
-	bimgh=0.90*imgw
-	print(imgdir+os.path.sep+imgname+" "+str(imgw)+","+str(imgh))
-	if ocvtype==1 or ocvtype==2 or ocvtype==4 or ocvtype==5:
-		rgb=large
-		rgb=cv2.pyrDown(large)
-	if ocvtype==3:
-		rgb=cv2.pyrDown(large)
-	if ocvtype==21:
-		rgb=cv2.pyrUp(large)
-		rgb=cv2.pyrUp(rgb)
-	rgb2=rgb.copy()
-	small = cv2.cvtColor(rgb, cv2.COLOR_BGR2GRAY)
-	kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3, 3))
-	grad = cv2.morphologyEx(small, cv2.MORPH_GRADIENT, kernel)
+    large=cv2.imread(imgdir+os.path.sep+imgname)
+    imgw,imgh=imgsize(imgdir+os.path.sep+imgname)
+    timgh=0.10*imgw
+    bimgh=0.90*imgw
+    print(imgdir+os.path.sep+imgname+" "+str(imgw)+","+str(imgh))
+    if ocvtype==1 or ocvtype==2 or ocvtype==4 or ocvtype==5:
+        rgb=large
+        rgb=cv2.pyrDown(large)
+    if ocvtype==3:
+        rgb=cv2.pyrDown(large)
+    if ocvtype==21:
+        rgb=cv2.pyrUp(large)
+        rgb=cv2.pyrUp(rgb)
+    rgb2=rgb.copy()
+    small = cv2.cvtColor(rgb, cv2.COLOR_BGR2GRAY)
+    kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3, 3))
+    grad = cv2.morphologyEx(small, cv2.MORPH_GRADIENT, kernel)
 
-	_, bw = cv2.threshold(grad, 0.0, 255.0, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
-	kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (9, 1))
-	connected = cv2.morphologyEx(bw, cv2.MORPH_CLOSE, kernel)
-	#cv2.imwrite(imgdir+os.path.sep+'grab1.png',connected)
-	# using RETR_EXTERNAL instead of RETR_CCOMP
-	_, contours, hierarchy = cv2.findContours(connected.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+    _, bw = cv2.threshold(grad, 0.0, 255.0, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
+    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (9, 1))
+    connected = cv2.morphologyEx(bw, cv2.MORPH_CLOSE, kernel)
+    #cv2.imwrite(imgdir+os.path.sep+'grab1.png',connected)
+    # using RETR_EXTERNAL instead of RETR_CCOMP
+    _, contours, hierarchy = cv2.findContours(connected.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
 
-	mask = np.zeros(bw.shape, dtype=np.uint8)
-	#print(contours)
-	for idx in range(len(contours)):
+    mask = np.zeros(bw.shape, dtype=np.uint8)
+    #print(contours)
+    for idx in range(len(contours)):
 
-		x, y, w, h = cv2.boundingRect(contours[idx])
-		mask[y:y+h, x:x+w] = 0
-		cv2.drawContours(mask, contours, idx, (255, 255, 255), -1)
-		r = float(cv2.countNonZero(mask[y:y+h, x:x+w])) / (w * h)
-		if ocvtype==1 or ocvtype==3 :
-			if r > 0.45 and w > 100 and h > 10 and y>timgh and y<bimgh:
-				a-=1
-				##img = rgb[y:y+h-1, x:x+w-1]
-				img=rgb[y-5:y+h+5, x-5:x+w+5]
-				cv2.imwrite(imgdir+os.path.sep+str(a)+"t1"+imgname, img)
-				cv2.rectangle(rgb, (x, y), (x+w, y+h), (255, 255, 255), -1)
-		elif ocvtype==2 or ocvtype==21:
-			if r > 0.45 and w > 25 and h > 10:
-				a-=1
-				##img = rgb[y+15:y+h-15, x+15:x+w-15]
-				img=rgb[y:y+h, x:x+w]
-				if ocvtype==2:
-					cv2.imwrite(imgdir+os.path.sep+str(a)+"t1"+imgname, img)
-				elif ocvtype==21:
-					cv2.rectangle(rgb, (x-3, y-3), (x+w+3, y+h+3), (255, 255, 255), -1)
-				cv2.rectangle(rgb, (x, y), (x+w, y+h), (255, 255, 255), -1)
-				converttext(imgdir, str(a)+"t1"+imgname+".jpg","2"+afterimg+".jpg",a,4,"neutral",testing)
-		elif ocvtype==4:
-			if r > 0.45 and w > 25 and h > 10:
-				a-=1
-				##img = rgb[y:y+h-1, x:x+w-1]
-				img=rgb[y-5:y+h+5, x-5:x+w+5]
-				cv2.imwrite(imgdir+os.path.sep+str(a)+"t3"+imgname, img)
-				cv2.rectangle(rgb, (x, y), (x+w, y+h), (255, 255, 255), -1)
-		elif ocvtype==5:
-			if w > 25 and h > 10 and y>timgh and y<bimgh:
-				a-=1
-				##img = rgb[y:y+h-1, x:x+w-1]
-				img=rgb[y-5:y+h+5, x-5:x+w+5]
-				cv2.imwrite(imgdir+os.path.sep+str(a)+"t3"+imgname, img)
-				cv2.rectangle(rgb, (x, y), (x+w, y+h), (255, 255, 255), -1)
+        x, y, w, h = cv2.boundingRect(contours[idx])
+        mask[y:y+h, x:x+w] = 0
+        cv2.drawContours(mask, contours, idx, (255, 255, 255), -1)
+        r = float(cv2.countNonZero(mask[y:y+h, x:x+w])) / (w * h)
+        if ocvtype==1 or ocvtype==3 :
+            if r > 0.45 and w > 100 and h > 10 and y>timgh and y<bimgh:
+                a-=1
+                ##img = rgb[y:y+h-1, x:x+w-1]
+                img=rgb[y-5:y+h+5, x-5:x+w+5]
+                cv2.imwrite(imgdir+os.path.sep+str(a)+"t1"+imgname, img)
+                cv2.rectangle(rgb, (x, y), (x+w, y+h), (255, 255, 255), -1)
+        elif ocvtype==2 or ocvtype==21:
+            if r > 0.45 and w > 25 and h > 10:
+                a-=1
+                ##img = rgb[y+15:y+h-15, x+15:x+w-15]
+                img=rgb[y:y+h, x:x+w]
+                if ocvtype==2:
+                    cv2.imwrite(imgdir+os.path.sep+str(a)+"t1"+imgname, img)
+                elif ocvtype==21:
+                    cv2.rectangle(rgb, (x-3, y-3), (x+w+3, y+h+3), (255, 255, 255), -1)
+                cv2.rectangle(rgb, (x, y), (x+w, y+h), (255, 255, 255), -1)
+                converttext(imgdir, str(a)+"t1"+imgname+".jpg","2"+afterimg+".jpg",a,4,"neutral",testing)
+        elif ocvtype==4:
+            if r > 0.45 and w > 25 and h > 10:
+                a-=1
+                ##img = rgb[y:y+h-1, x:x+w-1]
+                img=rgb[y-5:y+h+5, x-5:x+w+5]
+                cv2.imwrite(imgdir+os.path.sep+str(a)+"t3"+imgname, img)
+                cv2.rectangle(rgb, (x, y), (x+w, y+h), (255, 255, 255), -1)
+        elif ocvtype==5:
+            if w > 25 and h > 10 and y>timgh and y<bimgh:
+                a-=1
+                ##img = rgb[y:y+h-1, x:x+w-1]
+                img=rgb[y-5:y+h+5, x-5:x+w+5]
+                cv2.imwrite(imgdir+os.path.sep+str(a)+"t3"+imgname, img)
+                cv2.rectangle(rgb, (x, y), (x+w, y+h), (255, 255, 255), -1)
 
-		if testing and y>timgh and y<bimgh:
-			#img0=rgb[y-5:y+h+5, x-5:x+w+5]
-			#cv2.imwrite(imgdir+os.path.sep+str(a)+"t0qc"+imgname, img0)
-			#cv2.rectangle(rgb2, (x, y), (x+w, y+h), (255, 255, 255), -1)
-			#print("testing")
-			pass
-	if ocvtype==1 or ocvtype==3:
-		##rgb = cv2.pyrUp(rgb)
-		cv2.imwrite(imgdir+os.path.sep+afterimg, rgb)
-		#convertrest(imgdir,"contouredc"+imgname,afterimg,a,ocvtype)
-		#converttext(imgdir,"contouredc"+imgname,"contouredc2"+afterimg,a,5,"neutral",testing)
-	if ocvtype==4:
-		##rgb = cv2.pyrUp(rgb)
-		cv2.imwrite(imgdir+os.path.sep+afterimg, rgb)
-		convertrest(imgdir,"contouredc"+imgname,afterimg,a,ocvtype)
-	if ocvtype==5:
-		cv2.imwrite(imgdir+os.path.sep+afterimg, rgb)
-#	cv2.imwrite(imgdir+os.path.sep+afterimg+".jpg", img)
-	if testing:
-		#cv2.imwrite(imgdir+os.path.sep+"mask"+afterimg, mask)
-		#cv2.imwrite(imgdir+os.path.sep+"rect2"+afterimg, rgb2)
-		print("testing")
+        if testing and y>timgh and y<bimgh:
+            #img0=rgb[y-5:y+h+5, x-5:x+w+5]
+            #cv2.imwrite(imgdir+os.path.sep+str(a)+"t0qc"+imgname, img0)
+            #cv2.rectangle(rgb2, (x, y), (x+w, y+h), (255, 255, 255), -1)
+            #print("testing")
+            pass
+    if ocvtype==1 or ocvtype==3:
+        ##rgb = cv2.pyrUp(rgb)
+        cv2.imwrite(imgdir+os.path.sep+afterimg, rgb)
+        #convertrest(imgdir,"contouredc"+imgname,afterimg,a,ocvtype)
+        #converttext(imgdir,"contouredc"+imgname,"contouredc2"+afterimg,a,5,"neutral",testing)
+    if ocvtype==4:
+        ##rgb = cv2.pyrUp(rgb)
+        cv2.imwrite(imgdir+os.path.sep+afterimg, rgb)
+        convertrest(imgdir,"contouredc"+imgname,afterimg,a,ocvtype)
+    if ocvtype==5:
+        cv2.imwrite(imgdir+os.path.sep+afterimg, rgb)
+#    cv2.imwrite(imgdir+os.path.sep+afterimg+".jpg", img)
+    if testing:
+        #cv2.imwrite(imgdir+os.path.sep+"mask"+afterimg, mask)
+        #cv2.imwrite(imgdir+os.path.sep+"rect2"+afterimg, rgb2)
+        print("testing")
 def convertcolour(imgdir,imgname,afterimg,colour,size):
     a=1000
     idx=0
@@ -788,146 +800,146 @@ def pushnewdir1toand(newdir1,curindexpc,curindexoldpc):
         appendnewnote(newdir1,curindexpc,curindexoldpc)
     return True
 def runpdftonote(convpdfdirpc,pdfdir,pdfname,pagestart,pageend,ocvtype,continuenote,testing):
-	print("startpdftonote")
-	column=1
-	if not continuenote:
-		if os.path.exists(curnotelocpc):
-			os.remove(curnotelocpc)
-	CN=checknotz(curnotelocpc)
-	newdir1=CN[0]
-	objno2=CN[1]
-	pageend=pageend+1
-	if noconversion:
-		print("noconv")
-		a=0
-		b=objno2
-		for i in range(pagestart,pageend) :
-			a+=1
-			print("Page"+str(i))
-			imgname=convertpdf2jpg(pdfdir,pdfname,quality,i,outputdir)
-			if a==10 or i==(pageend-1):
-				convertjpg2note(outputdir,column,newdir1,objno2)
-				a=0
-				column+=1
-			print(imgname)
-	if not noconversion:
-		for i in range(pagestart,pageend) :
-			a=1000
-			##i-=1
-			imgname=convertpdf2jpg(pdfdir,pdfname,quality,i,convpdfdirpc)
-			print(str(i)+" "+imgname)
-			if testing:
-				pdfconvimg=convpdfdirpc+os.path.sep+"contouredc"+imgname+".jpg"
-				pdfdir0img=dir0+os.path.sep+"contouredc"+imgname+".jpg"
-				converttext(convpdfdirpc,imgname+".jpg","contouredc"+imgname+".jpg",1000,1,"neutral",testing)
-				a-=1
-				column+=1
-			if not testing:
-				straight=True
-				if not straight:
-					pdfconvimg=convpdfdirpc+os.path.sep+"contouredc"+imgname+".jpg"
-					pdfdir0img=dir0+os.path.sep+"contouredc"+imgname+".jpg"
-					#convertcolour(convpdfdirpc,imgname+".jpg","contouredc"+imgname+".jpg","green","down")
-					convertcolour(convpdfdirpc,imgname+".jpg","contouredc"+imgname+".jpg","green","")
-					subprocess.call("mv "+pdfconvimg+" "+pdfdir0img,shell=True)
-					objno2=convertjpg2note(convpdfdirpc,2,newdir1,1)
+    print("startpdftonote")
+    column=1
+    if not continuenote:
+        if os.path.exists(curnotelocpc):
+            os.remove(curnotelocpc)
+    CN=checknotz(curnotelocpc)
+    newdir1=CN[0]
+    objno2=CN[1]
+    pageend=pageend+1
+    if noconversion:
+        print("noconv")
+        a=0
+        b=objno2
+        for i in range(pagestart,pageend) :
+            a+=1
+            print("Page"+str(i))
+            imgname=convertpdf2jpg(pdfdir,pdfname,quality,i,outputdir)
+            if a==10 or i==(pageend-1):
+                convertjpg2note(outputdir,column,newdir1,objno2)
+                a=0
+                column+=1
+            print(imgname)
+    if not noconversion:
+        for i in range(pagestart,pageend) :
+            a=1000
+            ##i-=1
+            imgname=convertpdf2jpg(pdfdir,pdfname,quality,i,convpdfdirpc)
+            print(str(i)+" "+imgname)
+            if testing:
+                pdfconvimg=convpdfdirpc+os.path.sep+"contouredc"+imgname+".jpg"
+                pdfdir0img=dir0+os.path.sep+"contouredc"+imgname+".jpg"
+                converttext(convpdfdirpc,imgname+".jpg","contouredc"+imgname+".jpg",1000,1,"neutral",testing)
+                a-=1
+                column+=1
+            if not testing:
+                straight=True
+                if not straight:
+                    pdfconvimg=convpdfdirpc+os.path.sep+"contouredc"+imgname+".jpg"
+                    pdfdir0img=dir0+os.path.sep+"contouredc"+imgname+".jpg"
+                    #convertcolour(convpdfdirpc,imgname+".jpg","contouredc"+imgname+".jpg","green","down")
+                    convertcolour(convpdfdirpc,imgname+".jpg","contouredc"+imgname+".jpg","green","")
+                    subprocess.call("mv "+pdfconvimg+" "+pdfdir0img,shell=True)
+                    objno2=convertjpg2note(convpdfdirpc,2,newdir1,1)
 
-					shutil.rmtree(convpdfdirpc)
-					checkdir(convpdfdirpc,"")
-					subprocess.call("mv "+pdfdir0img+" "+pdfconvimg,shell=True)
-					convertcolour(convpdfdirpc,"contouredc"+imgname+".jpg","contouredc"+imgname+".jpg","blue","")
-					subprocess.call("mv "+pdfconvimg+" "+pdfdir0img,shell=True)
-					objno2=convertjpg2note(convpdfdirpc,1,newdir1,objno2)
+                    shutil.rmtree(convpdfdirpc)
+                    checkdir(convpdfdirpc,"")
+                    subprocess.call("mv "+pdfdir0img+" "+pdfconvimg,shell=True)
+                    convertcolour(convpdfdirpc,"contouredc"+imgname+".jpg","contouredc"+imgname+".jpg","blue","")
+                    subprocess.call("mv "+pdfconvimg+" "+pdfdir0img,shell=True)
+                    objno2=convertjpg2note(convpdfdirpc,1,newdir1,objno2)
 
-					shutil.rmtree(convpdfdirpc)
-					checkdir(convpdfdirpc,"")
-					subprocess.call("mv "+pdfdir0img+" "+pdfconvimg,shell=True)
-					converttext(convpdfdirpc,"contouredc"+imgname+".jpg","contouredc"+imgname+".jpg",1000,1,"neutral","")
-					subprocess.call("mv "+pdfconvimg+" "+pdfdir0img,shell=True)
-					objno2=convertjpg2note(convpdfdirpc,2,newdir1,objno2)
+                    shutil.rmtree(convpdfdirpc)
+                    checkdir(convpdfdirpc,"")
+                    subprocess.call("mv "+pdfdir0img+" "+pdfconvimg,shell=True)
+                    converttext(convpdfdirpc,"contouredc"+imgname+".jpg","contouredc"+imgname+".jpg",1000,1,"neutral","")
+                    subprocess.call("mv "+pdfconvimg+" "+pdfdir0img,shell=True)
+                    objno2=convertjpg2note(convpdfdirpc,2,newdir1,objno2)
 
-				if straight:
-					#shutil.rmtree(convpdfdirpc)
-					#checkdir(convpdfdirpc,"")
-					#subprocess.call("mv "+pdfdir0img+" "+pdfconvimg,shell=True)
-					converttext(convpdfdirpc,imgname+".jpg","contouredc"+imgname+".jpg",1000,1,"neutral","")
-					#subprocess.call("mv "+pdfconvimg+" "+pdfdir0img,shell=True)
-					objno2=convertjpg2note(convpdfdirpc,column,newdir1,objno2)
+                if straight:
+                    #shutil.rmtree(convpdfdirpc)
+                    #checkdir(convpdfdirpc,"")
+                    #subprocess.call("mv "+pdfdir0img+" "+pdfconvimg,shell=True)
+                    converttext(convpdfdirpc,imgname+".jpg","contouredc"+imgname+".jpg",1000,1,"neutral","")
+                    #subprocess.call("mv "+pdfconvimg+" "+pdfdir0img,shell=True)
+                    objno2=convertjpg2note(convpdfdirpc,column,newdir1,objno2)
 
-	            ###subprocess.call("cp "+convpdfdirpc+os.path.sep+imgname+".jpg "+pdfdir+os.path.sep+"attach/00.jpg",shell=True)
-	            ###subprocess.call("cp "+convpdfdirpc+os.path.sep+imgname+".jpg "+pdfdir+os.path.sep+"attach",shell=True)
-				a-=1
-				column+=1
-	if args.pdfmdir :
-		relevant_path=args.pdfmdir
-		included_extensions = ['pdf']
-		pdf_names = [fn for fn in os.listdir(relevant_path)
+                ###subprocess.call("cp "+convpdfdirpc+os.path.sep+imgname+".jpg "+pdfdir+os.path.sep+"attach/00.jpg",shell=True)
+                ###subprocess.call("cp "+convpdfdirpc+os.path.sep+imgname+".jpg "+pdfdir+os.path.sep+"attach",shell=True)
+                a-=1
+                column+=1
+    if args.pdfmdir :
+        relevant_path=args.pdfmdir
+        included_extensions = ['pdf']
+        pdf_names = [fn for fn in os.listdir(relevant_path)
                       if any(fn.endswith(ext) for ext in included_extensions)]
-		print(len(pdf_names))
-		for i in range(0,len(pdf_names)):
-			print(pdf_names[i])
-			subprocess.call("python3 "+pdftonotedir+" -pdir \""+relevant_path+"\" -p \""+pdf_names[i]+"\" -d 100 -t 1 -nc 1" ,shell=True)
+        print(len(pdf_names))
+        for i in range(0,len(pdf_names)):
+            print(pdf_names[i])
+            subprocess.call("python3 "+pdftonotedir+" -pdir \""+relevant_path+"\" -p \""+pdf_names[i]+"\" -d 100 -t 1 -nc 1" ,shell=True)
 def runshowpdf(convpdfdirpc,pdfdir,pdfname,pagestart,pageend,ocvtype,continuenote):
-	import matplotlib.pyplot as plt
-	import matplotlib.image as mpimg
-	convpdfdirpc1=convpdfdirpc+os.path.sep+pdfname
-	if not os.path.exists(convpdfdirpc1):
-		os.makedirs(convpdfdirpc1)
-	imgname=convertpdf2jpg(pdfdir,pdfname,quality,pagestart,convpdfdirpc1)
-	imgdir=convpdfdirpc+os.path.sep+pdfname+os.path.sep+imgname+".jpg"
-	print(imgdir)
-	img=mpimg.imread(imgdir)
-	imgplot=plt.imshow(img)
-	#countarea
-	plt.show()
-	image = PIL.Image.open(open(imgdir, 'rb'))
-	#image.show()
-	return True
+    import matplotlib.pyplot as plt
+    import matplotlib.image as mpimg
+    convpdfdirpc1=convpdfdirpc+os.path.sep+pdfname
+    if not os.path.exists(convpdfdirpc1):
+        os.makedirs(convpdfdirpc1)
+    imgname=convertpdf2jpg(pdfdir,pdfname,quality,pagestart,convpdfdirpc1)
+    imgdir=convpdfdirpc+os.path.sep+pdfname+os.path.sep+imgname+".jpg"
+    print(imgdir)
+    img=mpimg.imread(imgdir)
+    imgplot=plt.imshow(img)
+    #countarea
+    plt.show()
+    image = PIL.Image.open(open(imgdir, 'rb'))
+    #image.show()
+    return True
 
 #https://stackoverflow.com/questions/17466561/best-way-to-structure-a-tkinter-application
 #import tkinter as tk
 class MainApplication(tk.Frame):
-	def __init__(self, parent, *args, **kwargs):
-		tk.Frame.__init__(self, parent, *args, **kwargs)
-		self.parent = parent
+    def __init__(self, parent, *args, **kwargs):
+        tk.Frame.__init__(self, parent, *args, **kwargs)
+        self.parent = parent
 
-	if __name__ == "__main__":
-		rootimgv = tk.Tk()
-		#aMainApplication(root).pack(side="top", fill="both", expand=True)
-		rootimgv.mainloop()
+    if __name__ == "__main__":
+        rootimgv = tk.Tk()
+        #aMainApplication(root).pack(side="top", fill="both", expand=True)
+        rootimgv.mainloop()
 def prevpage(pdfdir,page):
-	page+=1
-	showpdf()
-	return True
+    page+=1
+    showpdf()
+    return True
 def nextpage(pdfdir,page):
-	page+=1
-	showpdf()
-	return True
+    page+=1
+    showpdf()
+    return True
 def detecttouch():
-	return True
+    return True
 def progresswhitelist():
-	return True
+    return True
 def whitelistarea(xpos,ypos,wimg,himg):
-	return True
+    return True
 def progresspage():
-	return True
+    return True
 
 def convertpdf2jpg(pdfdir,pdfname,quality,page,convpdfdirpc):
-	##for i in range(int(pagestart),int(pageend)):
-	#ppmcommand2="convert -verbose -density "+str(quality)+" -trim "+pdfdir+os.path.sep+pdfname+"["+str(page)+"] -quality 100 -flatten -sharpen 0x1.0 "+convpdfdirpc+os.path.sep+convpname
-	pdfpage=subprocess.getoutput("pdfinfo \""+pdfdir+os.path.sep+pdfname+"\" | grep Pages: | awk '{print $2}'")
-	pagez=str(page).zfill(4)
-	convpname="conv"+pagez
-	ppmcommand="pdftoppm \""+pdfdir+os.path.sep+pdfname+"\" \""+convpdfdirpc+os.path.sep+convpname+"\" -jpeg -f "+str(page)+" -singlefile"
-	print(ppmcommand)
-	print(convpname)
-	subprocess.call(ppmcommand,shell=True)
-	imgdir=convpdfdirpc+os.path.sep+convpname+".jpg"
-	while True:
-		if os.path.exists(imgdir):
-			print(imgdir)
-			break
-	return convpname
+    ##for i in range(int(pagestart),int(pageend)):
+    #ppmcommand2="convert -verbose -density "+str(quality)+" -trim "+pdfdir+os.path.sep+pdfname+"["+str(page)+"] -quality 100 -flatten -sharpen 0x1.0 "+convpdfdirpc+os.path.sep+convpname
+    pdfpage=subprocess.getoutput("pdfinfo \""+pdfdir+os.path.sep+pdfname+"\" | grep Pages: | awk '{print $2}'")
+    pagez=str(page).zfill(4)
+    convpname="conv"+pagez
+    ppmcommand="pdftoppm \""+pdfdir+os.path.sep+pdfname+"\" \""+convpdfdirpc+os.path.sep+convpname+"\" -jpeg -f "+str(page)+" -singlefile"
+    print(ppmcommand)
+    print(convpname)
+    subprocess.call(ppmcommand,shell=True)
+    imgdir=convpdfdirpc+os.path.sep+convpname+".jpg"
+    while True:
+        if os.path.exists(imgdir):
+            print(imgdir)
+            break
+    return convpname
 def convertpdf2jpg2(pdfdir,pdfname,quality,page,convpdfdirpc,ver):
         ##for i in range(int(pagestart),int(pageend)):
         #ppmcommand2="convert -verbose -density "+str(quality)+" -trim "+pdfdir+os.path.sep+pdfname+"["+str(page)+"] -quality 100 -flatten -sharpen 0x1.0 "+convpdfdirpc+os.path.sep+convpname
@@ -990,16 +1002,16 @@ def convertpdf2jpg2(pdfdir,pdfname,quality,page,convpdfdirpc,ver):
         return imgdir
 
 def conwindirtovwsldir(windir):
-	checkdir="C:\\Windows"
-	wsldir=""
-	#if os.path.exists(checkdir):
-		#userid=subprocess.getoutput("awk -F: '!/root/ && /(\/bin\/bash)/ {print $1}' /etc/passwd")
-		#userid=subprocess.getoutput("echo \"%USERNAME%\"")
-	print("wd="+windir)
-	wsldir=re.sub(r"C:","/mnt/c",windir)
-	wsldir=re.sub(r"\\","/",wsldir)
-	print("ad="+wsldir)
-	return wsldir
+    checkdir="C:\\Windows"
+    wsldir=""
+    #if os.path.exists(checkdir):
+        #userid=subprocess.getoutput("awk -F: '!/root/ && /(\/bin\/bash)/ {print $1}' /etc/passwd")
+        #userid=subprocess.getoutput("echo \"%USERNAME%\"")
+    print("wd="+windir)
+    wsldir=re.sub(r"C:","/mnt/c",windir)
+    wsldir=re.sub(r"\\","/",wsldir)
+    print("ad="+wsldir)
+    return wsldir
 
 def convertjpg2note(folderlocation,column,newdir1,objno2):
     print("runengine")
@@ -1027,50 +1039,50 @@ def convertjpg2note(folderlocation,column,newdir1,objno2):
     return objno2re
 
 def setvarconvpdf():
-	global ocvtype,noconversion
-	testing=False
-	continuenote=False
-	showpdf=False
-	if args.testing:
-		testing=True
-	if args.continuenote :
-		continuenote=True
-	if args.pdfdir:
-		pdfdir=args.pdfdir
-	else:
-		pdfdir=dir0
-		#print("Slide=100")
-		#print("Tbook=300")
-		#print("Work=300/Adobe")
-	if args.pdfname:
-		shutil.rmtree(convpdfdirpc)
-		checkdir(convpdfdirpc,"")
-		pdfname=args.pdfname
-		if args.density :
-			quality=int(args.density)
-		if args.pagestart :
-			pagestart=int(args.pagestart)
-		if args.pageend :
-			pageend=int(args.pageend)
-			pageend=pageend
-		else:
-			pdfpage=subprocess.getoutput("pdfinfo \""+pdfdir+os.path.sep+pdfname+"\" | grep Pages: | awk '{print $2}'")
-			pageend=int(pdfpage)
-		if args.type:
-			ocvtype=int(args.type)
-		if args.noconversion=="1":
-			noconversion=True
-		print("PDFDir="+pdfdir+os.path.sep+pdfname+" Page="+str(pagestart)+" to "+str(pageend))
-		print("ocvt"+str(ocvtype))
-		if args.showpdf:
-			runshowpdf(convpdfdirpc,pdfdir,pdfname,pagestart,pageend,ocvtype,continuenote)
-		if not args.showpdf:
-			if not testing:
-				runpdftonote(convpdfdirpc,pdfdir,pdfname,pagestart,pageend,ocvtype,continuenote,"")
-			if testing:
-				continuenote=False
-				runpdftonote(convpdfdirpc,pdfdir,pdfname,pagestart,pageend,ocvtype,continuenote,testing)
-	return True
+    global ocvtype,noconversion
+    testing=False
+    continuenote=False
+    showpdf=False
+    if args.testing:
+        testing=True
+    if args.continuenote :
+        continuenote=True
+    if args.pdfdir:
+        pdfdir=args.pdfdir
+    else:
+        pdfdir=dir0
+        #print("Slide=100")
+        #print("Tbook=300")
+        #print("Work=300/Adobe")
+    if args.pdfname:
+        shutil.rmtree(convpdfdirpc)
+        checkdir(convpdfdirpc,"")
+        pdfname=args.pdfname
+        if args.density :
+            quality=int(args.density)
+        if args.pagestart :
+            pagestart=int(args.pagestart)
+        if args.pageend :
+            pageend=int(args.pageend)
+            pageend=pageend
+        else:
+            pdfpage=subprocess.getoutput("pdfinfo \""+pdfdir+os.path.sep+pdfname+"\" | grep Pages: | awk '{print $2}'")
+            pageend=int(pdfpage)
+        if args.type:
+            ocvtype=int(args.type)
+        if args.noconversion=="1":
+            noconversion=True
+        print("PDFDir="+pdfdir+os.path.sep+pdfname+" Page="+str(pagestart)+" to "+str(pageend))
+        print("ocvt"+str(ocvtype))
+        if args.showpdf:
+            runshowpdf(convpdfdirpc,pdfdir,pdfname,pagestart,pageend,ocvtype,continuenote)
+        if not args.showpdf:
+            if not testing:
+                runpdftonote(convpdfdirpc,pdfdir,pdfname,pagestart,pageend,ocvtype,continuenote,"")
+            if testing:
+                continuenote=False
+                runpdftonote(convpdfdirpc,pdfdir,pdfname,pagestart,pageend,ocvtype,continuenote,testing)
+    return True
 args = parse_args()
 setvarconvpdf()
 #convertcolour(convpdfdirpc,imgname+".jpg","green")
