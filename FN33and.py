@@ -403,7 +403,9 @@ def gettkinterxypos(eventorigin,convimgdir,wledimgdir,pdfdir,pdfname,lastpage,an
             textclick=0
         else:
             pass
-        print(str(objno2))
+        print("objno2="+str(objno2))
+        if (objno2>=350):
+            newdir1,objno2=newnotz(fnnotesdirpc,fnnotesdirpc)
     callback()
     return True
 def cutarea(pdfdir,pdfname,lastpage,actxp1,actyp1,actxp2,actyp2,convimgdir,anglecorrection):
@@ -495,7 +497,7 @@ def undolatestwl(pdfdir,pdfname,convimgdir,wledimgdir,lastpage):
         target=cv2.imread(wledimgdir)
         if ".png" in wledimgdir:
             ###print("png")
-            print(str(xpos1),str(xpos2),str(ypos1),str(ypos2))
+            ###print(str(xpos1),str(xpos2),str(ypos1),str(ypos2))
             src=target
             cv2.rectangle(src, (xpos1, ypos1), (xpos2+3, ypos2+3), black_color, -1)
             tmp = cv2.cvtColor(src, cv2.COLOR_BGR2GRAY)
@@ -638,7 +640,7 @@ def DisplayImage(pdfdir,pdfname,choosepage,loadimg0,*args,**kwargs):
             b, g, r = cv2.split(src)
             rgba = [b,g,r, alpha]
             load1 = cv2.merge(rgba,4)
-    ###print(imgdir+" "+str(lastpage))
+    ###print(imgdir1+" "+str(lastpage))
 
     #global Home,panel,screenw,screenh
     #global loadimg
