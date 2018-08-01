@@ -131,6 +131,7 @@ def checkadbdevices():
     deviceconnected="device"
     if not deviceconnected in curanddevice:
         print("notconnected")
+        pass
     return curanddevice
 def runadbcommand(command):
     curanddevice=checkadbdevices()
@@ -143,8 +144,8 @@ dir0=os.path.dirname(os.path.realpath(__file__))
 regexindex1=r'(01)(.{8})(.{4})(011a)'
 patternpic=r'(010ac480c391c391c391(?!.*010ac480c391c391c391))(.*?)(01c88a)(.{36})(.{28})(.{2})(.{2})(.{2})(.{2})(.{36})(0303)(.{102,})'
 regexindex2=r'(1123236e6f7465732f2323756e66696c6564(?!.*1123236e6f7465732f2323756e66696c6564))(.*?)(00\d\d\d\d00\d\d)(2323)'
-regexnote1=r'(0302010201)(.{2})'
-regexnote2=r'(0302010201)(.{2})(.{2})'
+regexnote1=r'(0302010201)(.{2})(0a){0,1}'
+regexnote2=r'(0302010201)(.{2})(.{2})(0a){0,1}'
 thedir=dir0+os.path.sep+"ConvPDF"
 wsldir="/mnt/c/Windows"
 
@@ -744,6 +745,7 @@ def converttext(imgdir,imgname,afterimg,a,ocvtype,colour,testing):
         #cv2.imwrite(imgdir+os.path.sep+"mask"+afterimg, mask)
         #cv2.imwrite(imgdir+os.path.sep+"rect2"+afterimg, rgb2)
         print("testing")
+        pass
 def convertcolour(imgdir,imgname,afterimg,colour,size):
     a=1000
     idx=0
@@ -931,6 +933,7 @@ def convertpdf2jpg(pdfdir,pdfname,quality,page,convpdfdirpc):
     pagez=str(page).zfill(4)
     convpname="conv"+pagez
     ppmcommand="pdftoppm \""+pdfdir+os.path.sep+pdfname+"\" \""+convpdfdirpc+os.path.sep+convpname+"\" -jpeg -f "+str(page)+" -singlefile"
+    #ppmcommand="pdftoppm \""+pdfdir+os.path.sep+pdfname+"\" \""+convpdfdirpc+os.path.sep+convpname+"\" -png -f "+str(page)+" -singlefile"
     print(ppmcommand)
     print(convpname)
     subprocess.call(ppmcommand,shell=True)
@@ -992,6 +995,7 @@ def convertpdf2jpg2(pdfdir,pdfname,quality,page,convpdfdirpc,ver):
         imgdir=img0+".jpg"
         if not os.path.exists(imgdir):
                 ppmcommand=pdftoppmcommand+" \""+pdfdir+os.path.sep+pdfname+"\" \""+img0+"\" -jpeg -f "+str(page)+" -singlefile"
+                #ppmcommand=pdftoppmcommand+" \""+pdfdir+os.path.sep+pdfname+"\" \""+img0+"\" -png -f "+str(page)+" -singlefile"
                 print(ppmcommand)
                 subprocess.call(ppmcommand,shell=True)
                 #time.sleep(5)
