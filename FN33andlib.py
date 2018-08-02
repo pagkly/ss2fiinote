@@ -106,8 +106,8 @@ def getdateinhex0():
 def getdateinhex():
     diffDayHex, diffMonthHex=getdateinhex0()
     difftime=diffDayHex+diffMonthHex
-    ###print(diffDayHex, diffMonthHex)
-    ###print(difftime)
+    print(diffDayHex, diffMonthHex)
+    print(difftime)
     return difftime
 def imgsize(imgdir):
     im = PIL.Image.open(imgdir)
@@ -122,15 +122,15 @@ def SS1(clickStartX,clickStartY,clickStopX,clickStopY,curattachdirpc):
     im=grabimg(clickStartX,clickStartY,clickStopX,clickStopY)
     w,h=im.size
     im.save(imgdir)
-    ###print(imgdir)
+    print(imgdir)
     return w,h,picname,newdir1,objno2
 def checkadbdevices():
     global curanddevice
     curanddevice=subprocess.getoutput("adb devices | awk '{gsub(\"List of devices attached\",\"\");print}'")
-    ###print(curanddevice)
+    print(curanddevice)
     deviceconnected="device"
     if not deviceconnected in curanddevice:
-        ###print("notconnected")
+        print("notconnected")
         pass
     return curanddevice
 def runadbcommand(command):
@@ -166,13 +166,13 @@ if sys.platform in ['linux', 'linux2']:
         subprocess.call("nautilus file://"+schooldirpc,shell=True)
     if os.path.exists(wsldir):
         thedirw="C:\\Users\\"+userid+"\\AppData\\Roaming\\FiiNote\\@pagkly\\notes"
-        ###print(thedirw)
+        print(thedirw)
         #thedir=subprocess.getoutput("echo "+thedirw+" | awk '{gsub(\"C:\",\"/mnt/c\");gsub(\"\\\\\",\"/\");print}'")
         thedir=re.sub(r"C:","/mnt/c",thedirw)
         thedir=re.sub(r"\\","/",thedir)
-        ###print(thedir)
+        print(thedir)
 if sys.platform in ['Windows', 'win32', 'cygwin']:
-    ###print("Windows10")
+    print("Windows10")
     userid=subprocess.getoutput("echo %USERNAME%")
     userhomedir=subprocess.getoutput("echo %USERPROFILE%")
     dirand="Z:"
@@ -227,7 +227,7 @@ def setvarnotz(thedir,newdir1):
         ##subprocess.call("adb shell touch "+curnotefand,shell=True)
         firstlineappend(newdir1,curnotefpc)
         runadbcommand("adb push "+curnotefpc+" "+curnotzand)
-        ###print("appendfline")
+        print("appendfline")
     appendtext(curnotelocpc,newdir1+".notz","w+")
     runadbcommand("adb push "+curnotzpc+" "+fnnotesdirandint)
     return curnotzpc,curnotefpc,curattachdirpc,curnotzand,curattachdirand
@@ -241,9 +241,9 @@ def checknotz(curnotelocpc):
                     newdir1=line
                     newdir1 = re.sub('.notz', '', newdir1)
         setvarnotz(fnnotesdirpc,newdir1)
-        ###print(curnotefpc)
+        print(curnotefpc)
         if os.path.exists(curnotzpc) and os.path.exists(curnotefpc) and os.path.exists(curattachdirpc):
-            ###print("checkingcnf")
+            print("checkingcnf")
             with open(curnotefpc,"rb") as f:
                 content=f.read()
                 contenthex=str(binascii.hexlify(content).decode('utf-8'))
@@ -260,8 +260,11 @@ def checknotz(curnotelocpc):
                             if mo2.search(contenthex):
                                 prefix=int(mo1.group(2), 16)
                                 objno2=int(mo1.group(3), 16)
-                                prefix0=((prefix-194)*64)
-                                objno2=prefix0+objno2
+                                if prefix==194:
+                                    objno2=objno2
+                                if prefix>194:
+                                    prefix0=((prefix-194)*64)+128
+                                    objno2=prefix0+objno2
                                 print("objno2long="+str(objno2))
                             else:
                                 objno2=1
@@ -272,8 +275,8 @@ def checknotz(curnotelocpc):
             newdir1,objno2=newnotz(fnnotesdirpc,fnnotesdirpc)
     elif not os.path.exists(curnotelocpc) or (not os.path.exists(curnotzpc)):
         newdir1,objno2=newnotz(fnnotesdirpc,fnnotesdirpc)
-    ###print(str(objno2))
-    if (objno2>=350):
+    print(str(objno2))
+    if (objno2>=400):
         newdir1,objno2=newnotz(fnnotesdirpc,fnnotesdirpc)
     return newdir1,objno2,curnotzpc,curnotefpc,curattachdirpc,curnotzand,curattachdirand
 
@@ -358,7 +361,7 @@ def appendnewpic(w,h,picname,newdir1,objno2,column):
         objnonow=224+objnonowquot14+1
     prefixposyhex=format(math.trunc(prefixposy), 'x')
     objnohex=format(math.trunc(objnonow), 'x')
-    print("numberc1"+str(objno2))
+    print("numbc1="+str(objno2))
     if (quot==0):
         if (rem>0):
             posyhex="9E"
@@ -371,9 +374,9 @@ def appendnewpic(w,h,picname,newdir1,objno2,column):
             posyhex="81"
 
     if column=="nearlatest":
-        ###print("picnearlatest;"+str(objno2))
+        print("picnearlatest;"+str(objno2))
         if objno2<=2:
-            ###print("picnearlatest1")
+            print("picnearlatest1")
             column=1
             column=int(column)
             columnc1=int(column/8);
@@ -401,9 +404,9 @@ def appendnewpic(w,h,picname,newdir1,objno2,column):
                 cihx=str(binascii.hexlify(content).decode('utf-8'))
                 regexc1=re.compile(patternpic)
                 #mo1= re.search(patternpic,cihx)
-                ###print("findpatternpic1")
+                print("findpatternpic1")
                 if regexc1.search(cihx):
-                    ###print("findpatternpic2")
+                    print("findpatternpic2")
                     mo1= re.search(patternpic,cihx)
                     xlochex=mo1.group(4);
                     prefixposyhex=mo1.group(6);
@@ -498,83 +501,80 @@ def appendnewpic(w,h,picname,newdir1,objno2,column):
     picnamehex=convasciitohex(picname,1)
     hexc = newlinehex+secondobjhex+xlochex+ylochex+zlochex+objscalehex+picnamehex+xpixshex+ypixshex+"01"
 
-    ###print("number"+str(objno2))
-    ###print("column"+str(column))
-    ###print("w="+str(w))
-    ###print("h="+str(h))
-    ###print(str(objnonow)+"check")
-    ###print(objnohex)
-    ###print(newlinehex)
-    ###print(xlochex)
-    ###print(ylochex)
-    ###print(zlochex)
+    print("number"+str(objno2))
+    print("column"+str(column))
+    print("w="+str(w))
+    print("h="+str(h))
+    print(str(objnonow)+"check")
+    print(objnohex)
+    print(newlinehex)
+    print(xlochex)
+    print(ylochex)
+    print(zlochex)
     append=""
-    print("numberc2"+str(objno2))
-    if os.path.exists(curnotefpc) and objno2>=0:
+    print("numbc2="+str(objno2))
+    if os.path.exists(curnotefpc):
         with open(curnotefpc,"rb") as f:
             content=f.read()
             cihx=str(binascii.hexlify(content).decode('utf-8'))
             mo1=re.search(regexnote1,cihx)
             mo2=re.compile(regexnote1)
-            if mo2.search(cihx):
-                ###print("found")
+            if mo2.search(cihx) and objno2<=127:
+                print("found")
                 objno2=int(mo1.group(2), 16)
                 objno2+=1
-                prefixhex=""
+                checkending=mo1.group(3)
+                prefixhex="" 
                 if objno2<=2:
-                    ###print("found")
+                    print("found")
                     totalobjhex=str(format(objno2,'x')).zfill(2)
-                    ###print(totalobjhex)
+                    print(totalobjhex)
                     replace1 = re.sub(regexnote1, mo1.group(1)+totalobjhex, cihx)
                     ##append=replace1+newlinehex+secondobjhex+objscalehex+picnamehex+xpixshex+ypixshex+"01"
                     append=replace1+hexc
-                if objno2>2 and objno2<128:
-                    ###print("found2")
+                if objno2>2 and objno2<128 and checkending=="0a":
+                    print("found2")
                     totalobjhex=str(format(objno2,'x')).zfill(2)
-                    ###print(totalobjhex)
+                    print(totalobjhex)
                     replace1 = re.sub(regexnote1, mo1.group(1)+totalobjhex+mo1.group(3), cihx)
                     append=replace1+hexc
-                if objno2==128:
-                    ###print("found3")
+                if objno2==128 and checkending=="0a":
+                    print("found3")
                     prefix=194;
                     prefixhex=format(prefix,'x')
-                    ###print(prefixhex)
+                    print(prefixhex)
                     totalobjhex=str(format(objno2,'x')).zfill(2)
-                    ###print(totalobjhex)
-                    replace1 = re.sub(regexnote1, mo1.group(1)+prefixhex+totalobjhex+mo1.group(3), cihx)
+                    print(totalobjhex)
+                    replace1=re.sub(regexnote1, mo1.group(1)+prefixhex+totalobjhex+mo1.group(3), cihx)
                     append=replace1+hexc
-                if objno2>128:
-                    ###print("found4")
-                    mo1=re.search(regexnote2,cihx)
-                    mo2=re.compile(regexnote2)
-                    if mo2.search(cihx):
-                        ###print("found5")
-                        objno2=int(mo1.group(3), 16)
-                        objno2+=1
-                        ##prefix=int((objno2-128)/64);
-                        ##prefix=mo1.group(2)
-                        prefix=int(mo1.group(2), 16)
-                        ##prefix=194+prefix;
-                        prefix=prefix+int((objno2-128)/64);
-                        #if (objno2<192):
-                            #prefix=int((objno2-128)/64);
-                            #prefix=194+prefix;
-                        #if (objno2>=192):
-                            #prefix=int((objno2-192)/64);
-                            #prefix=195+prefix;
-                        prefixhex=format(prefix,'x')
-                        ###print(prefixhex)
-                        if (objno2<192):
-                            totalobjhex=str(format(objno2,'x')).zfill(2)
-                        if (objno2>=192):
-                            totalobjhex=str(format((128+int((objno2-192)%64)),'x')).zfill(2)
-                        ###print(totalobjhex)
-                        replace1 = re.sub(regexnote2, mo1.group(1)+prefixhex+totalobjhex+mo1.group(4), cihx)
-                        append=replace1+hexc
-                        print("numberc3"+str(objno2))
+                    print("numbc3="+str(objno2))
+            elif mo2.search(cihx) and objno2>127:
+                print("found4")
+                mo1=re.search(regexnote2,cihx)
+                mo2=re.compile(regexnote2)
+                print("numbc5="+str(objno2))
+                if mo2.search(cihx):
+                    print("found5")
+                    objno2+=1
+                    prefix=int(mo1.group(2), 16)
+                    print("pfint="+str(prefix))
+                    prefix0=194+int((objno2-128)/64);
+                    print("p0int="+str(prefix0))
+                    prefixhex=format(prefix0,'x')
+                    print("p0hex="+prefixhex)
+                    
+                    if (objno2<192):
+                        totalobjhex=str(format(objno2,'x')).zfill(2)
+                    if (objno2>=192):
+                        totalobjhex=str(format((128+int((objno2-192)%64)),'x')).zfill(2)
+                    print(totalobjhex)
+                    replace1 = re.sub(regexnote2, mo1.group(1)+prefixhex+totalobjhex+mo1.group(4), cihx)
+                    append=replace1+hexc
+                    print("numbc6="+str(objno2))
+                    
     if append:
         appendtext(curnotefpc,append,"wb")
-    print("numberc4"+str(objno2))
+    print("numbc4="+str(objno2))
     return objno2,curattachdirpc
 
 def appendnewnote(newdir1,curindexpc,curindexoldpc):
@@ -582,7 +582,7 @@ def appendnewnote(newdir1,curindexpc,curindexoldpc):
     replace1=""
     replace2=""
     with open(curindexpc, 'rb') as f:
-        ###print("checkingindexcur")
+        print("checkingindexcur")
         content = f.read()
         cihx=str(binascii.hexlify(content).decode('utf-8'))
         regexc1=re.compile(regexindex1)
@@ -617,7 +617,7 @@ def appendnewnote(newdir1,curindexpc,curindexoldpc):
             regexr2=mo2.group(1)+mo2.group(2)+newfolderhex1+mo2.group(3)+mo2.group(4)
             replace2 = re.sub(regexindex2, regexr2, replace1)
         appendtext(curindexpc,replace2,"wb")
-        ###print("donecheckingindexcur")
+        print("donecheckingindexcur")
     return True
 
 
@@ -631,7 +631,7 @@ import numpy as np
 a=1000
 def convertrest(imgdir,imgname,afterimg,a,ocvtype):
     ##a=0
-    ###print(imgname)
+    print(imgname)
     #time.sleep(3600)
     if ocvtype==2 or ocvtype==21:
         image = cv2.imread(imgdir+os.path.sep+imgname)
@@ -646,7 +646,7 @@ def convertrest(imgdir,imgname,afterimg,a,ocvtype):
     dilated = cv2.dilate(thresh,kernel,iterations = 13) # dilate
     _, contours, hierarchy = cv2.findContours(dilated,cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_NONE) # get contours
     # for each contour found, draw a rectangle around it on original image
-    ###print(contours)
+    print(contours)
     for contour in contours:
         a-=1
         # get rectangle bounding contour
@@ -670,7 +670,7 @@ def converttext(imgdir,imgname,afterimg,a,ocvtype,colour,testing):
     imgw,imgh=imgsize(imgdir+os.path.sep+imgname)
     timgh=0.10*imgw
     bimgh=0.90*imgw
-    ###print(imgdir+os.path.sep+imgname+" "+str(imgw)+","+str(imgh))
+    print(imgdir+os.path.sep+imgname+" "+str(imgw)+","+str(imgh))
     if ocvtype==1 or ocvtype==2 or ocvtype==4 or ocvtype==5:
         rgb=large
         rgb=cv2.pyrDown(large)
@@ -753,7 +753,7 @@ def converttext(imgdir,imgname,afterimg,a,ocvtype,colour,testing):
     if testing:
         #cv2.imwrite(imgdir+os.path.sep+"mask"+afterimg, mask)
         #cv2.imwrite(imgdir+os.path.sep+"rect2"+afterimg, rgb2)
-        ###print("testing")
+        print("testing")
         pass
 def convertcolour(imgdir,imgname,afterimg,colour,size):
     a=1000
@@ -811,7 +811,7 @@ def pushnewdir1toand(newdir1,curindexpc,curindexoldpc):
         appendnewnote(newdir1,curindexpc,curindexoldpc)
     return True
 def runpdftonote(convpdfdirpc,pdfdir,pdfname,pagestart,pageend,ocvtype,continuenote,testing):
-    ###print("startpdftonote")
+    print("startpdftonote")
     column=1
     if not continuenote:
         if os.path.exists(curnotelocpc):
@@ -821,24 +821,24 @@ def runpdftonote(convpdfdirpc,pdfdir,pdfname,pagestart,pageend,ocvtype,continuen
     objno2=CN[1]
     pageend=pageend+1
     if noconversion:
-        ###print("noconv")
+        print("noconv")
         a=0
         b=objno2
         for i in range(pagestart,pageend) :
             a+=1
-            ###print("Page"+str(i))
+            print("Page"+str(i))
             imgname=convertpdf2jpg(pdfdir,pdfname,quality,i,outputdir)
             if a==10 or i==(pageend-1):
                 convertjpg2note(outputdir,column,newdir1,objno2)
                 a=0
                 column+=1
-            ###print(imgname)
+            print(imgname)
     if not noconversion:
         for i in range(pagestart,pageend) :
             a=1000
             ##i-=1
             imgname=convertpdf2jpg(pdfdir,pdfname,quality,i,convpdfdirpc)
-            ###print(str(i)+" "+imgname)
+            print(str(i)+" "+imgname)
             if testing:
                 pdfconvimg=convpdfdirpc+os.path.sep+"contouredc"+imgname+".jpg"
                 pdfdir0img=dir0+os.path.sep+"contouredc"+imgname+".jpg"
@@ -886,9 +886,9 @@ def runpdftonote(convpdfdirpc,pdfdir,pdfname,pagestart,pageend,ocvtype,continuen
         included_extensions = ['pdf']
         pdf_names = [fn for fn in os.listdir(relevant_path)
                       if any(fn.endswith(ext) for ext in included_extensions)]
-        ###print(len(pdf_names))
+        print(len(pdf_names))
         for i in range(0,len(pdf_names)):
-            ###print(pdf_names[i])
+            print(pdf_names[i])
             subprocess.call("python3 "+pdftonotedir+" -pdir \""+relevant_path+"\" -p \""+pdf_names[i]+"\" -d 100 -t 1 -nc 1" ,shell=True)
 def runshowpdf(convpdfdirpc,pdfdir,pdfname,pagestart,pageend,ocvtype,continuenote):
     import matplotlib.pyplot as plt
@@ -898,7 +898,7 @@ def runshowpdf(convpdfdirpc,pdfdir,pdfname,pagestart,pageend,ocvtype,continuenot
         os.makedirs(convpdfdirpc1)
     imgname=convertpdf2jpg(pdfdir,pdfname,quality,pagestart,convpdfdirpc1)
     imgdir=convpdfdirpc+os.path.sep+pdfname+os.path.sep+imgname+".jpg"
-    ###print(imgdir)
+    print(imgdir)
     img=mpimg.imread(imgdir)
     imgplot=plt.imshow(img)
     #countarea
@@ -943,13 +943,13 @@ def convertpdf2jpg(pdfdir,pdfname,quality,page,convpdfdirpc):
     convpname="conv"+pagez
     ppmcommand="pdftoppm \""+pdfdir+os.path.sep+pdfname+"\" \""+convpdfdirpc+os.path.sep+convpname+"\" -jpeg -f "+str(page)+" -singlefile"
     #ppmcommand="pdftoppm \""+pdfdir+os.path.sep+pdfname+"\" \""+convpdfdirpc+os.path.sep+convpname+"\" -png -f "+str(page)+" -singlefile"
-    ###print(ppmcommand)
-    ###print(convpname)
+    print(ppmcommand)
+    print(convpname)
     subprocess.call(ppmcommand,shell=True)
     imgdir=convpdfdirpc+os.path.sep+convpname+".jpg"
     while True:
         if os.path.exists(imgdir):
-            ###print(imgdir)
+            print(imgdir)
             break
     return convpname
 def convertpdf2jpg2(pdfdir,pdfname,quality,page,convpdfdirpc,ver):
@@ -973,7 +973,7 @@ def convertpdf2jpg2(pdfdir,pdfname,quality,page,convpdfdirpc,ver):
                 if ver=="wsl":
                         pdfdir0=conwindirtovwsldir(pdfdir)
                         convpdfdirpc0=conwindirtovwsldir(convpdfdirpc)
-                        ###print("convertpdf2jpginwsl="+pdfdir)
+                        print("convertpdf2jpginwsl="+pdfdir)
                         ##pdfpage=subprocess.getoutput("wsl pdfinfo \""+pdfdir0+"/"+pdfname+"\" | grep Pages: | awk '{print $2}'")
                         #ppmcommand="wsl pdftoppm \""+pdfdir0+"/"+pdfname+"\" \""+convpdfdirpc0+"/"+convpname+"\" -jpeg -f "+str(page)+" -singlefile"
                         imgdir=convpdfdirpc+os.path.sep+convpname+".jpg"
@@ -988,11 +988,11 @@ def convertpdf2jpg2(pdfdir,pdfname,quality,page,convpdfdirpc,ver):
                         #print("pp1="+pdfpage1)
                         if re.search(r"Pages:",str(line)):
                                 pdfpage1=line
-                                ###print("pp1="+pdfpage1)
+                                print("pp1="+pdfpage1)
                                 pdfpage2 = re.sub(r"(Pages:)([ ])*", '', pdfpage1)
-                                ###print("pp2="+pdfpage2)
+                                print("pp2="+pdfpage2)
                                 pdfpage=int(pdfpage2)
-        ###print("totalp="+str(pdfpage))
+        print("totalp="+str(pdfpage))
         if page<0:
                 page=1
         if page<=pdfpage:
@@ -1005,12 +1005,12 @@ def convertpdf2jpg2(pdfdir,pdfname,quality,page,convpdfdirpc,ver):
         if not os.path.exists(imgdir):
                 ppmcommand=pdftoppmcommand+" \""+pdfdir+os.path.sep+pdfname+"\" \""+img0+"\" -jpeg -f "+str(page)+" -singlefile"
                 #ppmcommand=pdftoppmcommand+" \""+pdfdir+os.path.sep+pdfname+"\" \""+img0+"\" -png -f "+str(page)+" -singlefile"
-                ###print(ppmcommand)
+                print(ppmcommand)
                 subprocess.call(ppmcommand,shell=True)
                 #time.sleep(5)
         while True:
                 if os.path.exists(imgdir):
-                        ###print(imgdir)
+                        print(imgdir)
                         break
         return imgdir
 
@@ -1020,30 +1020,30 @@ def conwindirtovwsldir(windir):
     #if os.path.exists(checkdir):
         #userid=subprocess.getoutput("awk -F: '!/root/ && /(\/bin\/bash)/ {print $1}' /etc/passwd")
         #userid=subprocess.getoutput("echo \"%USERNAME%\"")
-    ###print("wd="+windir)
+    print("wd="+windir)
     wsldir=re.sub(r"C:","/mnt/c",windir)
     wsldir=re.sub(r"\\","/",wsldir)
-    ###print("ad="+wsldir)
+    print("ad="+wsldir)
     return wsldir
 
 def convertjpg2note(folderlocation,column,newdir1,objno2):
-    ###print("runengine")
+    print("runengine")
     objno2re=objno2
     allfnpicdir=os.listdir(folderlocation)
     for i in range(0,len(allfnpicdir)):
         Time=strftime("%Y%m%d%H%M%S")
         objno2rez=str(objno2re).zfill(2)
         picname=Time+'abcdefghijklm'+objno2rez+'.jpg'
-        ###print(picname)
+        print(picname)
         if objno2re>=0:
             picdir=folderlocation+ os.path.sep +  allfnpicdir[i]
             picdirnew=folderlocation + os.path.sep + picname
-            ###print(picdir)
+            print(picdir)
             subprocess.call("cp \""+picdir+"\" \""+picdirnew+"\"", shell=True)
             os.remove(picdir)
             subprocess.call("cp \""+picdirnew+"\" \""+curattachdirpc+"\"", shell=True)
             attachfnanddir=fnnotesdirandint+os.path.sep+newdir1+".notz/attach"
-            ###print(attachfnanddir)
+            print(attachfnanddir)
             w, h=imgsize(picdirnew)
             appendnewpic(w,h,picname,newdir1,objno2re,"nearlatest")
             runadbcommand("adb push -p \""+picdirnew+"\" \""+attachfnanddir+"\"")
@@ -1085,8 +1085,8 @@ def setvarconvpdf():
             ocvtype=int(args.type)
         if args.noconversion=="1":
             noconversion=True
-        ###print("PDFDir="+pdfdir+os.path.sep+pdfname+" Page="+str(pagestart)+" to "+str(pageend))
-        ###print("ocvt"+str(ocvtype))
+        print("PDFDir="+pdfdir+os.path.sep+pdfname+" Page="+str(pagestart)+" to "+str(pageend))
+        print("ocvt"+str(ocvtype))
         if args.showpdf:
             runshowpdf(convpdfdirpc,pdfdir,pdfname,pagestart,pageend,ocvtype,continuenote)
         if not args.showpdf:

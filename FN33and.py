@@ -40,12 +40,12 @@ if sys.platform in ['linux', 'linux2'] or sys.platform in ['Windows', 'win32', '
                 if (linuxpc==0) and os.path.exists("/run/user/1000/gvfs/*/Internal"):
                     subprocess.call("adb shell \"su -c 'input keyevent KEYCODE_ESCAPE && sleep 0.1 && killall com.fiistudio.fiinote'\"", shell=True)
                 clickStartX, clickStartY=clickX, clickY
-                ###print(clickStartX, clickStartY)
+                print(clickStartX, clickStartY)
                 TT.config(text="C")
                 textclick=1
             elif (textclick==1):
                 clickStopX, clickStopY=clickX, clickY
-                ###print(clickStopX, clickStopY)
+                print(clickStopX, clickStopY)
                 clickStartX=int(clickStartX)
                 clickStartY=int(clickStartY)
                 clickStopX=int(clickStopX)
@@ -53,7 +53,7 @@ if sys.platform in ['linux', 'linux2'] or sys.platform in ['Windows', 'win32', '
                 if clickStartX<clickStopX :
                     global curattachdirpc
                     SS=SS1(clickStartX,clickStartY,clickStopX,clickStopY,curattachdirpc)
-                    ###print(SS)
+                    print(SS)
                     objno2,curattachdirpc=appendnewpic(SS[0],SS[1],SS[2],SS[3],SS[4],"nearlatest")
                     imgdir=curattachdirpc+os.path.sep+SS[2]
                     if (linuxpc==0) and os.path.exists("/run/user/1000/gvfs/*/Internal"):
@@ -83,8 +83,10 @@ if sys.platform in ['linux', 'linux2'] or sys.platform in ['Windows', 'win32', '
         restartgui.pack()
         choosepdf=Button(root, text="choosepdf", command=choosepdfguiinit,height=3,width=3)
         choosepdf.pack()
-        exitall=Button(root, text="exitsc", command=quit,height=1,width=3)
+        exitall=Button(root, text="exitsc", command=quitthis,height=1,width=3)
         exitall.pack()
+        rnotz=Button(root, text="rebuildnotz", command=rebuildnotzguiinit,height=1,width=3)
+        rnotz.pack()
         TT=Label(root, relief='raised')
         TT.pack()
         TT2=Label(root)
@@ -109,18 +111,27 @@ if sys.platform in ['linux', 'linux2'] or sys.platform in ['Windows', 'win32', '
         Suspend1()
         #MainApplication(rootimgv).pack(side="top", fill="both", expand=True)
         root.mainloop()
-    def quit():
-        global root
-        root.quit()
+    def quitthis():
+        global root,hm
+        hm.UnhookMouse()
+        hm.UnhookKeyboard()
+        root.destroy()
         sys.exit()
         exit()
         quit()
         os.exit(0)
     def restartguifn():
-        quit()
+        global root
+        root.destroy()
+        time.sleep(0.5)
         #if sys.platform in ['linux', 'linux2'] :
         if sys.platform in ['Windows', 'win32', 'cygwin']:
-            subprocess.call("%USERPROFILE%\\Documents\\GitHub\\FN35OCVbside\\fn33andguistart.bat",shell=True)
+            #subprocess.call("%USERPROFILE%\\Documents\\GitHub\\FN35OCVbside\\fn33andguistart.bat",shell=True)
+            username=subprocess.getoutput("echo %USERNAME%")
+            if username=="SP3":
+                pythondir=userhomedir+"\\Documents\\Docs\\Automate\\3WinPython-32bit-3.5.3.1Qt5\\python-3.5.3\\python.exe"
+                subprocess.call(pythondir+" %USERPROFILE%\\Documents\\GitHub\\FN35OCVbside\\FN33and.py",shell=True)
+        quitthis()
         return True
     def choosepdfguiinit():
         _thread.start_new_thread(choosepdfgui,())
@@ -169,13 +180,14 @@ if sys.platform in ['linux', 'linux2'] or sys.platform in ['Windows', 'win32', '
     def newnotz1():
         global newdir1,objno2
         #newnotz0()
+        #print(curnotzpc,curnotefpc,curattachdirpc,curnotzand,curattachdirand)
         newdir1,objno2=newnotz(fnnotesdirpc,fnnotesdirpc)
         TT2.config(text="NEW")
     def term(scriptn):
         if sys.platform in ['linux', 'linux2'] :
             python_path=""
             subprocess.call("python3 "+str(dir0)+"/"+str(scriptn)+".py", shell=True)
-            ###print(python_path+"sudo python3 "+str(dir0)+"/"+scriptn)
+            print(python_path+"sudo python3 "+str(dir0)+"/"+scriptn)
         if sys.platform in ['Windows', 'win32', 'cygwin']:
             python_path=dir0+os.path.sep+"WinPython-32bit-3.5.3.1Qt5"+os.path.sep+"scripts"+os.path.sep
             subprocess.call(python_path+"python "+str(dir0)+"\\"+str(scriptn)+".py", shell=True)
@@ -213,7 +225,7 @@ def choosepdfgui():
         userhomedir=subprocess.getoutput("echo %USERPROFILE%")
     Home1=Toplevel()
     width = 600
-    height = 300
+    height = 800
     screen_width = root.winfo_screenwidth()
     screen_height = root.winfo_screenheight()
     x = (screen_width/2) - (width/2)
@@ -221,8 +233,8 @@ def choosepdfgui():
     Home1.geometry("%dx%d+%d+%d" % (width, height, x, y))
     Home1.resizable(0, 0)
     #================================FRAMES=========================================
-    mfwidth=500
-    mfheight=200
+    mfwidth=600
+    mfheight=800
     Top = Frame(Home1, width=mfwidth, bd=1, relief=SOLID)
     Top.pack(side=TOP)
     Mid = Frame(Home1, width=mfwidth, height=mfheight, bd=1, relief=SOLID)
@@ -245,22 +257,57 @@ def changepage(pdfdir,pdfname,lastpage,ptype):
         choosepage=int(lastpage)-1
     elif ptype=="next":
         choosepage=int(lastpage)+1
-    ###print("lpcp="+str(choosepage))
+    print("lpcp="+str(choosepage))
     DisplayImage(pdfdir,pdfname,choosepage,[])
     return True
 def choosepageguiinit(pdfdir,pdfname):
     _thread.start_new_thread(partial(choosepagegui,pdfdir,pdfname),())
 def choosepagegui(pdfdir,pdfname):
     def show_entry_fields():
-        ###print("First Name: %s" % (e1.get()))
+        print("First Name: %s" % (e1.get()))
         choosepage=int(e1.get())
         DisplayImage(pdfdir,pdfname,choosepage,[])
-    ###print(pdfdir+" "+pdfname)
+    print(pdfdir+" "+pdfname)
     Home2=Toplevel()
     Label(Home2, text="Page").grid(row=0)
     e1 = Entry(Home2)
     e1.grid(row=0, column=1)
     Button(Home2, text='Show', command=show_entry_fields).grid(row=3, column=0, sticky=W, pady=4)
+def rebuildnotzguiinit():
+    _thread.start_new_thread(rebuildnotzgui,())
+def rebuildnotzgui():
+    global curattachdirpc
+    def show_entry_fields():
+        global curattachdirpc,objno2
+        print("Attachdir: %s" % (e1.get()))
+        attachdir=str(e1.get())
+        if sys.platform in ['Windows', 'win32', 'cygwin']:
+            #attachdirfix=re.sub(r"\\","\\",attachdir)
+            attachdirfix=attachdir
+        else:
+            attachdirfix=attachdir
+        print(attachdirfix)
+        newnotz1()
+        from os import listdir
+        from os.path import isfile, join
+        onlyfiles = [f for f in listdir(attachdirfix) if isfile(join(attachdirfix, f))]
+        #print(onlyfiles)
+        for files in onlyfiles:
+            print("capc="+curattachdirpc)
+            print("obj2="+str(objno2))
+            picname=files
+            oldimgdir=attachdirfix+os.path.sep+files
+            newimgdir=curattachdirpc+os.path.sep+files
+            print(oldimgdir)
+            print(newimgdir)
+            shutil.copy(oldimgdir,newimgdir)
+            w, h=imgsize(newimgdir)
+            objno2,curattachdirpc=appendnewpic(w,h,picname,newdir1,objno2,"nearlatest")
+    Home2=Toplevel()
+    Label(Home2, text="AttachDir").grid(row=0)
+    e1 = Entry(Home2)
+    e1.grid(row=0, column=1)
+    Button(Home2, text='Rebuild', command=show_entry_fields).grid(row=3, column=0, sticky=W, pady=4)
 def whitelistpagearea(page,x,y):
     import cv2
     return True
@@ -285,7 +332,7 @@ def perccolor(imgdir):
         output = cv2.bitwise_and(img, img, mask=mask)
 
         ratio_brown = cv2.countNonZero(mask)/(img.size/3)
-        ###print('brown pixel percentage:', np.round(ratio_brown*100, 2))
+        print('brown pixel percentage:', np.round(ratio_brown*100, 2))
 
         cv2.imshow("images", np.hstack([img, output]))
         cv2.waitKey(0)
@@ -306,11 +353,10 @@ xpos2=""
 ypos2=""
 def gettkinterxypos(eventorigin,convimgdir,wledimgdir,pdfdir,pdfname,lastpage,anglecorrection,imgw,imgh,showimgw,showimgh):
     global pause,textclick
-    ###print(str(pause)+" "+str(textclick))
+    print(str(pause)+" "+str(textclick))
     def callback():
         global root
         global textclick,pause,xpos1,ypos1,xpos2,ypos2
-        #global showimgw,showimgh
         global newdir1,objno2,curattachdirpc
         global Home
         global xcorrection,ycorrection
@@ -325,44 +371,37 @@ def gettkinterxypos(eventorigin,convimgdir,wledimgdir,pdfdir,pdfname,lastpage,an
         if pause==0 and textclick==0:
             xpos1=eventorigin.x
             ypos1=eventorigin.y
-            ###print(str(xpos1)+" "+str(ypos1))
+            print(str(xpos1)+" "+str(ypos1))
             textclick=1
         elif pause==0 and textclick==1:
             xpos2=eventorigin.x
             ypos2=eventorigin.y
-            ###print(str(xpos2)+" "+str(ypos2))
+            print(str(xpos2)+" "+str(ypos2))
             if os.path.exists(wledimgdir):
                 global screenw,screenh
-                #imgw,imgh=imgsize(wledimgdir)
                 if screenw==1920 and screenh==1080:
                     ycorrection=10
                 else:
-                    ycorrection=20
+                    #ycorrection=20
+                    ycorrection=0
                 if anglecorrection==270:
                     if ypos1>ypos2 and xpos2>xpos1:
-                        #xpos1ac=screenw-ypos1
-                        #xpos2ac=xpos1ac+(ypos1-ypos2)
                         xpos1ac=imgw-ypos1
                         xpos2ac=imgw-ypos2
                         ypos1ac=xpos1
                         ypos2ac=xpos2
-                        xcorrection=130
                         xcorrection=60
                         ycorrection=0
                         xandy=True
-
                     elif ypos2>ypos1 and xpos2>xpos1:
-                        #xpos1ac=screenw-ypos1
-                        #xpos2ac=xpos1ac+(ypos1-ypos2)
                         xpos1ac=imgw-ypos2
                         xpos2ac=imgw-ypos1
                         ypos1ac=xpos1
                         ypos2ac=xpos2
-                        xcorrection=130
                         xcorrection=60
                         ycorrection=0
                     else:
-                        ###print("trya")
+                        print("trya")
                         return True
                     actxp1=int(imgw/showimgw*xpos1ac)+xcorrection
                     actyp1=int(imgh/showimgh*ypos1ac)+ycorrection
@@ -371,19 +410,19 @@ def gettkinterxypos(eventorigin,convimgdir,wledimgdir,pdfdir,pdfname,lastpage,an
                 else:
                     if screenh>screenw:
                         ycorrection=0
-                    ###print(ycorrection)
+                    print(ycorrection)
                     xpos1ac=xpos1
                     xpos2ac=xpos2
                     ypos1ac=ypos1
                     ypos2ac=ypos2
-                    actxp1=int(imgw/showimgw*xpos1ac)
+                    actxp1=int(imgw/showimgw*xpos1ac)+xcorrection
                     actyp1=int(imgh/showimgh*ypos1ac)+ycorrection
-                    actxp2=int(imgw/showimgw*xpos2ac)
+                    actxp2=int(imgw/showimgw*xpos2ac)+xcorrection
                     actyp2=int(imgh/showimgh*ypos2ac)+ycorrection
-                ###print(actxp1,actxp2,actyp1,actyp2)
+                print(actxp1,actxp2,actyp1,actyp2)
             if (actxp2>actxp1 and actyp2>actyp1) or xandy:
                 SS=cutarea(pdfdir,pdfname,lastpage,actxp1,actyp1,actxp2,actyp2,convimgdir,anglecorrection)
-                ###print(SS)
+                print(SS)
                 objno2,curattachdirpc=appendnewpic(SS[0],SS[1],SS[2],SS[3],SS[4],"nearlatest")
                 imgdir=curattachdirpc+os.path.sep+SS[2]
                 if (linuxpc==0) and os.path.exists("/run/user/1000/gvfs/*/Internal"):
@@ -398,29 +437,29 @@ def gettkinterxypos(eventorigin,convimgdir,wledimgdir,pdfdir,pdfname,lastpage,an
                 loadimg=whitelistarea(pdfdir,pdfname,lastpage,actxp1,actyp1,actxp2,actyp2,wledimgdir)
                 DisplayImage(pdfdir,pdfname,lastpage,loadimg)
             else:
-                #TT.config(text="Rep")
+                TT.config(text="Rep")
+                textclick=0
                 pass
             textclick=0
         else:
+            textclick=0
             pass
         print("objno2="+str(objno2))
-        if (objno2>=350):
-            newdir1,objno2=newnotz(fnnotesdirpc,fnnotesdirpc)
     callback()
     return True
 def cutarea(pdfdir,pdfname,lastpage,actxp1,actyp1,actxp2,actyp2,convimgdir,anglecorrection):
     global curattachdirpc,newdir1,objno2
     picname=strftime("%Y%m%d%H%M%S")+'abcdefghijklmno.jpg'
     imgdir=curattachdirpc+os.path.sep+picname
-    ###print(convimgdir)
-    ###print(imgdir)
-    ###print(str(actyp1)+" "+str(actyp2)+","+str(actxp1)+":"+str(actxp2))
+    print(convimgdir)
+    print(imgdir)
+    print(str(actyp1)+" "+str(actyp2)+","+str(actxp1)+":"+str(actxp2))
     temp=cv2.imread(convimgdir)
     img=temp[actyp1:actyp2,actxp1:actxp2]
     cv2.imwrite(imgdir,img)
     w,h=imgsize(imgdir)
-    ###print(str(w)+" "+str(h))
-    ###print(newdir1+" "+str(objno2))
+    print(str(w)+" "+str(h))
+    print(newdir1+" "+str(objno2))
     return w,h,picname,newdir1,objno2
 def whitelistarea(pdfdir,pdfname,lastpage,actxp1,actyp1,actxp2,actyp2,wledimgdir):
     convimgdir=re.sub(r"wled","conv",wledimgdir)
@@ -437,11 +476,11 @@ def whitelistarea(pdfdir,pdfname,lastpage,actxp1,actyp1,actxp2,actyp2,wledimgdir
     rgba = [b,g,r, alpha]
     dst = cv2.merge(rgba,4)
     cv2.imwrite(wledimgdir, dst)
-    ###print("donewlarea="+wledimgdir)
+    print("donewlarea="+wledimgdir)
     wledposfile=re.sub(r"wled","wledpos",wledimgdir)
     wledposfile=re.sub(r"(.jpg|.png)","",wledposfile)
     appendpos=str(actxp1)+","+str(actyp1)+","+str(actxp2)+","+str(actyp2)
-    ###print(appendpos)
+    print(appendpos)
     appendtext(wledposfile,appendpos,"a")
     return dst
 
@@ -484,7 +523,7 @@ def undolatestwl(pdfdir,pdfname,convimgdir,wledimgdir,lastpage):
         try:
             lines = f.read().splitlines()
             last_line = lines[-1]
-            ###print("lastline="+last_line)
+            print("lastline="+last_line)
         except:
             last_line=""
     if last_line!="" :
@@ -496,8 +535,8 @@ def undolatestwl(pdfdir,pdfname,convimgdir,wledimgdir,lastpage):
         img=temp[ypos1:ypos2+3,xpos1:xpos2+3]
         target=cv2.imread(wledimgdir)
         if ".png" in wledimgdir:
-            ###print("png")
-            ###print(str(xpos1),str(xpos2),str(ypos1),str(ypos2))
+            print("png")
+            print(str(xpos1),str(xpos2),str(ypos1),str(ypos2))
             src=target
             cv2.rectangle(src, (xpos1, ypos1), (xpos2+3, ypos2+3), black_color, -1)
             tmp = cv2.cvtColor(src, cv2.COLOR_BGR2GRAY)
@@ -516,9 +555,9 @@ def undolatestwl(pdfdir,pdfname,convimgdir,wledimgdir,lastpage):
 
         file = open(wledposfile)
         filetext=file.read()
-        ###print("readf="+str(filetext))
+        print("readf="+str(filetext))
         newwledpos=re.sub("\n"+last_line,"",str(filetext))
-        ###print("nwwpos="+newwledpos)
+        print("nwwpos="+newwledpos)
         appendtext(wledposfile,newwledpos,"w+")
         #removelastlinefromfile(wledposfile)
     DisplayImage(pdfdir,pdfname,lastpage,[])
@@ -601,17 +640,17 @@ def DisplayImage(pdfdir,pdfname,choosepage,loadimg0,*args,**kwargs):
     #except NameError:
     #    load=cv2.imread(convimgdir)
     #    imgh, imgw, channels = load.shape
-    #    ###print('a does not exist.')
+    #    print('a does not exist.')
     #except AttributeError:
     #    load=cv2.imread(convimgdir)
     #    imgh, imgw, channels = load.shape
-    #    ###print('a does not have a shape property.')
+    #    print('a does not have a shape property.')
 
     #if not imgh:
     if prevlastpage!=lastpage:
         load=cv2.imread(convimgdir)
         imgh, imgw, channels = load.shape
-    ###print(str(convimgdir),str(imgw))
+    print(str(convimgdir),str(imgw))
     if not os.path.exists(wledimgdir):
         if imgtype=="jpg":
             shutil.copy(convimgdir,wledimgdir)
@@ -631,7 +670,7 @@ def DisplayImage(pdfdir,pdfname,choosepage,loadimg0,*args,**kwargs):
     if os.path.exists(wledimgdir):
         #imgdir=wledimgdir
         imgdir1=wledimgdir
-        ###print(imgdir1)
+        print(imgdir1)
         load1=cv2.imread(imgdir1)
         if imgtype=="png":
             src=load1
@@ -640,7 +679,7 @@ def DisplayImage(pdfdir,pdfname,choosepage,loadimg0,*args,**kwargs):
             b, g, r = cv2.split(src)
             rgba = [b,g,r, alpha]
             load1 = cv2.merge(rgba,4)
-    ###print(imgdir1+" "+str(lastpage))
+    print(imgdir1+" "+str(lastpage))
 
     #global Home,panel,screenw,screenh
     #global loadimg
@@ -655,16 +694,17 @@ def DisplayImage(pdfdir,pdfname,choosepage,loadimg0,*args,**kwargs):
     
     #load=PIL.Image.open(open(imgdir, 'rb'))
     #imgw, imgh = load.size
-    ###print(imgw,imgh)
+    print(imgw,imgh)
     global showimgw,showimgh
-    showimgw=int((screenh/imgh)*imgw)
-    showimgh=int(screenh)
-    if imgh>imgw and screenw>screenh and screenw==2160 and screenh==1440:
+    showimgw=int(((screenh/imgh)*imgw)*95/100)
+    showimgh=int(screenh*95/100)
+    if screenw>screenh and imgh>imgw and screenw==2160 and screenh==1440:
         anglecorrection=270
         if prevlastpage!=lastpage:
             load=imutils.rotate_bound(load, anglecorrection)
         load1=imutils.rotate_bound(load1, anglecorrection)
         screenh=screenh-100
+        screenw=screenw-100
         showimgwb=int((screenh/imgw)*imgh)
         showimghb=int(screenh)
         showimgw=showimghb
@@ -673,10 +713,11 @@ def DisplayImage(pdfdir,pdfname,choosepage,loadimg0,*args,**kwargs):
         y = (screenh/2) - (showimghb/2)
     else:
         anglecorrection=0
+        screenh=screenh
         showimgwb=showimgw
         showimghb=showimgh
         x = (screenw/2) - (showimgwb/2)
-        y = (screenh/2) - (showimghb/2)
+        y = (screenh/2) - (showimghb/2)-50
     if screenh>screenw and imgh>imgw:
         anglecorrection=0
         #screenh=2160-100
@@ -689,20 +730,20 @@ def DisplayImage(pdfdir,pdfname,choosepage,loadimg0,*args,**kwargs):
         showimghb=showimgh
         x = (screenw/2) - (showimgwb/2)
         y = (screenh/2) - (showimghb/2)
-        ###print(screenw,screenh)
-        ###print(showimgw,showimgh)
+        print(screenw,screenh)
+        print(showimgw,showimgh)
 
     #load[load[:, :, 1:].all(axis=-1)] = 0
     #load1[load1[:, :, 1:].all(axis=-1)] = 0
     #dst = cv2.addWeighted(load, 1, load1, 1, 0)
     if not Home:
-        ###print("not home")
+        print("not home")
         Home=Toplevel()
         Home.geometry("%dx%d+%d+%d" % (showimgwb, showimghb, x,y))
         Home.resizable(1, 1)
         pass
     else:
-        ###print("home exists")
+        print("home exists")
         pass
     #Home.geometry("%dx%d+%d+%d" % (showimgwb, showimghb, x,y))
     #Home.resizable(1, 1)
@@ -802,7 +843,7 @@ def listfilesext(dir,ext):
             allfilesdir.append(dir)
             allfilesname.append(file)
             allfilesfulldir.append(os.path.join(dir, file))
-    ###print(allfilesfulldir)
+    print(allfilesfulldir)
     return allfilesdir,allfilesname,allfilesfulldir
 #https://stackoverflow.com/questions/10927234/setting-the-position-on-a-button-in-python
 #https://stackoverflow.com/questions/10865116/python-tkinter-creating-buttons-in-for-loop-passing-command-arguments
@@ -812,8 +853,8 @@ def placebutton(allfilesdir,allfilesname,allfilesfulldir,Top,Mid):
     bwidth=500
     bheight=25
     for i in range(value):
-        ###print(allfilesdir[i])
-        ###print(allfilesname[i])
+        print(allfilesdir[i])
+        print(allfilesname[i])
         #b=Button(Mid,text=allfilesfulldir[i],command=lambda: DisplayImage(allfilesdir[i],allfilesname[i]))
         b=Button(Mid,text=allfilesfulldir[i],command=partial(DisplayImage,allfilesdir[i],allfilesname[i],"",[]))
         b.place(x=mfwidth/2-bwidth/2, y=i*30, width=bwidth, height=bheight)
@@ -828,7 +869,7 @@ def lastmodfile(num_files, directory):
     modified = []
     accessed = []
     rootdir = os.path.join(os.getcwd(), directory)
-    ###print("dir="+ directory)
+    print("dir="+ directory)
     for root, sub_folders, files in os.walk(rootdir):
         for file in files:
             try:
@@ -843,16 +884,16 @@ def lastmodfile(num_files, directory):
                 pass
     modified.sort(key=lambda a: a[0], reverse=True)
     accessed.sort(key=lambda a: a[0], reverse=True)
-    ###print('Modified')
-    ###print(modified[0][1])
+    print('Modified')
+    print(modified[0][1])
     #print('Accessed')
     #pprint(accessed[:num_files])
     return modified[0][1]
 def curpage(pdfname,convpdfdirpc):
-    ###print("curcpdfpc="+convpdfdirpc)
+    print("curcpdfpc="+convpdfdirpc)
     if os.path.exists(convpdfdirpc):
         lastimg=lastmodfile(1, convpdfdirpc)
-        ###print("li="+str(lastimg))
+        print("li="+str(lastimg))
         if sys.platform in ['Windows', 'win32', 'cygwin']:
             lastimg0=lastimg.rsplit("\\",1)[1]
         if sys.platform in ['linux', 'linux2']:
@@ -862,7 +903,7 @@ def curpage(pdfname,convpdfdirpc):
         lastpage=re.sub(r"(.jpg|.png)","",lastpage)
     if not os.path.exists(convpdfdirpc):
         lastpage=1
-    ###print("lp="+str(lastpage))
+    print("lp="+str(lastpage))
     return int(lastpage)
 
 if sys.platform in ['linux', 'linux2']:
@@ -1005,11 +1046,11 @@ if sys.platform in ['Windows', 'win32', 'cygwin']:
             Suspend1()
             return True
         elif event.KeyID == HookConstants.VKeyToID('VK_LEFT') and Home and pause==0:
-            ###print("pn0="+pdfname0)
+            print("pn0="+pdfname0)
             #changepage(pdfdir0,pdfname0,lastpage,"prev")
             return True
         elif event.KeyID == HookConstants.VKeyToID('VK_RIGHT') and Home and pause==0:
-            ###print("pn0="+pdfname0)
+            print("pn0="+pdfname0)
             #changepage(pdfdir0,pdfname0,lastpage,"next")
             return True
         elif GetKeyState(HookConstants.VKeyToID('VK_CONTROL')) and event.KeyID == HookConstants.VKeyToID('VK_ESCAPE'):
@@ -1028,7 +1069,7 @@ if sys.platform in ['Windows', 'win32', 'cygwin']:
         elif event.KeyID == HookConstants.VKeyToID('VK_F12'):
             return True
         elif GetKeyState(HookConstants.VKeyToID('VK_CONTROL')) and HookConstants.IDToName(event.KeyID) == 'P' :
-            ###print("Pause Recording")
+            print("Pause Recording")
             return True
 
         elif event.KeyID == HookConstants.VKeyToID('VK_ESCAPE'):
@@ -1037,26 +1078,26 @@ if sys.platform in ['Windows', 'win32', 'cygwin']:
             if is_recording==1:
                 newhndl = ctypes.windll.user32.GetForegroundWindow()
                 appname=get_app_name(newhndl)
-                ###print(appname)
+                print(appname)
                 title=win32gui.GetWindowText (win32gui.GetForegroundWindow())
-                ###print(title)
+                print(title)
                 Hold=0
-                ###print("recording")
-                ###print('Key:', event.Key)
+                print("recording")
+                print('Key:', event.Key)
                 #if (RegexMatch(activeprocess,"Acrobat|SumatraPDF|chrome|opera")):
                 if GetKeyState(HookConstants.VKeyToID('VK_CONTROL')) and (self.Key == 'Oem_Plus' or self.Key == 'Oem_Minus' or HookConstants.IDToName(event.KeyID) == '0'):
-                    ###print("captured")
+                    print("captured")
                     #if RegExMatch(A_ThisHotkey,"\^=|\^-|\^0"):
                     #append(".+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.1.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.")
                     return True
                 elif GetKeyState(HookConstants.VKeyToID('VK_LSHIFT')) and GetKeyState(HookConstants.VKeyToID('VK_CONTROL')) and HookConstants.IDToName(event.KeyID) == 'A' :
-                    ###print("1")
+                    print("1")
                     #elif RegExMatch(A_ThisHotkey,"\+\^a"):
                     #append(".+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.2.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.")
                     return True
                     #elif RegExMatch(A_ThisHotkey,"\+(Up|Down|Left|Right)"):
                 elif GetKeyState(HookConstants.VKeyToID('VK_LSHIFT')) and (event.KeyID == HookConstants.VKeyToID('VK_UP') or event.KeyID == HookConstants.VKeyToID('VK_DOWN') or event.KeyID == HookConstants.VKeyToID('VK_LEFT') or event.KeyID == HookConstants.VKeyToID('VK_RIGHT')):
-                    ###print("2")
+                    print("2")
                     #append(".+.+.+.+.+.+.+.+.+.3.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.")
                     return True
                 else:
@@ -1098,7 +1139,7 @@ if sys.platform in ['Windows', 'win32', 'cygwin']:
                     win32gui.ShowWindow(i[0],win32con.SW_MAXIMIZE)
                     win32gui.SetForegroundWindow(i[0])
                     j=os.getpid()
-                    ###print(j)
+                    print(j)
                     break
     def closeprog(appname):
             results = []
@@ -1111,7 +1152,7 @@ if sys.platform in ['Windows', 'win32', 'cygwin']:
                     win32gui.SetForegroundWindow(i[0])
                     win32gui.PostMessage(handle,win32con.WM_CLOSE,0,0)
                     j=os.getpid()
-                    ###print(j)
+                    print(j)
                     break
     def runfn():
         PROCNAME = "FiiNote.exe"
@@ -1153,7 +1194,7 @@ if sys.platform in ['Windows', 'win32', 'cygwin']:
     def currenthwnd():
         newhndl = ctypes.windll.user32.GetForegroundWindow()
         appname=get_app_path(newhndl)
-        ###print(newhndl,appname)
+        print(newhndl,appname)
     def get_app_path(hwnd):
         global exepath
         """Get applicatin path given hwnd."""
