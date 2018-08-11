@@ -50,11 +50,11 @@ if sys.platform in ['linux', 'linux2'] or sys.platform in ['Windows', 'win32', '
                 clickStartY=int(clickStartY)
                 clickStopX=int(clickStopX)
                 clickStopY=int(clickStopY)
-                if clickStartX<clickStopX :
+                if clickStartX<clickStopX and clickStartY<clickStopY:
                     global curattachdirpc
                     SS=SS1(clickStartX,clickStartY,clickStopX,clickStopY,curattachdirpc)
                     print(SS)
-                    objno2,curattachdirpc=appendnewpic(SS[0],SS[1],SS[2],SS[3],SS[4],"nearlatest")
+                    objno2,curattachdirpc=appendnewpic(SS[0],SS[1],SS[2],SS[3],SS[4],"nearlatest;;firstcolumn;;nextline")
                     imgdir=curattachdirpc+os.path.sep+SS[2]
                     if (linuxpc==0) and os.path.exists("/run/user/1000/gvfs/*/Internal"):
                         subprocess.call("adb push -p "+imgdir+" "+fnnotesanddirint+newdir1+".notz/attach",shell=True)
@@ -111,6 +111,10 @@ if sys.platform in ['linux', 'linux2'] or sys.platform in ['Windows', 'win32', '
         Suspend1()
         #MainApplication(rootimgv).pack(side="top", fill="both", expand=True)
         root.mainloop()
+    def pastethistoapp():
+        return True
+    def pastethistobend():
+        return True
     def quitthis():
         global root,hm
         hm.UnhookMouse()
@@ -169,7 +173,8 @@ if sys.platform in ['linux', 'linux2'] or sys.platform in ['Windows', 'win32', '
             TT.config(text="Suspended")
             fiinotew10pcdir=userhomedir+"\\Documents\\Docs\\Automate\\FiiNoteWINE\\FiiNote.exe"
             if sys.platform in ['Windows', 'win32', 'cygwin']:
-               #subprocess.call("start \"fiinote\" \""+fiinotew10pcdir+"\"",shell=True)
+                #subprocess.call("taskkill /F /IM FiiNote.exe /T",shell=True)
+                #subprocess.call("start \"fiinote\" \""+fiinotew10pcdir+"\"",shell=True)
                 pass
         elif pause==1:
             pause=0
@@ -351,12 +356,17 @@ xpos1=""
 ypos1=""
 xpos2=""
 ypos2=""
+prevx1=""
+prevx2=""
+prevy1=""
+prevy2=""
 def gettkinterxypos(eventorigin,convimgdir,wledimgdir,pdfdir,pdfname,lastpage,anglecorrection,imgw,imgh,showimgw,showimgh):
     global pause,textclick
     print(str(pause)+" "+str(textclick))
     def callback():
         global root
         global textclick,pause,xpos1,ypos1,xpos2,ypos2
+        global prevx1,prevx2,prevy1,prevy2
         global newdir1,objno2,curattachdirpc
         global Home
         global xcorrection,ycorrection
@@ -423,7 +433,16 @@ def gettkinterxypos(eventorigin,convimgdir,wledimgdir,pdfdir,pdfname,lastpage,an
             if (actxp2>actxp1 and actyp2>actyp1) or xandy:
                 SS=cutarea(pdfdir,pdfname,lastpage,actxp1,actyp1,actxp2,actyp2,convimgdir,anglecorrection)
                 print(SS)
-                objno2,curattachdirpc=appendnewpic(SS[0],SS[1],SS[2],SS[3],SS[4],"nearlatest")
+                #if objno2==2:
+                #    objno2,curattachdirpc=appendnewpic(SS[0],SS[1],SS[2],SS[3],SS[4],"nearlatest;;firstcolumn;;sameline")
+                if objno2>2:
+                    if prevx1 and actxp1>prevx1 and (actyp1 in range(prevy1-50,prevy1+50)):
+                        objno2,curattachdirpc=appendnewpic(SS[0],SS[1],SS[2],SS[3],SS[4],"nearlatest;;nextcolumn;;sameline")
+                    elif prevx1 and actyp1>prevy1:
+                        objno2,curattachdirpc=appendnewpic(SS[0],SS[1],SS[2],SS[3],SS[4],"nearlatest;;firstcolumn;;nextline")
+                    else:
+                        objno2,curattachdirpc=appendnewpic(SS[0],SS[1],SS[2],SS[3],SS[4],"nearlatest;;firstcolumn;;sameline")
+                #objno2,curattachdirpc=appendnewpic(SS[0],SS[1],SS[2],SS[3],SS[4],"nearlatest")
                 imgdir=curattachdirpc+os.path.sep+SS[2]
                 if (linuxpc==0) and os.path.exists("/run/user/1000/gvfs/*/Internal"):
                     subprocess.call("adb push -p "+imgdir+" "+fnnotesanddirint+newdir1+".notz/attach",shell=True)
@@ -436,6 +455,7 @@ def gettkinterxypos(eventorigin,convimgdir,wledimgdir,pdfdir,pdfname,lastpage,an
                 #TT2.config(text=str(objno2))
                 loadimg=whitelistarea(pdfdir,pdfname,lastpage,actxp1,actyp1,actxp2,actyp2,wledimgdir)
                 DisplayImage(pdfdir,pdfname,lastpage,loadimg)
+                prevx1,prevx2,prevy1,prevy2=actxp1,actxp2,actyp1,actyp2
             else:
                 TT.config(text="Rep")
                 textclick=0
@@ -624,10 +644,10 @@ def DisplayImage(pdfdir,pdfname,choosepage,loadimg0,*args,**kwargs):
     prevpage=lastpage-1
     nextpage=lastpage+1
     if prevpage>0:
-        previmgdir=convertpdf2jpg2(pdfdir,pdfname,120,prevpage,convpdfdirpcwithpdf,"")
-    nextimgdir=convertpdf2jpg2(pdfdir,pdfname,120,nextpage,convpdfdirpcwithpdf,"")
+        prevconvpname,previmgdir=convertpdf2jpg2(pdfdir,pdfname,120,prevpage,convpdfdirpcwithpdf,"")
+    nextconvpname,nextimgdir=convertpdf2jpg2(pdfdir,pdfname,120,nextpage,convpdfdirpcwithpdf,"")
 
-    convimgdir=convertpdf2jpg2(pdfdir,pdfname,120,choosepage,convpdfdirpcwithpdf,"")
+    convpname,convimgdir=convertpdf2jpg2(pdfdir,pdfname,120,choosepage,convpdfdirpcwithpdf,"")
     wledimgdir=re.sub(r"conv","wled",convimgdir)
     wledimgdir=re.sub(r".jpg","."+imgtype,wledimgdir)
     #imgdir=convimgdir
@@ -1225,11 +1245,12 @@ Default()
 CN=checknotz(curnotelocpc)
 newdir1=CN[0]
 objno2=CN[1]
-curnotzpc=CN[2]
-curnotefpc=CN[3]
-curattachdirpc=CN[4]
-curnotzand=CN[5]
-curattachdirand=CN[6]
+curnotzpc,curnotefpc,curattachdirpc,curnotzand,curattachdirand=setvarnotz(fnnotesdirpc,newdir1)
+#curnotzpc=CN[2]
+#curnotefpc=CN[3]
+#curattachdirpc=CN[4]
+#curnotzand=CN[5]
+#curattachdirand=CN[6]
 _thread.start_new_thread(task2, ())
 print(newdir1)
 print(objno2)

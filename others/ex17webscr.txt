@@ -1,0 +1,51 @@
+#pip install bs4
+import requests
+url = 'http://www.nytimes.com'
+r = requests.get(url)
+r_html = r.text
+
+all work
+scan case studies
+receipt scan
+chem prac
+math homework
+univ fees week 3
+tax refund 30 sept
+papa 080818
+mama 090818
+cici
+
+rebuild notes
+choose note manually
+
+348=
+128
+c5-c2
+d9
+157-128
+29
+6*
+64*5
+
+320
+29
+
+friday:
+bayar uni
+print mama
+print mathcover
+print tutorialcase
+submit math homework
+get book
+do chems
+
+
+beresin koper
+beresin receipt
+beresing scan
+scan buku
+programming
+subject lains
+
+358034082124352
+358034082786572
