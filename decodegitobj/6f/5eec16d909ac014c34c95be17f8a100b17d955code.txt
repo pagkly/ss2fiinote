@@ -1,1 +1,0 @@
-b"blob 300\x00function displayMathImgInline ( images )\n{\t\n  if ( images )\n  {\t\n    for (var i = images.length - 1; i >= 0; --i) \n    {\n      if (images[i].className == 'Wirisformula') \n      {\n        images[i].align = '';\n        images[i].style.verticalAlign = (-images[i].height / 2) + 'px';\n      }\n    }\n  }\n}"

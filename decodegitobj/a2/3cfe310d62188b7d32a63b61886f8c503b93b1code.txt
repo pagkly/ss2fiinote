@@ -1,1 +1,0 @@
-b'blob 169\x00.pageTitle #titleicon {\n    display: inherit !important;\n    margin: 0 6px 0 0;\n}\n\n#syncFailureList {\n    padding-top: 5px;\n    max-height: 430px;\n    overflow: auto;\n}\n'

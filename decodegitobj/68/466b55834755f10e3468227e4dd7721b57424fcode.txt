@@ -1,1 +1,0 @@
-b'blob 46\x00a="proteomics"\nprint(a[1:3])\nprint(a[1]+a[2])\n'

@@ -1,1 +1,0 @@
-b'blob 151\x00\nstartp=135\ninterest=40/10000\nendp=0\nyear=5\nfor f in range(1,year*365):\n    endp=(10040/10000)*startp\n    startp=endp\n    #print(startp)\nprint(startp)\n'
