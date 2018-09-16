@@ -1,0 +1,1 @@
+b'blob 296\x00#num=2/3\n#2.000e+07\n#-1\nnumberinput=input("input number:")\nnum=str(numberinput)\n#print(str(float(numberinput)))\n#print(str(len(num)))\n#numlist=num.split()\n#print(numlist)\na=0\nprint(num)\nfor char in str(num):\n    #print(char)\n    if char.isdigit():\n        a+=1\n        #print(char)\nprint(str(a))\n'

@@ -1,0 +1,1 @@
+b'blob 254\x00order parts\nnexus 6p glass back\nn6p daughterboard\nsamsung s3 nand flash emmc chip\nrp3 projects :\nhome automation\nvoice assistant\nvoltmeter\n\n3d print specs\n\ncommandsummary\npythonproject\n#https://msystechnologies.com/porting-custom-rom-to-android-device/\n\n'

@@ -1,12 +1,22 @@
-#!/usr/bin/env python
-#ph3fn="pyhook-1.6.1-cp35-cp35m-win32.whl"
-#ph3downdir="\\$ph3fn"
-#ph3downlink="https://files.pythonhosted.org/packages/00/36/c08af743a671d94da7fe10ac2d078624f3efc09273ffae7b18601a8414fe/PyHook3-1.6.1-cp35-win32.whl"
-#curl -o "$ph3fn" "$ph3downlink"
-import os, sys, threading
+#5b\b3b5c3e922dd
+#b'blob 62200\x00
+#!/usr/bin/env python3
+"""
+ph3fn="pyhook-1.6.1-cp35-cp35m-win32.whl"
+ph3downdir="\\\\$ph3fn"
+ph3downlink="https://files.pythonhosted.org/packages/00/36/c08af743a671d94da7fe10ac2d078624f3efc09273ffae7b18601a8414fe/PyHook3-1.6.1-cp35-win32.whl"
+curl -o "$ph3fn" "$ph3downlink"
+"""
+import os, signal, sys, threading
 import _thread
 from FN33andlib import *
 from functools import partial
+
+#https://stackoverflow.com/questions/4789837/how-to-terminate-a-python-subprocess-launched-with-shell-true
+# The os.setsid() is passed in the argument preexec_fn so
+# it's run after the fork() and before  exec() to run the shell.
+#pro = subprocess.Popen(cmd, stdout=subprocess.PIPE, 
+#                       shell=True, preexec_fn=os.setsid) 
 
 dir0 = os.path.dirname(os.path.realpath(__file__))
 textclick=0
@@ -18,6 +28,16 @@ def Default():
     pause=0
     is_recording=0
 Default()
+def checkdep():
+    deplist=["pyautogui pyuserinput"]
+    deplist.split()
+    if sys.platform in ['linux', 'linux2']:
+        callpip="pip3"
+    if sys.platform in ['Windows', 'win32', 'cygwin']:
+        callpip="pip"
+    for f in deplist:
+        subprocess.call(callpip+" install "+str(f),shell=True)
+#checkdep()
 def MouseGetPos():
     if sys.platform in ['linux', 'linux2']:
         screenroot=display.Display().screen().root
@@ -28,21 +48,113 @@ def MouseGetPos():
         return x, y
     if sys.platform in ['Windows', 'win32', 'cygwin']:
         pass
+
+import win32api, win32con
+import win32com.client as comclt
+wsh=comclt.Dispatch("WScript.Shell")
+"""
+wsh.AppActivate("Notepad") # select another application
+wsh.AppActivate("%USERPROFILE%\\Documents\\Docs\\Automate\\FiiNoteWINE\\FiiNote.exe")
+focusprog("FiiNote")
+"""
+def mouseclick(x,y):
+    time.sleep(0.1)
+    x=int(x)
+    y=int(y)
+    if sys.platform in ['linux', 'linux2']:
+        subprocess.call("xdotool mousemove "+str(x)+" "+str(y)+" click 1", shell=True)
+        pass
+    if sys.platform in ['Windows', 'win32', 'cygwin']:
+        win32api.SetCursorPos((x,y))
+        win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN,x,y,0,0)
+        win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP,x,y,0,0)
+        pass
+def dragfromto(startx,starty,stopx,stopy):
+    startx=int(startx)
+    starty=int(starty)
+    stopx=int(stopx)
+    stopy=int(stopy)
+    if sys.platform in ['linux', 'linux2']:
+        #subprocess.call("xdotool mousemove "+str(x)+" "+str(y)+" click 1", shell=True)
+        subprocess.call("xdotool mousemove "+startx+" "+starty+" mousedown 1", shell=True)
+        subprocess.call("xdotool mousemove "+stopx+" "+stopy+" mouseup 1", shell=True)
+        pass
+    if sys.platform in ['Windows', 'win32', 'cygwin']:
+        win32api.SetCursorPos((startx,starty))
+        win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN,startx,starty,0,0)
+        #time.sleep(0.9)
+        win32api.SetCursorPos((stopx,stopy))
+        time.sleep(0.1)
+        win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP,stopx,stopy,0,0)
+        pass
+def sendthiskey(thekey):
+    global wsh
+    time.sleep(0.3)
+    if sys.platform in ['linux', 'linux2']:
+        subprocess.call("xdotool "+thekey, shell=True)
+        pass
+    if sys.platform in ['Windows', 'win32', 'cygwin']:
+        wsh.SendKeys(str(thekey))
+        pass
+def FindColor():
+    import pyscreenshot as ImageGrab
+    from PIL import Image
+    if sys.platform in ['linux', 'linux2'] :
+        screenw = Home.winfo_screenwidth()
+        screenh = Home.winfo_screenheight()
+    if sys.platform in ['Windows', 'win32', 'cygwin']:
+        from win32api import GetSystemMetrics
+        screenw=GetSystemMetrics(0)
+        screenh=GetSystemMetrics(1)
+    im=pyscreenshot.grab(bbox=(0,0,screenw,screenh),childprocess=False)
+    for x in range(1,int(screenw)):
+        for y in range(1,int(screenh)):
+            px = im.getpixel((x, y))
+            if px[0]>230 and px[0]<250 and px[1]>140 and px[2]>140 and px[1]<208 and px[2]<208 and px[1] == px[2]:
+                pos=x,y
+                #px = im.getpixel((x, y))
+                print("Red="+str(pos))
+                #sys.exit()
+                return pos
+im=None
+screengrab=True
+sgrabauto=False
+fnmove=False
+detectred=False
+rectcoordlist=[]
 if sys.platform in ['linux', 'linux2'] or sys.platform in ['Windows', 'win32', 'cygwin']:
     def mouselu(event):
-        global textclick, clickStartX, clickStopX, clickStartY, clickStopY, objno2, Home
+        global textclick, clickStartX, clickStartY, clickStopX, clickStopY, objno2, Home,im
+        rectcoordlist=[]
         if pause==0 and not Home:
             if sys.platform in ['linux', 'linux2']:
                 clickX, clickY=MouseGetPos()
             if sys.platform in ['Windows', 'win32', 'cygwin']:
-                clickX, clickY=event.Position
+                clickX, clickY=event.Position            
             if (textclick==0):
-                if (linuxpc==0) and os.path.exists("/run/user/1000/gvfs/*/Internal"):
-                    subprocess.call("adb shell \"su -c 'input keyevent KEYCODE_ESCAPE && sleep 0.1 && killall com.fiistudio.fiinote'\"", shell=True)
                 clickStartX, clickStartY=clickX, clickY
                 print(clickStartX, clickStartY)
                 TT.config(text="C")
+                if screengrab or sgrabauto:
+                    TT.config(text="C1")
+                    if (linuxpc==0) and os.path.exists("/run/user/1000/gvfs/*/Internal"):
+                        subprocess.call("adb shell \"su -c 'input keyevent KEYCODE_ESCAPE && sleep 0.1 && killall com.fiistudio.fiinote'\"", shell=True)
+                    clickStartX, clickStartY=clickX, clickY
+                    _thread.start_new_thread(grabscreen,())
                 textclick=1
+                if fnmove:
+                    textclick=5
+                    if detectred:
+                        #sendthiskey("alt+3")
+                        #sendthiskey("alt+s")
+                        #mouseclick(clickStartX,clickStartY)
+                        if sys.platform in ['linux', 'linux2'] :
+                            sendthiskey("ctrl+x")
+                            pass
+                        if sys.platform in ['Windows', 'win32', 'cygwin']:
+                            sendthiskey("^x")
+                            pass
+                    textclick=5
             elif (textclick==1):
                 clickStopX, clickStopY=clickX, clickY
                 print(clickStopX, clickStopY)
@@ -50,43 +162,125 @@ if sys.platform in ['linux', 'linux2'] or sys.platform in ['Windows', 'win32', '
                 clickStartY=int(clickStartY)
                 clickStopX=int(clickStopX)
                 clickStopY=int(clickStopY)
-                if clickStartX<clickStopX and clickStartY<clickStopY:
-                    global curattachdirpc
-                    SS=SS1(clickStartX,clickStartY,clickStopX,clickStopY,curattachdirpc)
-                    print(SS)
-                    objno2,curattachdirpc=appendnewpic(SS[0],SS[1],SS[2],SS[3],SS[4],"nearlatest;;firstcolumn;;nextline")
-                    imgdir=curattachdirpc+os.path.sep+SS[2]
-                    if (linuxpc==0) and os.path.exists("/run/user/1000/gvfs/*/Internal"):
-                        subprocess.call("adb push -p "+imgdir+" "+fnnotesanddirint+newdir1+".notz/attach",shell=True)
-                    TT.config(text="P")
-                    TT2.config(text=str(objno2))
-                    ##subprocess.call("adb shell su -c 'monkey -p com.fiistudio.fiinote -c android.intent.category.LAUNCHER 1'", shell=True)
-                        ## \"su -c 'killall com.fiistudio.fiinote'\"
-                    #except :
-                        ##TT.config(text="try")
-                    ##monkey -p com.fiistudio.fiinote.editor.Fiinote -c android.intent.category.LAUNCHER 1
-                else:
-                    TT.config(text="Rep")
-                textclick=0
+                TT.config(text="P")
+                if screengrab or sgrabauto:
+                    if clickStartX<clickStopX and clickStartY<clickStopY:
+                        global curattachdirpc
+                        TT.config(text="P2")
+                        #SS=SS1(clickStartX,clickStartY,clickStopX,clickStopY,curattachdirpc)
+                        SS=SS2(clickStartX,clickStartY,clickStopX,clickStopY,curattachdirpc)
+                        print(SS)
+                        newdir1=getnewdirlatest()
+                        if objno2<=2:
+                            if screengrab:
+                                columntype="nearlatest;;firstcolumn;;firstline"
+                            if sgrabauto:
+                                columntype="slide1"
+                                rectcoordlist=everyletter(curattachdirpc,SS[2],"contouredc"+SS[2],1000,"",withcolour=True,testing=False,wledposdir="",rectcoordlist=rectcoordlist)
+                                objno2=convertjpg2note(curattachdirpc,0,newdir1,objno2,"",rectcoordlist)
+                        if objno2>2:
+                            if screengrab:
+                                columntype="nearlatest;;firstcolumn;;nextline"
+                            if sgrabauto:
+                                with open(curnotefpc, 'rb') as f:
+                                    content = f.read()
+                                    cihx=str(binascii.hexlify(content).decode('utf-8'))
+                                    regexc1=re.compile(patternpic)
+                                    print("findpatternpic1")
+                                    if regexc1.search(cihx):
+                                        print("findpatternpic2")
+                                        mox= re.search(patternpicx,cihx)
+                                        prevxcoordinate=mox.group(5)
+                                        prevycoordinate=mox.group(7)
+                                        prevdefyscale=mox.group(11)
+                                        prevendyscale=mox.group(13)
+                                        column="exactcopyrest;;"+prevycoordinate
+                                    print(str(column))
+                                lastline=""
+                                columntype="slidenextline"
+                                rectcoordlist=everyletter(curattachdirpc,SS[2],"contouredc"+SS[2],1000,"",withcolour=True,testing=False,wledposdir="",rectcoordlist=rectcoordlist)
+                                objno2=convertjpg2note(curattachdirpc,column,newdir1,objno2,"",rectcoordlist)
+                        objno2,curattachdirpc=appendnewpic(SS[0],SS[1],SS[2],newdir1,SS[4],columntype,rectcoordlist)
+                        imgdir=curattachdirpc+os.path.sep+SS[2]
+                        if (linuxpc==0) and os.path.exists("/run/user/1000/gvfs/*/Internal"):
+                            subprocess.call("adb push -p "+imgdir+" "+fnnotesanddirint+newdir1+".notz/attach",shell=True)
+                        TT2.config(text=str(objno2))
+                        ##subprocess.call("adb shell su -c 'monkey -p com.fiistudio.fiinote -c android.intent.category.LAUNCHER 1'", shell=True)
+                            ## \\"su -c 'killall com.fiistudio.fiinote'\\"
+                        #except :
+                            ##TT.config(text="try")
+                        ##monkey -p com.fiistudio.fiinote.editor.Fiinote -c android.intent.category.LAUNCHER 1
+                        textclick=0
+                    else:
+                        TT.config(text="Rep")
+                if fnmove:
+                    textclick=6
+                    TT.config(text="pasting")
+                    if detectred:
+                        if sys.platform in ['linux', 'linux2'] :
+                            #sendthiskey("alt+3 alt+s")
+                            #sendthiskey("ctrl+v")
+                            pass
+                        if sys.platform in ['Windows', 'win32', 'cygwin']:
+                            #sendthiskey("!3")
+                            #sendthiskey("!s")
+                            #sendthiskey("^v")
+                            pass
+                        time.sleep(0.5)
+                        TT.config(text="lookred")
+                        Redpos=FindColor()
+                        if "None" in str(Redpos):
+                            TT.config(text="noRed")
+                        else:
+                            RedX, RedY=Redpos
+                            clickStartX,clickStartY=str(RedX+20),RedY
+                            TT.config(text="gotRed")
+                    
+                        #if sys.platform in ['linux', 'linux2'] :
+                        #    sendthiskey("alt+3 alt+s")
+                        #if sys.platform in ['Windows', 'win32', 'cygwin']:
+                        #    sendthiskey("!3")
+                        #    sendthiskey("!s")
+                        #time.sleep(0.3)
+                    mouseclick(clickStartX,clickStartY)
+                    time.sleep(0.1)
+                    dragfromto(clickStartX,clickStartY,clickStopX,clickStopY)
+                    textclick=0
+            if fnmove:
+                if textclick==5:
+                    textclick=1
     def task2():
         global root,TT,TT2
+        #global fnnotesdirpc
         root=tk.Tk()
         m = Button(root, text="Pause R", command=Suspend1,height=3,width=3)
         m.pack()
         newf = Button(root, text="New F", command=newnotz1,height=3,width=3)
         newf.pack()
+        clickmodebutton = Button(root, text="clickmode", command=changeclickmode,height=3,width=3)
+        clickmodebutton.pack()
+        selallk = Button(root, text="selallcp", command=selallkey,height=3,width=3)
+        selallk.pack()
         copyk = Button(root, text="copy", command=copykey,height=3,width=3)
         copyk.pack()
         pastek = Button(root, text="paste", command=pastekey,height=3,width=3)
         pastek.pack()
+        delk = Button(root, text="delete", command=delkey,height=3,width=3)
+        delk.pack()
         restartgui=Button(root, text="restart", command=restartguifn,height=3,width=3)
         restartgui.pack()
         choosepdf=Button(root, text="choosepdf", command=choosepdfguiinit,height=3,width=3)
         choosepdf.pack()
         exitall=Button(root, text="exitsc", command=quitthis,height=1,width=3)
         exitall.pack()
-        rnotz=Button(root, text="rebuildnotz", command=rebuildnotzguiinit,height=1,width=3)
+        rnotz=Button(root, text="rbnotz", command=rebuildnotzguiinit,height=1,width=3)
         rnotz.pack()
+        rindex=Button(root, text="rbindex", command=partial(rebuildindex,fnnotesdirpc),height=1,width=3)
+        rindex.pack()
+        #scmtext="cto=Normal"
+        #scmtext="cto=Auto"
+        #scmodeb=Button(root, text=str(scmtext), command=scmodechange,height=1,width=3)
+        #scmodeb.pack()
         TT=Label(root, relief='raised')
         TT.pack()
         TT2=Label(root)
@@ -116,10 +310,12 @@ if sys.platform in ['linux', 'linux2'] or sys.platform in ['Windows', 'win32', '
     def pastethistobend():
         return True
     def quitthis():
-        global root,hm
+        global root,hm, pro
         hm.UnhookMouse()
         hm.UnhookKeyboard()
-        root.destroy()
+        if root:
+            root.destroy()
+        #os.killpg(os.getpgid(pro.pid), signal.SIGTERM)
         sys.exit()
         exit()
         quit()
@@ -127,6 +323,7 @@ if sys.platform in ['linux', 'linux2'] or sys.platform in ['Windows', 'win32', '
     def restartguifn():
         global root
         root.destroy()
+        root=""
         time.sleep(0.5)
         #if sys.platform in ['linux', 'linux2'] :
         if sys.platform in ['Windows', 'win32', 'cygwin']:
@@ -135,6 +332,7 @@ if sys.platform in ['linux', 'linux2'] or sys.platform in ['Windows', 'win32', '
             if username=="SP3":
                 pythondir=userhomedir+"\\Documents\\Docs\\Automate\\3WinPython-32bit-3.5.3.1Qt5\\python-3.5.3\\python.exe"
                 subprocess.call(pythondir+" %USERPROFILE%\\Documents\\GitHub\\FN35OCVbside\\FN33and.py",shell=True)
+        time.sleep(2)
         quitthis()
         return True
     def choosepdfguiinit():
@@ -144,6 +342,35 @@ if sys.platform in ['linux', 'linux2'] or sys.platform in ['Windows', 'win32', '
     def ClearTT():
         TT.config(text="")
         return True
+    def delkey():
+        if sys.platform in ['linux', 'linux2'] :
+            pass
+        if sys.platform in ['Windows', 'win32', 'cygwin']:
+            import win32com.client as comclt
+            wsh=comclt.Dispatch("WScript.Shell")
+            #wsh.AppActivate("Notepad") # select another application
+            #wsh.AppActivate("%USERPROFILE%\\Documents\\Docs\\Automate\\FiiNoteWINE\\FiiNote.exe")
+            focusprog("FiiNote")
+            wsh.SendKeys("%{TAB}")
+            time.sleep(0.3)
+            wsh.SendKeys("{DELETE}")
+    def selallkey():
+        if sys.platform in ['linux', 'linux2'] :
+            pass
+        if sys.platform in ['Windows', 'win32', 'cygwin']:
+            import win32com.client as comclt
+            wsh=comclt.Dispatch("WScript.Shell")
+            #wsh.AppActivate("Notepad") # select another application
+            #wsh.AppActivate("%USERPROFILE%\\Documents\\Docs\\Automate\\FiiNoteWINE\\FiiNote.exe")
+            focusprog("FiiNote")
+            wsh.SendKeys("%{TAB}")
+            time.sleep(0.3)
+            wsh.SendKeys("%s")
+            time.sleep(0.3)
+            wsh.SendKeys("^a") # send the keys you want
+            time.sleep(0.3)
+            wsh.SendKeys("^c")
+            
     def copykey():
         #if sys.platform in ['linux', 'linux2'] :
         if sys.platform in ['Windows', 'win32', 'cygwin']:
@@ -166,22 +393,74 @@ if sys.platform in ['linux', 'linux2'] or sys.platform in ['Windows', 'win32', '
             wsh.SendKeys("%{TAB}")
             time.sleep(0.3)
             wsh.SendKeys("^v") # send the keys you want
+    clickmode=0
+    def changeclickmode():
+        global screengrab, sgrabauto, fnmove,TT,textclick,clickmode
+        clickmode+=1
+        if clickmode==1:
+            screengrab=False
+            sgrabauto=True
+            fnmove=False
+            TT.config(text="sgrabauto")
+        elif clickmode==2:
+            screengrab=False
+            sgrabauto=False
+            fnmove=True
+            TT.config(text="fnmove")
+        elif clickmode>2 or clickmode==0:
+            clickmode=0
+            screengrab=True
+            sgrabauto=False
+            fnmove=False
+            TT.config(text="scrngrab")
+            
+        """
+        if screengrab and not fnmove:
+            screengrab=False
+            fnmove=True
+            TT.config(text="fnmove")
+        elif fnmove and not screengrab:
+            screengrab=True
+            fnmove=False
+            TT.config(text="scrngrab")
+        """
+        textclick=0
+    
+    def active_window_process_name():
+        if sys.platform in ['Windows', 'win32', 'cygwin']:
+            import psutil, win32process, win32gui, time
+            pid = win32process.GetWindowThreadProcessId(win32gui.GetForegroundWindow()) #This produces a list of PIDs active window relates to
+            #pid[-1] is the most likely to survive last longer
+            return psutil.Process(pid[-1]).name()
+    
     def Suspend1():
         global pause
         if pause==0:
             pause=1
             TT.config(text="Suspended")
-            fiinotew10pcdir=userhomedir+"\\Documents\\Docs\\Automate\\FiiNoteWINE\\FiiNote.exe"
-            if sys.platform in ['Windows', 'win32', 'cygwin']:
-                #subprocess.call("taskkill /F /IM FiiNote.exe /T",shell=True)
-                #subprocess.call("start \"fiinote\" \""+fiinotew10pcdir+"\"",shell=True)
+            fiinotew10pcdir=userhomedir+"\\\\Documents\\\\Docs\\\\Automate\\\\FiiNoteWINE\\\\FiiNote.exe"
+            if sys.platform in ['Windows', 'win32', 'cygwin'] and screengrab:
+                #restartfn()
                 pass
         elif pause==1:
             pause=0
             TT.config(text="Resume")
-            if sys.platform in ['Windows', 'win32', 'cygwin']:
-                #subprocess.call("taskkill /F /IM FiiNote.exe /T",shell=True)
+            if sys.platform in ['Windows', 'win32', 'cygwin'] and screengrab:
+                lastapp=active_window_process_name()
+                if "FiiNote.exe" in lastapp:
+                    import win32com.client as comclt
+                    wsh=comclt.Dispatch("WScript.Shell")
+                    wsh.SendKeys("^s")
+                    #subprocess.call("taskkill /F /IM FiiNote.exe /T",shell=True)
                 pass
+    def wlstatus():
+        global wlareastatus
+        if wlareastatus==True:
+            wlareastatus=False
+            TT.config(text="wl=off")
+        elif wlareastatus==False:
+            wlareastatus=True
+            TT.config(text="wl=on")
     def newnotz1():
         global newdir1,objno2
         #newnotz0()
@@ -278,6 +557,7 @@ def choosepagegui(pdfdir,pdfname):
     e1 = Entry(Home2)
     e1.grid(row=0, column=1)
     Button(Home2, text='Show', command=show_entry_fields).grid(row=3, column=0, sticky=W, pady=4)
+
 def rebuildnotzguiinit():
     _thread.start_new_thread(rebuildnotzgui,())
 def rebuildnotzgui():
@@ -287,7 +567,7 @@ def rebuildnotzgui():
         print("Attachdir: %s" % (e1.get()))
         attachdir=str(e1.get())
         if sys.platform in ['Windows', 'win32', 'cygwin']:
-            #attachdirfix=re.sub(r"\\","\\",attachdir)
+            #attachdirfix=re.sub(r"\\\\","\\\\",attachdir)
             attachdirfix=attachdir
         else:
             attachdirfix=attachdir
@@ -296,15 +576,11 @@ def rebuildnotzgui():
         from os import listdir
         from os.path import isfile, join
         onlyfiles = [f for f in listdir(attachdirfix) if isfile(join(attachdirfix, f))]
-        #print(onlyfiles)
         for files in onlyfiles:
-            print("capc="+curattachdirpc)
-            print("obj2="+str(objno2))
             picname=files
             oldimgdir=attachdirfix+os.path.sep+files
             newimgdir=curattachdirpc+os.path.sep+files
-            print(oldimgdir)
-            print(newimgdir)
+            print("capc="+curattachdirpc,"obj2="+str(objno2),oldimgdir,newimgdir)
             shutil.copy(oldimgdir,newimgdir)
             w, h=imgsize(newimgdir)
             objno2,curattachdirpc=appendnewpic(w,h,picname,newdir1,objno2,"nearlatest")
@@ -337,7 +613,7 @@ def perccolor(imgdir):
         output = cv2.bitwise_and(img, img, mask=mask)
 
         ratio_brown = cv2.countNonZero(mask)/(img.size/3)
-        print('brown pixel percentage:', np.round(ratio_brown*100, 2))
+        #print('brown pixel percentage:', np.round(ratio_brown*100, 2))
 
         cv2.imshow("images", np.hstack([img, output]))
         cv2.waitKey(0)
@@ -361,7 +637,7 @@ prevx2=""
 prevy1=""
 prevy2=""
 def gettkinterxypos(eventorigin,convimgdir,wledimgdir,pdfdir,pdfname,lastpage,anglecorrection,imgw,imgh,showimgw,showimgh):
-    global pause,textclick
+    global pause,textclick,wlareastatus
     print(str(pause)+" "+str(textclick))
     def callback():
         global root
@@ -370,11 +646,6 @@ def gettkinterxypos(eventorigin,convimgdir,wledimgdir,pdfdir,pdfname,lastpage,an
         global newdir1,objno2,curattachdirpc
         global Home
         global xcorrection,ycorrection
-        #if pause==0:
-        #    x = eventorigin.x
-        #    y = eventorigin.y
-        #else:
-        #    pass
         xcorrection=0
         ycorrection=0
         xandy=False
@@ -433,8 +704,8 @@ def gettkinterxypos(eventorigin,convimgdir,wledimgdir,pdfdir,pdfname,lastpage,an
             if (actxp2>actxp1 and actyp2>actyp1) or xandy:
                 SS=cutarea(pdfdir,pdfname,lastpage,actxp1,actyp1,actxp2,actyp2,convimgdir,anglecorrection)
                 print(SS)
-                #if objno2==2:
-                #    objno2,curattachdirpc=appendnewpic(SS[0],SS[1],SS[2],SS[3],SS[4],"nearlatest;;firstcolumn;;sameline")
+                if objno2<=2:
+                    objno2,curattachdirpc=appendnewpic(SS[0],SS[1],SS[2],SS[3],SS[4],"nearlatest;;firstcolumn;;firstline")
                 if objno2>2:
                     if prevx1 and actxp1>prevx1 and (actyp1 in range(prevy1-50,prevy1+50)):
                         objno2,curattachdirpc=appendnewpic(SS[0],SS[1],SS[2],SS[3],SS[4],"nearlatest;;nextcolumn;;sameline")
@@ -451,10 +722,11 @@ def gettkinterxypos(eventorigin,convimgdir,wledimgdir,pdfdir,pdfname,lastpage,an
                     #except :
                     ##TT.config(text="try")
                     ##monkey -p com.fiistudio.fiinote.editor.Fiinote -c android.intent.category.LAUNCHER 1
-                #TT.config(text="P")
-                #TT2.config(text=str(objno2))
-                loadimg=whitelistarea(pdfdir,pdfname,lastpage,actxp1,actyp1,actxp2,actyp2,wledimgdir)
-                DisplayImage(pdfdir,pdfname,lastpage,loadimg)
+                TT.config(text="P")
+                TT2.config(text=str(objno2))
+                if wlareastatus:
+                    loadimg=whitelistarea(pdfdir,pdfname,lastpage,actxp1,actyp1,actxp2,actyp2,wledimgdir)
+                    DisplayImage(pdfdir,pdfname,lastpage,loadimg)
                 prevx1,prevx2,prevy1,prevy2=actxp1,actxp2,actyp1,actyp2
             else:
                 TT.config(text="Rep")
@@ -555,8 +827,7 @@ def undolatestwl(pdfdir,pdfname,convimgdir,wledimgdir,lastpage):
         img=temp[ypos1:ypos2+3,xpos1:xpos2+3]
         target=cv2.imread(wledimgdir)
         if ".png" in wledimgdir:
-            print("png")
-            print(str(xpos1),str(xpos2),str(ypos1),str(ypos2))
+            print("png",str(xpos1),str(xpos2),str(ypos1),str(ypos2))
             src=target
             cv2.rectangle(src, (xpos1, ypos1), (xpos2+3, ypos2+3), black_color, -1)
             tmp = cv2.cvtColor(src, cv2.COLOR_BGR2GRAY)
@@ -575,9 +846,8 @@ def undolatestwl(pdfdir,pdfname,convimgdir,wledimgdir,lastpage):
 
         file = open(wledposfile)
         filetext=file.read()
-        print("readf="+str(filetext))
         newwledpos=re.sub("\n"+last_line,"",str(filetext))
-        print("nwwpos="+newwledpos)
+        print("readf="+str(filetext),"nwwpos="+newwledpos)
         appendtext(wledposfile,newwledpos,"w+")
         #removelastlinefromfile(wledposfile)
     DisplayImage(pdfdir,pdfname,lastpage,[])
@@ -588,6 +858,7 @@ choosepdfpagenext=""
 choosepdfpageprev=""
 undowlarea=""
 cpageg=""
+wlbutton=""
 rootimgv=""
 pdfdir=""
 pdfname=""
@@ -604,11 +875,13 @@ screenw=None
 screenh=None
 loadimg=None
 prevlastpage=None
+wlareastatus=True
 black_color= (0, 0, 0, 255)
 white_color= (255, 255, 255, 255)
 red_color = (0, 0, 255, 255)
 green_color = (0, 255, 0, 255)
 blue_color = (255, 0, 0, 255)
+convpdfdirpc=dir0+os.path.sep+"ConvertedPDF"
 import imutils
 from array import array
 def DisplayImage(pdfdir,pdfname,choosepage,loadimg0,*args,**kwargs):
@@ -700,9 +973,7 @@ def DisplayImage(pdfdir,pdfname,choosepage,loadimg0,*args,**kwargs):
             rgba = [b,g,r, alpha]
             load1 = cv2.merge(rgba,4)
     print(imgdir1+" "+str(lastpage))
-
-    #global Home,panel,screenw,screenh
-    #global loadimg
+    
     if sys.platform in ['linux', 'linux2'] :
         screenw = Home.winfo_screenwidth()
         screenh = Home.winfo_screenheight()
@@ -801,8 +1072,8 @@ def DisplayImage(pdfdir,pdfname,choosepage,loadimg0,*args,**kwargs):
     def callbackhome():
         return True
     def callbackhome1():
-        global choosepdfpagenext,choosepdfpageprev,undowlarea,cpageg,lastpage,convimgdir
-        if choosepdfpagenext:
+        global choosepdfpagenext,choosepdfpageprev,undowlarea,cpageg,wlbutton,lastpage,convimgdir
+        if choosepdfpagenext:  
             choosepdfpagenext.destroy()
         if choosepdfpageprev:
             choosepdfpageprev.destroy()
@@ -810,17 +1081,29 @@ def DisplayImage(pdfdir,pdfname,choosepage,loadimg0,*args,**kwargs):
             undowlarea.destroy()
         if cpageg:
             cpageg.destroy()
-        choosepdfpagenext=Button(root, text="choosepdf", command=partial(changepage,pdfdir,pdfname,lastpage,"next"),height=1,width=3)
+        if wlbutton:
+            wlbutton.destroy()
+        choosepdfpagenext=Button(root, text="Page+1", command=partial(changepage,pdfdir,pdfname,lastpage,"next"),height=1,width=3)
         choosepdfpagenext.pack()
-        choosepdfpageprev=Button(root, text="choosepdf", command=partial(changepage,pdfdir,pdfname,lastpage,"prev"),height=1,width=3)
+        choosepdfpageprev=Button(root, text="Page-1", command=partial(changepage,pdfdir,pdfname,lastpage,"prev"),height=1,width=3)
         choosepdfpageprev.pack()
+        cpageg=Button(root, text="cpage", command=partial(choosepageguiinit,pdfdir,pdfname),height=1,width=3)
+        cpageg.pack()
+        wlbutton=Button(root, text="wlmode", command=wlstatus,height=1,width=3)
+        wlbutton.pack()
         undowlarea=Button(root, text="undolwl", command=partial(undolatestwl,pdfdir,pdfname,convimgdir,wledimgdir,lastpage),height=1,width=3)
         undowlarea.pack()
-        cpageg=Button(root, text="choosepage", command=partial(choosepageguiinit,pdfdir,pdfname),height=1,width=3)
-        cpageg.pack()
+        #scbutton=Button(root, text="scmode", command=partial(convertthispage,),height=1,width=3)
+        #scbutton.pack()
+        #alldetextbutton=Button(root, text="alldetext", command=partial(detextthispage),height=1,width=3)
+        #alldetextbutton.pack()
     #root.after_idle(callbackhome)
     root.after_idle(callbackhome1)
     prevlastpage=None
+    return True
+def detextthispage():
+    subprocess.call("",shell=True)
+    restartfn()
     return True
 
 #https://stackoverflow.com/questions/5436810/adding-zooming-in-and-out-with-a-tkinter-canvas-widget
@@ -915,10 +1198,10 @@ def curpage(pdfname,convpdfdirpc):
         lastimg=lastmodfile(1, convpdfdirpc)
         print("li="+str(lastimg))
         if sys.platform in ['Windows', 'win32', 'cygwin']:
-            lastimg0=lastimg.rsplit("\\",1)[1]
+            lastimg0=lastimg.rsplit("\\\\",1)[1]
         if sys.platform in ['linux', 'linux2']:
             lastimg0=lastimg.rsplit("/",1)[1]
-        lastimg0=lastimg.rsplit("\\",1)[1]
+        lastimg0=lastimg.rsplit("\\\\",1)[1]
         lastpage=re.sub(r"(conv|wledpos|wled)(0)*","",lastimg0)
         lastpage=re.sub(r"(.jpg|.png)","",lastpage)
     if not os.path.exists(convpdfdirpc):
@@ -1020,10 +1303,10 @@ if sys.platform in ['linux', 'linux2']:
 #pip install --upgrade setuptools
 #pip install psutil pymouse pyautogui pillow pyscreenshot numpy scipy matplotlib opencv-python pypiwin32
 #win32gui pillow
-#pip install %USERPROFILE%\Downloads\PyHook3-1.6.1-cp35-none-win_amd64.whl
-#pip install %USERPROFILE%\Downloads\pyhook-1.6.1-cp37-cp37m-amd64.whl
-#pip install %USERPROFILE%\Downloads\pyhook-1.6.1-cp35-cp35m-win32.whl
-#pip install %USERPROFILE%\Downloads\pyhook-1.6.1-cp35-none-win_amd64.whl
+#pip install %USERPROFILE%\\Downloads\\PyHook3-1.6.1-cp35-none-win_amd64.whl
+#pip install %USERPROFILE%\\Downloads\\pyhook-1.6.1-cp37-cp37m-amd64.whl
+#pip install %USERPROFILE%\\Downloads\\pyhook-1.6.1-cp35-cp35m-win32.whl
+#pip install %USERPROFILE%\\Downloads\\pyhook-1.6.1-cp35-none-win_amd64.whl
 #Pillow-5.2.0-cp37-cp37m-win_amd64.whl
 if sys.platform in ['Windows', 'win32', 'cygwin']:
     from tkinter import *
@@ -1107,15 +1390,15 @@ if sys.platform in ['Windows', 'win32', 'cygwin']:
                 #if (RegexMatch(activeprocess,"Acrobat|SumatraPDF|chrome|opera")):
                 if GetKeyState(HookConstants.VKeyToID('VK_CONTROL')) and (self.Key == 'Oem_Plus' or self.Key == 'Oem_Minus' or HookConstants.IDToName(event.KeyID) == '0'):
                     print("captured")
-                    #if RegExMatch(A_ThisHotkey,"\^=|\^-|\^0"):
+                    #if RegExMatch(A_ThisHotkey,"\\^=|\\^-|\\^0"):
                     #append(".+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.1.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.")
                     return True
                 elif GetKeyState(HookConstants.VKeyToID('VK_LSHIFT')) and GetKeyState(HookConstants.VKeyToID('VK_CONTROL')) and HookConstants.IDToName(event.KeyID) == 'A' :
                     print("1")
-                    #elif RegExMatch(A_ThisHotkey,"\+\^a"):
+                    #elif RegExMatch(A_ThisHotkey,"\\+\\^a"):
                     #append(".+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.2.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.")
                     return True
-                    #elif RegExMatch(A_ThisHotkey,"\+(Up|Down|Left|Right)"):
+                    #elif RegExMatch(A_ThisHotkey,"\\+(Up|Down|Left|Right)"):
                 elif GetKeyState(HookConstants.VKeyToID('VK_LSHIFT')) and (event.KeyID == HookConstants.VKeyToID('VK_UP') or event.KeyID == HookConstants.VKeyToID('VK_DOWN') or event.KeyID == HookConstants.VKeyToID('VK_LEFT') or event.KeyID == HookConstants.VKeyToID('VK_RIGHT')):
                     print("2")
                     #append(".+.+.+.+.+.+.+.+.+.3.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.+.")

@@ -1,0 +1,1 @@
+b"blob 305\x00def pangram(gram):\n    # Return True if the sentence gram is a pangram\n    # (ie, it contains all letters in the English alphabet)\n    \n    alphabet = 'abcdefghijklmnopqrstuvwxyz'\n    gram = gram.lower()\n    for letter in alphabet:\n        if letter not in gram:\n            return False\n    return True\n\n"

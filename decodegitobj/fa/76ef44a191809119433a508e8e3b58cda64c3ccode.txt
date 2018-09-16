@@ -1,0 +1,1 @@
+b'blob 195\x00modules\nread file 503\nwrite file 503\nappend file 503\n\n\n\nparameter argument 5022\nnamespace/scope 5021\nnaming parameter 5021\nstring and variable 201\nreturn value 5021\n\nOtherfunctions 103\nformatting'

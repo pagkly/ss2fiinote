@@ -1,0 +1,1 @@
+b'blob 178\x00letter=input("Enter a letter: ")\nif letter == \'a\' or letter==\'e\' or letter==\'i\' or letter==\'o\' or letter==\'u\':\n    print("vowel")\nelse:\n    print("consonant")\nprint(str(letter))\n'
