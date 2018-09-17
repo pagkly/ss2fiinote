@@ -1790,6 +1790,7 @@ def setvarconvpdf():
         
         if args.density :
             quality=int(args.density)
+        """
         if args.pagestart :
             pagestart=int(args.pagestart)
         else:
@@ -1801,6 +1802,8 @@ def setvarconvpdf():
             pdftoppmcommand,pdfpage=getpdfinfo(pdfdir,pdfname,"")
             #pdfpage=subprocess.getoutput("pdfinfo \\""+pdfdir+os.path.sep+pdfname+"\\" | grep Pages: | awk '{print $2}'")
             pageend=int(pdfpage)
+        """
+                
         if args.singlepage:
             pagestart=int(args.singlepage)
             pageend=int(args.singlepage)
@@ -1810,8 +1813,8 @@ def setvarconvpdf():
             
         if args.noconversion=="1":
             noconversion=True
-        print("PDFDir="+pdfdir+os.path.sep+pdfname+" Page="+str(pagestart)+" to "+str(pageend))
-        print("ocvt"+str(ocvtype))
+        #print("PDFDir="+pdfdir+os.path.sep+pdfname+" Page="+str(pagestart)+" to "+str(pageend))
+        #print("ocvt"+str(ocvtype))
         if args.showpdf:
             runshowpdf(convpdfdirpc,pdfdir,pdfname,pagestart,pageend,ocvtype,continuenote)
         if not args.showpdf:
@@ -1819,7 +1822,29 @@ def setvarconvpdf():
                 testing=""
             if testing:
                 continuenote=False
-            rectcoordlist,wledposdir=runpdftonote(convpdfdirpc,pdfdir,pdfname,pagestart,pageend,ocvtype,continuenote,testing,multiplepage)
+            if args.pagestart:
+                pageslst=args.pagestart.split("+")
+                for pages in pageslst:
+                    if pages:
+                        eachpages=pages.split(";;")
+                        pagestart=int(eachpages[0])
+                        pageend=int(eachpages[1])
+                        print(pages, eachpages)
+                        if not pagestart:
+                            pagestart=0
+                        if not pageend:
+                            pdftoppmcommand,pdfpage=getpdfinfo(pdfdir,pdfname,"")
+                            #pdfpage=subprocess.getoutput("pdfinfo \\""+pdfdir+os.path.sep+pdfname+"\\" | grep Pages: | awk '{print $2}'")
+                            pageend=int(pdfpage)
+                        rectcoordlist,wledposdir=runpdftonote(convpdfdirpc,pdfdir,pdfname,pagestart,pageend,ocvtype,continuenote,testing,multiplepage)
+                        os.remove(curnotelocpc)
+            if not args.pagestart:
+                pagestart=0
+                if not args.pageend:
+                    pdftoppmcommand,pdfpage=getpdfinfo(pdfdir,pdfname,"")
+                    #pdfpage=subprocess.getoutput("pdfinfo \\""+pdfdir+os.path.sep+pdfname+"\\" | grep Pages: | awk '{print $2}'")
+                    pageend=int(pdfpage)
+                rectcoordlist,wledposdir=runpdftonote(convpdfdirpc,pdfdir,pdfname,pagestart,pageend,ocvtype,continuenote,testing,multiplepage)
         if rectcoordlist and os.path.exists(wledposdir):
             #print(rectcoordlist)
             for f in rectcoordlist:
