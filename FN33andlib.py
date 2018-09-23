@@ -196,6 +196,8 @@ patternpicx=r'(010[aA][cC]480[cC]391[cC]391[cC]391(?!.*010[aA][cC]480[cC]391[cC]
 regexindex2=r'(1123236e6f7465732f2323756e66696c6564(?!.*1123236e6f7465732f2323756e66696c6564))(.*?)(00\d\d\d\d00\d\d)(2323)'
 regexnote1=r'(0302010201)(.{2})(.{2}){0,1}'
 regexnote2=r'(0302010201)(.{2})(.{2})(0a){0,1}'
+regexnote3=r'(0302010201)(.*)(0a){0,1}'
+regexnote4=r'(0302010201)((((.){2,6})(0a){1})|(01))'
 regexnote1v2=r'(.{1570})(0201)(.{2})(0a)'
 thedir=dir0+os.path.sep+"ConvPDF"
 wsldir="/mnt/c/Windows"
@@ -305,8 +307,53 @@ def checknotz(curnotelocpc):
             with open(curnotefpc,"rb") as f:
                 content=f.read()
                 contenthex=str(binascii.hexlify(content).decode('utf-8'))
-                mo1 = re.search(regexnote1,contenthex)
-                mo2 = re.compile(regexnote1)
+                #mo1 = re.search(regexnote1,contenthex)
+                #mo2 = re.compile(regexnote1)
+                mo1 = re.search(regexnote4,contenthex)
+                mo2 = re.compile(regexnote4)
+                if mo2.search(contenthex):
+                    if mo1.group(6)=="0a" and mo1.group(2)!="01":
+                        """
+                        1-128 01
+                        127- c2 80
+                        128- c2 81
+                        192- c3 81
+                        864- cd a1
+                        1272- d3 b9
+                        1672- DA 89
+                        1872- DD 91
+                        1972- DE 85 
+                        2046- DF BF
+                        2048- 32*64
+                        2047- e0 a0 80
+                        2048- e0 a0 81
+                        2072- E0 A0 99 
+                        2222- E0 A2 AF
+                        2872- E0 AC B9
+                        FE 85
+                        E0 BE 86
+                        """
+                        if len(mo1.group(4))==2:
+                            objno2=int(mo1.group(4),16)-1
+                        elif len(mo1.group(4))==4:
+                            #7f
+                            #c280
+                            phexint=int(mo1.group(4)[-4:-2],16)
+                            objno2hexint=int(mo1.group(4)[-2:],16)
+                            objno2=((phexint-194)*64)+128+(objno2hexint-128)-1
+                        elif len(mo1.group(4))==6:
+                            #e0a080=2047
+                            pphexint=int(mo1.group(4)[-6:-4],16)
+                            phexint=int(mo1.group(4)[-4:-2],16)
+                            objno2hexint=int(mo1.group(4)[-2:],16)
+                            objno2=((pphexint-224)*(192-160)*(192-128))+((phexint-160)*(192-128))+2048+(objno2hexint-128)-1
+                        print(mo1)
+                        #time.sleep(3600)
+                    elif mo1.group(6)!="0a" and mo1.group(2)=="01":
+                        objno2=0
+                        pass
+                        
+                """
                 if mo2.search(contenthex):
                     checkending=mo1.group(3)
                     if checkending:
@@ -331,6 +378,7 @@ def checknotz(curnotelocpc):
                     if not checkending:
                         objno2=1
                 f.close()
+                """
         if (not os.path.exists(curnotzpc) or not os.path.exists(curnotefpc) or not os.path.exists(curattachdirpc)) :
             newdir1,objno2=newnotz(fnnotesdirpc,fnnotesdirpc)
     elif not os.path.exists(curnotelocpc) or (not os.path.exists(curnotzpc)):
@@ -346,7 +394,7 @@ def newnotz(thedir1,thedir2):
     global newdir1, objno2
     if os.path.exists(curnotelocpc):
         os.remove(curnotelocpc)
-    objno2=1
+    objno2=0
     newdir1="AOWNLPC00000"+strftime("%Y%m%d%H%M%S")
     #curnotzpc,curnotefpc,curattachdirpc,curnotzand,curattachdirand=setvarnotz(fnnotesdirandint,newdir1)
     curnotzpc,curnotefpc,curattachdirpc,curnotzand,curattachdirand=setvarnotz(thedir1,newdir1)
@@ -426,9 +474,9 @@ def appendnewpic(w,h,picname,newdir1,objno2,columntype,rectcoordlist):
         newxlochex="A9E19E81"
     if "slidenextline" or "nearlatest" or "exactcopyrest" in columntype:
         print(columntype)
-        if objno2<=2:
+        if objno2<=1:
             pass
-        if objno2>2:
+        if objno2>1:
             with open(curnotefpc, 'rb') as f:
                 content = f.read()
                 cihx=str(binascii.hexlify(content).decode('utf-8'))
@@ -451,7 +499,7 @@ def appendnewpic(w,h,picname,newdir1,objno2,columntype,rectcoordlist):
                         prevycoordinate=ctypelist[-1]
                         """
                         pass
-                    else:
+                    elif "nearlatest" in columntype or "slide" in columntype:
                         prevxcoordinate=mox.group(5)
                         prevycoordinate=mox.group(7)
                     
@@ -531,7 +579,7 @@ def appendnewpic(w,h,picname,newdir1,objno2,columntype,rectcoordlist):
             ctypelist=columntype.split(";;")
             prevxcoordinate="E5A5A9E19E81"
             prevycoordinate=ctypelist[-1]
-    if "slidenextline" or "nextline" or "exactcopy" in columntype:
+    if "slidenextline" in columntype or "nextline" in columntype or "exactcopy" in columntype:
     #and not "firstline" in columntype:
         if prevxcoordinate or not "firstcolumn" in columntype:
             posxpppsuffixint=int(prevxcoordinate[-12:-10],16)
@@ -665,9 +713,11 @@ def appendnewpic(w,h,picname,newdir1,objno2,columntype,rectcoordlist):
             #xpresuffix=(02=2,)
             scaledw=(realscaling*w)
             if w>h and h<=25:
-                scaledw-=(w*3)
+                #scaledw-=(w*3)
+                pass
             if w<h and h>1000:
-                scaledw+=(w/2)
+                #scaledw+=(w//2)
+                pass
             while scaledw>0:
                 xscaleremint+=1
                 if xscaleremint>191:
@@ -747,18 +797,58 @@ def appendnewpic(w,h,picname,newdir1,objno2,columntype,rectcoordlist):
         with open(curnotefpc,"rb") as f:
             content=f.read()
             cihx=str(binascii.hexlify(content).decode('utf-8'))
+            mo1=re.search(regexnote4,cihx)
+            mo2=re.compile(regexnote4)
+            #add by 1 twice is correct
+            objno2+=1
+            objno2+=1
+            totalobjhex=""
+            if objno2<127:
+                totalobjhex=str(format(objno2,'x')).zfill(2)
+            if objno2==127:
+                totalobjhex="c280"
+            if 127<objno2<2048:
+                phexint=194+(objno2-128)//64
+                #objno2hexint=objno2-(phexint*64)
+                objno2hexint=128+((objno2-128)%64)
+                phexd=str(format(phexint,'x')).zfill(2)
+                objno2hexd=str(format(objno2hexint,'x')).zfill(2)
+                totalobjhex=phexd+objno2hexd
+            if objno2==2048:
+                totalobjhex="e0a080"
+            if objno2>2048:
+                pphexint=224+((objno2-2048)//(64*(192-160)))
+                phexint=160+((objno2-2048)//64)
+                #objno2hexint=objno2-(phexint*64)
+                objno2hexint=128+((objno2-2048)%64)
+                pphexd=str(format(pphexint,'x')).zfill(2)
+                phexd=str(format(phexint,'x')).zfill(2)
+                objno2hexd=str(format(objno2hexint,'x')).zfill(2)
+                totalobjhex=pphexd+phexd+objno2hexd
+                pass
+            
+            if not mo1.group(6):
+                ending=""
+            else:
+                ending=mo1.group(6)
+                
+            if mo2.search(cihx) and totalobjhex:
+                replace1 = re.sub(mo1.group(1)+mo1.group(2), mo1.group(1)+totalobjhex+ending, cihx)
+                append=replace1+hexc
+                pass
+            """
             mo1=re.search(regexnote1,cihx)
             mo2=re.compile(regexnote1)
             if mo2.search(cihx) and objno2<=127:
                 objno2=int(mo1.group(2), 16)
                 objno2+=1
                 checkending=mo1.group(3)
-                prefixhex="" 
-                if objno2<=2:
+                prefixhex=""
+                if objno2<=1:
                     totalobjhex=str(format(objno2,'x')).zfill(2)
                     replace1 = re.sub(regexnote1, mo1.group(1)+totalobjhex, cihx)
                     append=replace1+hexc
-                if objno2>2 and objno2<128 and checkending=="0a":
+                if objno2>1 and objno2<128 and checkending=="0a":
                     totalobjhex=str(format(objno2,'x')).zfill(2)
                     replace1 = re.sub(regexnote1, mo1.group(1)+totalobjhex+mo1.group(3), cihx)
                     append=replace1+hexc
@@ -784,7 +874,10 @@ def appendnewpic(w,h,picname,newdir1,objno2,columntype,rectcoordlist):
                     replace1 = re.sub(regexnote2, mo1.group(1)+prefixhex+totalobjhex+mo1.group(4), cihx)
                     append=replace1+hexc
                     print("numbc6="+str(objno2))
+            """
+            #print(replace1)
             print("TOTOBJHEX="+totalobjhex)
+            print("totpics="+str(len(os.listdir(curattachdirpc))))
     if append:
         appendtext(curnotefpc,append,"wb")
     return objno2,curattachdirpc
@@ -1583,6 +1676,8 @@ def convertpdf2jpg2(pdfdir,pdfname,quality,page,convpdfdirpc,ver):
         convpname=namethis()
         convpname=re.sub(".jpg","",convpname)
         img0=convpdfdirpc+os.path.sep+convpname
+        if noconversion:
+            img0=curattachdirpc+os.path.sep+convpname
         imgdir=img0+".jpg"
         #imgdir=img0
         if not os.path.exists(imgdir):
@@ -1634,7 +1729,7 @@ def convertjpg2note(folderlocation,column,newdir1,objno2,wledposdir,rectcoordlis
         print(attachfnanddir)
     """
     if len(rectcoordlist)==0:
-        if objno2<=2:
+        if objno2<=1:
             w, h=imgsize(picdirnew)
             appendnewpic(w,h,picname,newdir1,objno2re,"nearlatest;;firstcolumn;;firstline")
         else:
@@ -1652,6 +1747,8 @@ def convertjpg2note(folderlocation,column,newdir1,objno2,wledposdir,rectcoordlis
             allfnpicdir.remove(rectcoordlist[i][4])
             pass
         picdir=folderlocation+ os.path.sep +  rectcoordlist[i][4]
+        if noconversion:
+            picdir=curattachdirpc+ os.path.sep +  rectcoordlist[i][4]
         if objno2re>=0 and os.path.getsize(picdir)>0:
             ###print(rectcoordlist[i][4])                    
             ##picdir=folderlocation+ os.path.sep +  allfnpicdir[i]
@@ -1671,7 +1768,17 @@ def convertjpg2note(folderlocation,column,newdir1,objno2,wledposdir,rectcoordlis
                 subprocess.call(copycommand+" \""+picdirnew+"\" \""+curattachdirpc+"\"", shell=True)
             w, h=imgsize(picdirnew)
             #appendnewpic(w,h,picname,newdir1,objno2re,"nearlatest")
-            columntype="exactcopy"
+            if noconversion:
+                if objno2<=1:
+                    columntype="slide1"
+                if objno2>1:
+                    columntype="slidenextline"
+            else:
+                if objno2<=1:
+                    columntype="exactcopy1"
+                if objno2>1:
+                    columntype="exactcopyrest"
+                
             if i==0 and "nearlatest" in columntype and not "slide" in str(type(column)):
                 columntype="nearlatest;;firstcolumn;;nextline"
             elif i>0 and "nearlatest" in columntype and not "slide" in str(type(column)):
@@ -1706,7 +1813,7 @@ def convertjpg2note(folderlocation,column,newdir1,objno2,wledposdir,rectcoordlis
                 elif "slidenextline" in column:
                     columntype="nearlatest;;slidenextline"
                 if "exactcopy" in column:
-                    if objno2<=2:
+                    if objno2<=1:
                         columntype="exactcopy1"
                     else:
                         columntype=column
@@ -1778,13 +1885,31 @@ def setvarconvpdf():
     if args.pdfname:
         checkdir(convpdfdirpc,"")
         #pdfname=args.pdfname
-        pfulldir=args.pdfname.split(os.path.sep)
+        #pfulldir=args.pdfname.split(os.path.sep)
+        if "file:///" in args.pdfname:
+            pdir=re.sub("file:///","",args.pdfname)
+            pdir=re.sub("%20"," ",pdir)
+            pdir=re.sub("/",os.path.sep+os.path.sep,pdir)
+            print(pdir)
+            """
+            time.sleep(3600)
+            pfulldir=args.pdfname.split(os.path.sep)
+            pfulldir=pdir.split("/")
+            pdir=os.path.sep.join(pfulldir)
+            print(pdir)
+            time.sleep(3600)
+            """
+            pfulldir=pdir.split(os.path.sep)
+            print(pfulldir)
+        else:
+            pfulldir=args.pdfname.split(os.path.sep)
         if len(pfulldir)==1:
             pdfdir=dir0
             pdfname=pfulldir[0]
         else:
             pdfdir=os.path.sep.join(pfulldir[:-1:])
             pdfname=pfulldir[-1]
+        print(pdfdir, pdfname)
         if os.path.exists(convpdfdirpc):
             shutil.rmtree(convpdfdirpc)
         
@@ -1827,23 +1952,35 @@ def setvarconvpdf():
                 for pages in pageslst:
                     if pages:
                         eachpages=pages.split(";;")
-                        pagestart=int(eachpages[0])
-                        pageend=int(eachpages[1])
-                        print(pages, eachpages)
-                        if not pagestart:
+                        try:
+                            pagestart=int(eachpages[0])
+                        except:
                             pagestart=0
-                        if not pageend:
+                        try:
+                            pageend=int(eachpages[1])
+                        except:
                             pdftoppmcommand,pdfpage=getpdfinfo(pdfdir,pdfname,"")
                             #pdfpage=subprocess.getoutput("pdfinfo \\""+pdfdir+os.path.sep+pdfname+"\\" | grep Pages: | awk '{print $2}'")
                             pageend=int(pdfpage)
+                        print(pages, eachpages)
+                        #if not pagestart:
+                        #    pagestart=0
+                        #if not pageend:
+                        #    pdftoppmcommand,pdfpage=getpdfinfo(pdfdir,pdfname,"")
+                            #pdfpage=subprocess.getoutput("pdfinfo \\""+pdfdir+os.path.sep+pdfname+"\\" | grep Pages: | awk '{print $2}'")
+                        #    pageend=int(pdfpage)
                         rectcoordlist,wledposdir=runpdftonote(convpdfdirpc,pdfdir,pdfname,pagestart,pageend,ocvtype,continuenote,testing,multiplepage)
                         os.remove(curnotelocpc)
-            if not args.pagestart:
+            if not args.pagestart and not args.singlepage:
                 pagestart=0
                 if not args.pageend:
                     pdftoppmcommand,pdfpage=getpdfinfo(pdfdir,pdfname,"")
                     #pdfpage=subprocess.getoutput("pdfinfo \\""+pdfdir+os.path.sep+pdfname+"\\" | grep Pages: | awk '{print $2}'")
                     pageend=int(pdfpage)
+                rectcoordlist,wledposdir=runpdftonote(convpdfdirpc,pdfdir,pdfname,pagestart,pageend,ocvtype,continuenote,testing,multiplepage)
+            if args.singlepage:
+                pagestart=int(args.singlepage)
+                pageend=int(args.singlepage)
                 rectcoordlist,wledposdir=runpdftonote(convpdfdirpc,pdfdir,pdfname,pagestart,pageend,ocvtype,continuenote,testing,multiplepage)
         if rectcoordlist and os.path.exists(wledposdir):
             #print(rectcoordlist)

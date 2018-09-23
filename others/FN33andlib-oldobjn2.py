@@ -1,6 +1,6 @@
 #b'blob 78679\x00
 #!/usr/bin/env python
-import os, sys, threading
+import os, signal, sys, threading
 import _thread
 import subprocess
 import shutil
@@ -173,7 +173,7 @@ def SS2(clickStartX,clickStartY,clickStopX,clickStopY,curattachdirpc):
     return w,h,picname,newdir1,objno2
 def checkadbdevices():
     #global curanddevice
-    curanddevice=subprocess.getoutput("adb devices | awk '{gsub(\\"List of devices attached\\",\\"\\");print}'")
+    curanddevice=subprocess.getoutput("adb devices | awk '{gsub(\"List of devices attached\",\"\");print}'")
     print(curanddevice)
     deviceconnected="device"
     if not deviceconnected in curanddevice:
@@ -193,7 +193,7 @@ regexindex1=r'(01)(.{8})(.{4})(011a)'
 patternpic=r'(010ac480c391c391c391(?!.*010ac480c391c391c391))(.*?)(01c88a)(.{36})(.{28})(.{2})(.{2})(.{2})(.{2})(.{36})(0303)(.{102,})'
 #patternpicx=r'(010ac480c391c391c391(?!.*010ac480c391c391c391))(.*?)(01c88a)(.{28})(.{2})(.{2})(.{2})(.{2})(.{36})(.{36})(03)(.{8})(.{8})(.{8})(.{8})(.*?)'
 patternpicx=r'(010[aA][cC]480[cC]391[cC]391[cC]391(?!.*010[aA][cC]480[cC]391[cC]391[cC]391))(.*?)(01[cC]88[aA])(.{24})(.{12})(.{24})(.{12})(.{36})(03)(.{8})(.{8})(.{8})(.{8})(.*?)'
-regexindex2=r'(1123236e6f7465732f2323756e66696c6564(?!.*1123236e6f7465732f2323756e66696c6564))(.*?)(00\\d\\d\\d\\d00\\d\\d)(2323)'
+regexindex2=r'(1123236e6f7465732f2323756e66696c6564(?!.*1123236e6f7465732f2323756e66696c6564))(.*?)(00\d\d\d\d00\d\d)(2323)'
 regexnote1=r'(0302010201)(.{2})(.{2}){0,1}'
 regexnote2=r'(0302010201)(.{2})(.{2})(0a){0,1}'
 regexnote1v2=r'(.{1570})(0201)(.{2})(0a)'
@@ -216,10 +216,9 @@ if sys.platform in ['linux', 'linux2']:
         fnnotesdirand=dirand+os.path.sep+dirand2[0]+"/Internal shared storage/fiinote/notes"
         subprocess.call("nautilus file://"+schooldirpc,shell=True)
     if os.path.exists(wsldir):
-        thedirw="C:\\\\Users\\\\"+userid+"\\\\AppData\\\\Roaming\\\\FiiNote\\\\@pagkly\\\
-otes"
+        thedirw="C:\\Users\\"+userid+"\\AppData\\Roaming\\FiiNote\\@pagkly\\notes"
         print(thedirw)
-        #thedir=subprocess.getoutput("echo "+thedirw+" | awk '{gsub(\\"C:\\",\\"/mnt/c\\");gsub(\\"\\\\\\\\\\",\\"/\\");print}'")
+        #thedir=subprocess.getoutput("echo "+thedirw+" | awk '{gsub(\"C:\",\"/mnt/c\");gsub(\"\\\\\",\"/\");print}'")
         thedir=re.sub(r"C:","/mnt/c",thedirw)
         thedir=re.sub(r"\\\\","/",thedir)
         print(thedir)
@@ -240,7 +239,7 @@ autodirpc=userhomedir+os.path.sep+"Documents"+os.path.sep+"Docs"+os.path.sep+"Te
 schooldirpc=autodirpc+os.path.sep+"PDF"+os.path.sep+"Sem2"
 pdftonotedir=autodirpc+os.path.sep+"FN35AOCV"+os.path.sep+"pdf2note.py"
 fnexedir=dir0+os.path.sep+"FiiNote"+os.path.sep+"FiiNote.exe"
-fiinotew10pcdir=userhomedir+"\\\\Documents\\\\Docs\\\\Automate\\\\FiiNoteWINE\\\\FiiNote.exe"
+fiinotew10pcdir=userhomedir+"\\Documents\\Docs\\Automate\\FiiNoteWINE\\FiiNote.exe"
 pdfreaderexedir=dir0+os.path.sep+"SumatraPDF-3.1.2"+os.path.sep+"SumatraPDF.exe"
 winefnexedir="wine "+fnexedir
 winepdfreaderexedir="wine "+pdfreaderexedir
@@ -274,6 +273,7 @@ def setvarnotz(thedir,newdir1):
     curnotefpc1=thedir+os.path.sep+"ConvertedPDF"+os.path.sep+notefn
     curnotzand=fnnotesdirandint+os.path.sep+notzdn
     curattachdirand=curnotzand+os.path.sep+"attach"
+    print(curnotzpc)
     checkdir(curnotzpc,"")
     checkdir(curattachdirpc,"")
     if not os.path.exists(curnotefpc):
@@ -290,13 +290,14 @@ def setvarnotz(thedir,newdir1):
 def checknotz(curnotelocpc):
     global objno2,newdir1
     if curanddevice:
-        runadbcommand("adb shell \\"su -c 'input keyevent KEYCODE_ESCAPE && sleep 0.1 && killall com.fiistudio.fiinote'\\"")
+        runadbcommand("adb shell \"su -c 'input keyevent KEYCODE_ESCAPE && sleep 0.1 && killall com.fiistudio.fiinote'\"")
     if os.path.exists(curnotelocpc):
         with open(curnotelocpc) as f:
             for line in f:
-                if re.search(r"\\.notz",str(line)):
+                if re.search(r".notz",str(line)):
                     newdir1=line
-                    newdir1 = re.sub('.notz', ', newdir1)
+                    newdir1=newdir1.split(os.path.sep)[-1]
+                    newdir1 = re.sub('.notz', '', newdir1)
         curnotzpc,curnotefpc,curattachdirpc,curnotzand,curattachdirand=setvarnotz(fnnotesdirpc,newdir1)
         if os.path.exists(curnotzpc) and os.path.exists(curnotefpc) and os.path.exists(curattachdirpc):
             print("checkingcnf")
@@ -365,41 +366,40 @@ def firstlineappendindex(newdir1,curindexpc):
 def firstlineappend(newdir1,curnotef):
     difftime=getdateinhex()
     newdir1hex=convasciitohex(newdir1,1)
-    filetypehex="060000" + \\
-                 "01" + difftime + "FFFFFF" + "0000" + \\
-                 "01" + difftime + "FFFFFF" + \\
-                 "001A" + newdir1hex + \\
-                 "000000" + "ffff" + \\
-                 "000000" + "000000" + \\
-                 "000000" + "000000" + \\
-                 "000000" + "000000" + \\
-                 "01" + \\
-                 "000000" + "000000" + \\
-                 "000000" + "000000" + \\
-                 "01" + difftime + "FFFFFF" + \\
-                 "010302010201"+ \\
+    filetypehex="060000" + \
+                 "01" + difftime + "FFFFFF" + "0000" + \
+                 "01" + difftime + "FFFFFF" + \
+                 "001A" + newdir1hex + \
+                 "000000" + "ffff" + \
+                 "000000" + "000000" + \
+                 "000000" + "000000" + \
+                 "000000" + "000000" + \
+                 "01" + \
+                 "000000" + "000000" + \
+                 "000000" + "000000" + \
+                 "01" + difftime + "FFFFFF" + \
+                 "010302010201"+ \
                  "01"
     appendtext(curnotef,filetypehex,"wb")
 
 def getnewdirlatest():
     import os
-    directory = userhomedir+"\\\\AppData\\\\Roaming\\\\FiiNote\\\\@pagkly\\\
-otes"
+    directory = userhomedir+"\\AppData\\Roaming\\FiiNote\\@pagkly\\notes"
     #directory = userhomedir+os.path.sep+"AppData"+os.path.sep+"Roaming"+os.path.sep+"FiiNote"+os.path.sep+"@pagkly"+os.path.sep+"notes"
-    #directory = userhomedir+"\\\\AppData"+os.path.sep+"Roaming"+os.path.sep+"FiiNote"+os.path.sep+"@pagkly"+os.path.sep+"notes"
+    #directory = userhomedir+"\\AppData"+os.path.sep+"Roaming"+os.path.sep+"FiiNote"+os.path.sep+"@pagkly"+os.path.sep+"notes"
     print(directory)
     alldirlist=[os.path.join(directory,d) for d in os.listdir(directory)]
     for f in alldirlist:
-        if (".nti" in f) or ("andimages" in f) or (".pc" in f):
+        if (".ntiold" in f) or (".nti" in f) or ("andimages" in f) or (".pc" in f):
             alldirlist.remove(f)
     latestdir=max(alldirlist, key=os.path.getmtime)
     #if "AOWNLPC0000020180808143255.notz" in latestdir:
     #    print("correct")
     print(latestdir)
-    #directory=re.sub(r"\\\\","\\\\\\\\",directory)
+    #directory=re.sub(r"\","\\\",directory)
     #print(directory)
     #latestdir=re.sub(directory,"",latestdir)
-    allld=latestdir.split("\\\\")
+    allld=latestdir.split(os.path.sep)
     latestdir=allld[len(allld)-1]
     print(latestdir)
     #time.sleep(3600)
@@ -451,7 +451,7 @@ def appendnewpic(w,h,picname,newdir1,objno2,columntype,rectcoordlist):
                         prevycoordinate=ctypelist[-1]
                         """
                         pass
-                    else:
+                    elif "nearlatest" in columntype or "slide" in columntype:
                         prevxcoordinate=mox.group(5)
                         prevycoordinate=mox.group(7)
                     
@@ -531,21 +531,23 @@ def appendnewpic(w,h,picname,newdir1,objno2,columntype,rectcoordlist):
             ctypelist=columntype.split(";;")
             prevxcoordinate="E5A5A9E19E81"
             prevycoordinate=ctypelist[-1]
-    if "slidenextline" or "nextline" or "exactcopy" in columntype and "firstline" not in columntype:
-        posxpppsuffixint=int(prevxcoordinate[-12:-10],16)
-        posxppsuffixint=int(prevxcoordinate[-10:-8],16)
-        posxpsuffixint=int(prevxcoordinate[-8:-6],16)
-        posxsuffixint=int(prevxcoordinate[-6:-4],16)
-        posxint=int(prevxcoordinate[-4:-2],16)
-        posxremint=int(prevxcoordinate[-2:],16)
-                    
-        posypppsuffixint=int(prevycoordinate[-12:-10],16)         
-        posyppsuffixint=int(prevycoordinate[-10:-8],16)
-        posypsuffixint=int(prevycoordinate[-8:-6],16)
-        posysuffixint=int(prevycoordinate[-6:-4],16)
-        posyint=int(prevycoordinate[-4:-2],16)
-        posyremint=int(prevycoordinate[-2:],16)
-        if not "slide" in columntype:
+    if "slidenextline" or "nextline" or "exactcopy" in columntype:
+    #and not "firstline" in columntype:
+        if prevxcoordinate or not "firstcolumn" in columntype:
+            posxpppsuffixint=int(prevxcoordinate[-12:-10],16)
+            posxppsuffixint=int(prevxcoordinate[-10:-8],16)
+            posxpsuffixint=int(prevxcoordinate[-8:-6],16)
+            posxsuffixint=int(prevxcoordinate[-6:-4],16)
+            posxint=int(prevxcoordinate[-4:-2],16)
+            posxremint=int(prevxcoordinate[-2:],16)
+        if prevycoordinate or not "firstline" in columntype:
+            posypppsuffixint=int(prevycoordinate[-12:-10],16)         
+            posyppsuffixint=int(prevycoordinate[-10:-8],16)
+            posypsuffixint=int(prevycoordinate[-8:-6],16)
+            posysuffixint=int(prevycoordinate[-6:-4],16)
+            posyint=int(prevycoordinate[-4:-2],16)
+            posyremint=int(prevycoordinate[-2:],16)
+        if prevxcoordinate or not "slide" or not "firstcolumn" in columntype:
             if countingx:
                 while countingx>0:
                     posxremint+=1
@@ -572,34 +574,32 @@ def appendnewpic(w,h,picname,newdir1,objno2,columntype,rectcoordlist):
             posxhex=format(posxint, 'x')
             posxremhex=format(posxremint, 'x')
             newxlochex=posxpppsuffixhex+posxppsuffixhex+posxpsuffixhex+posxsuffixhex+posxhex+posxremhex
-        
-        while countingy>0 :
-            posyremint+=1
-            if posyremint>191:
-                posyint+=1
-                posyremint=128
-            if posyint>191:
-                posysuffixint+=1
-                posyint=128
-            if posysuffixint>231:
-                posypsuffixint+=1
-                posysuffixint=225
-            if posypsuffixint>191:
-                posyppsuffixint+=1
-                posypsuffixint=128
-            if posyppsuffixint>191:
-                posypppsuffixint+=1
-                posyppsuffixint=128
-            countingy-=1
-        posypppsuffixhex=format(posypppsuffixint, 'x')
-        posyppsuffixhex=format(posyppsuffixint, 'x')
-        posypsuffixhex=format(posypsuffixint, 'x')
-        posysuffixhex=format(posysuffixint, 'x')           
-        posyhex=format(posyint, 'x')
-        posyremhex=format(posyremint, 'x')
-        newylochex=posypppsuffixhex+posyppsuffixhex+posypsuffixhex+posysuffixhex+posyhex+posyremhex
-        #print(newxlochex)
-        #print(newylochex)
+        if prevycoordinate or not "firstline" in columntype:
+            while countingy>0 :
+                posyremint+=1
+                if posyremint>191:
+                    posyint+=1
+                    posyremint=128
+                if posyint>191:
+                    posysuffixint+=1
+                    posyint=128
+                if posysuffixint>231:
+                    posypsuffixint+=1
+                    posysuffixint=225
+                if posypsuffixint>191:
+                    posyppsuffixint+=1
+                    posypsuffixint=128
+                if posyppsuffixint>191:
+                    posypppsuffixint+=1
+                    posyppsuffixint=128
+                countingy-=1
+            posypppsuffixhex=format(posypppsuffixint, 'x')
+            posyppsuffixhex=format(posyppsuffixint, 'x')
+            posypsuffixhex=format(posypsuffixint, 'x')
+            posysuffixhex=format(posysuffixint, 'x')           
+            posyhex=format(posyint, 'x')
+            posyremhex=format(posyremint, 'x')
+            newylochex=posypppsuffixhex+posyppsuffixhex+posypsuffixhex+posysuffixhex+posyhex+posyremhex
     if "slide" in columntype:
         newxlochex="E5A5AAE19E81"
     if "slide1" in columntype:
@@ -612,12 +612,12 @@ def appendnewpic(w,h,picname,newdir1,objno2,columntype,rectcoordlist):
         newxlochex="E5A5A9E19E81"
     if "firstline" in columntype:
         newylochex="E5A5A9E19E81"
-    xlochex="E5A5AA"+"E5AB81"+\\
+    xlochex="E5A5AA"+"E5AB81"+\
             "E5A5A9"+"E19E81"+newxlochex
-    ylochex="E5A5A9"+"E19E81"+\\
+    ylochex="E5A5A9"+"E19E81"+\
             "E5A5AA"+"E5AB81"+newylochex
-    zlochex="E5A5A9"+"E19E81"+\\
-            "E5A5A9"+"E19E81"+\\
+    zlochex="E5A5A9"+"E19E81"+\
+            "E5A5A9"+"E19E81"+\
             "E5A5AA"+"E5AB81"
     
     yscalehexs="";
@@ -665,9 +665,11 @@ def appendnewpic(w,h,picname,newdir1,objno2,columntype,rectcoordlist):
             #xpresuffix=(02=2,)
             scaledw=(realscaling*w)
             if w>h and h<=25:
-                scaledw-=(w*3)
+                #scaledw-=(w*3)
+                pass
             if w<h and h>1000:
-                scaledw+=(w/2)
+                #scaledw+=(w//2)
+                pass
             while scaledw>0:
                 xscaleremint+=1
                 if xscaleremint>191:
@@ -753,7 +755,7 @@ def appendnewpic(w,h,picname,newdir1,objno2,columntype,rectcoordlist):
                 objno2=int(mo1.group(2), 16)
                 objno2+=1
                 checkending=mo1.group(3)
-                prefixhex="" 
+                prefixhex=""
                 if objno2<=2:
                     totalobjhex=str(format(objno2,'x')).zfill(2)
                     replace1 = re.sub(regexnote1, mo1.group(1)+totalobjhex, cihx)
@@ -809,20 +811,20 @@ def appendnewnote(newdir1,curindexpc,curindexoldpc):
             pass
         difftime=getdateinhex()
         newdir1hex=convasciitohex(newdir1,1)
-        newfolderhex1="011A"+newdir1hex+"00" + \\
-                        "00" + \\
-                        "04" + \\
-                        "00" + \\
-                        "00" + \\
-                        "01" + difftime + "FFFFFF" + "0000" + \\
-                        "01" + difftime + "FFFFFF" + "0000" + \\
-                        "001A" + newdir1hex + \\
-                        "00" + "1123236E6F7465732F2323756E66696C6564" + "05" + \\
-                        "00"+ \\
-                        "000000" + \\
-                        "000000" + \\
-                        "000000" + \\
-                        "01" + difftime + "FFFFFF" + "0000" + \\
+        newfolderhex1="011A"+newdir1hex+"00" + \
+                        "00" + \
+                        "04" + \
+                        "00" + \
+                        "00" + \
+                        "01" + difftime + "FFFFFF" + "0000" + \
+                        "01" + difftime + "FFFFFF" + "0000" + \
+                        "001A" + newdir1hex + \
+                        "00" + "1123236E6F7465732F2323756E66696C6564" + "05" + \
+                        "00"+ \
+                        "000000" + \
+                        "000000" + \
+                        "000000" + \
+                        "01" + difftime + "FFFFFF" + "0000" + \
                         "01" + difftime + "FFFFFF"
         regexc2=re.compile(regexindex2)
         if regexc2.search(replace1):
@@ -840,6 +842,7 @@ def rebuildindex(fnnotesdirpc):
     if sys.platform in ['Windows', 'win32', 'cygwin']:
         subprocess.call("taskkill /F /IM FiiNote.exe /T",shell=True)
         subprocess.call("taskkill /F /IM wxHexEditor.exe /T",shell=True)
+    #print(curindexpc)
     copyfile(curindexpc,curindexoldpc)
     #delfile(curindexpc)
     os.remove(curindexpc)
@@ -849,8 +852,13 @@ def rebuildindex(fnnotesdirpc):
     firstlinenote=re.sub(" ","",firstlinenote)
     appendtext(curindexpc,firstlinenote,"wb")
     dirlist=sorted(os.listdir(fnnotesdirpc))
-    print(firstlinenote)
     print(dirlist)
+    #search_dir = "/mydir/"
+    #os.chdir(search_dir)
+    #files = filter(os.path.isfile, os.listdir(search_dir))
+    #files = [os.path.join(search_dir, f) for f in files] # add path to each file
+    dirlist.sort(key=lambda x: os.path.getmtime(fnnotesdirpc+os.path.sep+x))
+    #dirlist=dirlist[::-1]
     for f in dirlist:
         if ".notz" in f:
             newdir1=re.sub(r".notz","",f)
@@ -859,7 +867,9 @@ def rebuildindex(fnnotesdirpc):
             print("newdir={0}".format(newdir1))
             appendnewnote(newdir1,curindexpc,curindexoldpc)
     if sys.platform in ['Windows', 'win32', 'cygwin']:
-        subprocess.call("start /MAX \\"fiinote\\" \\""+fiinotew10pcdir+"\\"",shell=True)
+        #subprocess.call("start /MAX \"\" \""+fiinotew10pcdir+"\"",shell=True)
+        #restartfn()
+        pass
     pass
 
 #####libocvfinal
@@ -882,7 +892,7 @@ def namethis():
     return rectimgname
 def everyletter(imgdir,imgname,afterimg,a,ocvtype,withcolour,testing,wledposdir,rectcoordlist):
     global curattachdirpc
-    print("otype="+ocvtype)
+    print("otype="+str(ocvtype), imgdir+os.path.sep+imgname)
     #a=1000
     imgori = cv2.imread(imgdir+os.path.sep+imgname)
     img=imgori.copy()
@@ -1455,7 +1465,7 @@ def runpdftonote(convpdfdirpc,pdfdir,pdfname,pagestart,pageend,ocvtype,continuen
         print(len(pdf_names))
         for i in range(0,len(pdf_names)):
             print(pdf_names[i])
-            subprocess.call("python3 "+pdftonotedir+" -pdir \\""+relevant_path+"\\" -p \\""+pdf_names[i]+"\\" -d 100 -t 1 -nc 1" ,shell=True)
+            subprocess.call("python3 "+pdftonotedir+" -pdir \""+relevant_path+"\" -p \""+pdf_names[i]+"\" -d 100 -t 1 -nc 1" ,shell=True)
     return rectcoordlist,wledposdir
 
 def runshowpdf(convpdfdirpc,pdfdir,pdfname,pagestart,pageend,ocvtype,continuenote):
@@ -1507,11 +1517,11 @@ def progresspage():
 def convertpdf2jpg(pdfdir,pdfname,quality,page,convpdfdirpc):
     ##for i in range(int(pagestart),int(pageend)):
     #ppmcommand2="convert -verbose -density "+str(quality)+" -trim "+pdfdir+os.path.sep+pdfname+"["+str(page)+"] -quality 100 -flatten -sharpen 0x1.0 "+convpdfdirpc+os.path.sep+convpname
-    pdfpage=subprocess.getoutput("pdfinfo \\""+pdfdir+os.path.sep+pdfname+"\\" | grep Pages: | awk '{print $2}'")
+    pdfpage=subprocess.getoutput("pdfinfo \""+pdfdir+os.path.sep+pdfname+"\" | grep Pages: | awk '{print $2}'")
     pagez=str(page).zfill(4)
     convpname="conv"+pagez
-    ppmcommand="pdftoppm \\""+pdfdir+os.path.sep+pdfname+"\\" \\""+convpdfdirpc+os.path.sep+convpname+"\\" -jpeg -f "+str(page)+" -singlefile"
-    #ppmcommand="pdftoppm \\""+pdfdir+os.path.sep+pdfname+"\\" \\""+convpdfdirpc+os.path.sep+convpname+"\\" -png -f "+str(page)+" -singlefile"
+    ppmcommand="pdftoppm \""+pdfdir+os.path.sep+pdfname+"\" \""+convpdfdirpc+os.path.sep+convpname+"\" -jpeg -f "+str(page)+" -singlefile"
+    #ppmcommand="pdftoppm \""+pdfdir+os.path.sep+pdfname+"\" \""+convpdfdirpc+os.path.sep+convpname+"\" -png -f "+str(page)+" -singlefile"
     print(ppmcommand)
     print(convpname)
     subprocess.call(ppmcommand,shell=True)
@@ -1525,23 +1535,23 @@ def getpdfinfo(pdfdir,pdfname,ver):
         if sys.platform in ['linux', 'linux2']:
                 pdfinfocommand="pdfinfo"
                 pdftoppmcommand="pdftoppm"
-                pdfpage=subprocess.getoutput(pdfinfocommand+" \\""+pdfdir+os.path.sep+pdfname+"\\" | grep Pages: | awk '{print $2}'")
+                pdfpage=subprocess.getoutput(pdfinfocommand+" \""+pdfdir+os.path.sep+pdfname+"\" | grep Pages: | awk '{print $2}'")
                 pdfpage=int(pdfpage)
         if sys.platform in ['Windows', 'win32', 'cygwin']:
                 userid=subprocess.getoutput("echo %USERNAME%")
                 userhomedir=subprocess.getoutput("echo %USERPROFILE%")
                 popplerver="poppler-0.51"
-                popplerdir="C:\\\\Users\\\\"+userid+"\\\\Downloads\\\\"+popplerver+"_x86\\\\"+popplerver+"\\\\bin"
-                pdfinfocommand=popplerdir+"\\\\pdfinfo.exe"
-                pdftoppmcommand=popplerdir+"\\\\pdftoppm.exe"
+                popplerdir="C:\\Users\\"+userid+"\\Downloads\\"+popplerver+"_x86\\"+popplerver+"\\bin"
+                pdfinfocommand=popplerdir+"\\pdfinfo.exe"
+                pdftoppmcommand=popplerdir+"\\pdftoppm.exe"
                 if ver=="wsl":
                         pdfdir0=conwindirtovwsldir(pdfdir)
                         convpdfdirpc0=conwindirtovwsldir(convpdfdirpc)
                         print("convertpdf2jpginwsl="+pdfdir)
-                        ##pdfpage=subprocess.getoutput("wsl pdfinfo \\""+pdfdir0+"/"+pdfname+"\\" | grep Pages: | awk '{print $2}'")
-                        #ppmcommand="wsl pdftoppm \\""+pdfdir0+"/"+pdfname+"\\" \\""+convpdfdirpc0+"/"+convpname+"\\" -jpeg -f "+str(page)+" -singlefile"
+                        ##pdfpage=subprocess.getoutput("wsl pdfinfo \""+pdfdir0+"/"+pdfname+"\" | grep Pages: | awk '{print $2}'")
+                        #ppmcommand="wsl pdftoppm \""+pdfdir0+"/"+pdfname+"\" \""+convpdfdirpc0+"/"+convpname+"\" -jpeg -f "+str(page)+" -singlefile"
                         imgdir=convpdfdirpc+os.path.sep+convpname+".jpg"
-                pdfpage0=subprocess.getoutput(pdfinfocommand+" \\""+pdfdir+os.path.sep+pdfname+"\\"")
+                pdfpage0=subprocess.getoutput(pdfinfocommand+" \""+pdfdir+os.path.sep+pdfname+"\"")
                 #print("pp0="+pdfpage0)
                 #https://stackoverflow.com/questions/15422144/how-to-read-a-long-multiline-string-line-by-line-in-python
                 for line in pdfpage0.splitlines():
@@ -1553,7 +1563,7 @@ def getpdfinfo(pdfdir,pdfname,ver):
                         if re.search(r"Pages:",str(line)):
                                 pdfpage1=line
                                 #print("pp1="+pdfpage1)
-                                pdfpage2 = re.sub(r"(Pages:)([ ])*", ', pdfpage1)
+                                pdfpage2 = re.sub(r"(Pages:)([ ])*", '', pdfpage1)
                                 #print("pp2="+pdfpage2)
                                 pdfpage=int(pdfpage2)
         print("totalp="+str(pdfpage))
@@ -1575,11 +1585,13 @@ def convertpdf2jpg2(pdfdir,pdfname,quality,page,convpdfdirpc,ver):
         convpname=namethis()
         convpname=re.sub(".jpg","",convpname)
         img0=convpdfdirpc+os.path.sep+convpname
+        if noconversion:
+            img0=curattachdirpc+os.path.sep+convpname
         imgdir=img0+".jpg"
         #imgdir=img0
         if not os.path.exists(imgdir):
-            ppmcommand=pdftoppmcommand+" \\""+pdfdir+os.path.sep+pdfname+"\\" \\""+img0+"\\" -jpeg -f "+str(page)+" -singlefile"
-            #ppmcommand=pdftoppmcommand+" \\""+pdfdir+os.path.sep+pdfname+"\\" \\""+img0+"\\" -png -f "+str(page)+" -singlefile"
+            ppmcommand=pdftoppmcommand+" \""+pdfdir+os.path.sep+pdfname+"\" \""+img0+"\" -jpeg -f "+str(page)+" -singlefile"
+            #ppmcommand=pdftoppmcommand+" \""+pdfdir+os.path.sep+pdfname+"\" \""+img0+"\" -png -f "+str(page)+" -singlefile"
             print(ppmcommand)
             subprocess.call(ppmcommand,shell=True)
             #time.sleep(5)
@@ -1644,6 +1656,8 @@ def convertjpg2note(folderlocation,column,newdir1,objno2,wledposdir,rectcoordlis
             allfnpicdir.remove(rectcoordlist[i][4])
             pass
         picdir=folderlocation+ os.path.sep +  rectcoordlist[i][4]
+        if noconversion:
+            picdir=curattachdirpc+ os.path.sep +  rectcoordlist[i][4]
         if objno2re>=0 and os.path.getsize(picdir)>0:
             ###print(rectcoordlist[i][4])                    
             ##picdir=folderlocation+ os.path.sep +  allfnpicdir[i]
@@ -1658,12 +1672,22 @@ def convertjpg2note(folderlocation,column,newdir1,objno2,wledposdir,rectcoordlis
                 #    ###appendtext(wledposdir,textedit,"w+")
             print(picdir)
             if curanddevice:
-                subprocess.call(copycommand+" \\""+picdir+"\\" \\""+picdirnew+"\\"", shell=True)
+                subprocess.call(copycommand+" \""+picdir+"\" \""+picdirnew+"\"", shell=True)
                 os.remove(picdir)
-                subprocess.call(copycommand+" \\""+picdirnew+"\\" \\""+curattachdirpc+"\\"", shell=True)
+                subprocess.call(copycommand+" \""+picdirnew+"\" \""+curattachdirpc+"\"", shell=True)
             w, h=imgsize(picdirnew)
             #appendnewpic(w,h,picname,newdir1,objno2re,"nearlatest")
-            columntype="exactcopy"
+            if noconversion:
+                if objno2<=2:
+                    columntype="slide1"
+                if objno2>2:
+                    columntype="slidenextline"
+            else:
+                if objno2<=2:
+                    columntype="exactcopy1"
+                if objno2>2:
+                    columntype="exactcopyrest"
+                
             if i==0 and "nearlatest" in columntype and not "slide" in str(type(column)):
                 columntype="nearlatest;;firstcolumn;;nextline"
             elif i>0 and "nearlatest" in columntype and not "slide" in str(type(column)):
@@ -1706,10 +1730,10 @@ def convertjpg2note(folderlocation,column,newdir1,objno2,wledposdir,rectcoordlis
                 appendnewpic(w,h,picname,newdir1,objno2re,columntype,rectcoordlist[i])  
                 
             if curanddevice:
-                runadbcommand("adb push -p \\""+picdirnew+"\\" \\""+attachfnanddir+"\\"")
+                runadbcommand("adb push -p \""+picdirnew+"\" \""+attachfnanddir+"\"")
             objno2re+=1
         if curanddevice:
-            runadbcommand("adb push \\""+curnotefpc+"\\" \\""+curnotzand+"\\"")
+            runadbcommand("adb push \""+curnotefpc+"\" \""+curnotzand+"\"")
     ##print(str(len(allfnpicdir)))
     ##print(allfnpicdir)
     """
@@ -1736,9 +1760,9 @@ def convertjpg2note(folderlocation,column,newdir1,objno2,wledposdir,rectcoordlis
 
 def restartfn():
         if sys.platform in ['Windows', 'win32', 'cygwin']:
-            fiinotew10pcdir=userhomedir+"\\\\Documents\\\\Docs\\\\Automate\\\\FiiNoteWINE\\\\FiiNote.exe"
+            fiinotew10pcdir=userhomedir+"\\Documents\\Docs\\Automate\\FiiNoteWINE\\FiiNote.exe"
             subprocess.call("taskkill /F /IM FiiNote.exe /T",shell=True)
-            subprocess.call("start /MAX \\"fiinote\\" \\""+fiinotew10pcdir+"\\"",shell=True)
+            subprocess.call("start /MAX \"fiinote\" \""+fiinotew10pcdir+"\"",shell=True)
 def setvarconvpdf():
     global ocvtype,noconversion
     testing=False
@@ -1770,18 +1794,37 @@ def setvarconvpdf():
     if args.pdfname:
         checkdir(convpdfdirpc,"")
         #pdfname=args.pdfname
-        pfulldir=args.pdfname.split(os.path.sep)
+        #pfulldir=args.pdfname.split(os.path.sep)
+        if "file:///" in args.pdfname:
+            pdir=re.sub("file:///","",args.pdfname)
+            pdir=re.sub("%20"," ",pdir)
+            pdir=re.sub("/",os.path.sep+os.path.sep,pdir)
+            print(pdir)
+            """
+            time.sleep(3600)
+            pfulldir=args.pdfname.split(os.path.sep)
+            pfulldir=pdir.split("/")
+            pdir=os.path.sep.join(pfulldir)
+            print(pdir)
+            time.sleep(3600)
+            """
+            pfulldir=pdir.split(os.path.sep)
+            print(pfulldir)
+        else:
+            pfulldir=args.pdfname.split(os.path.sep)
         if len(pfulldir)==1:
             pdfdir=dir0
             pdfname=pfulldir[0]
         else:
             pdfdir=os.path.sep.join(pfulldir[:-1:])
             pdfname=pfulldir[-1]
+        print(pdfdir, pdfname)
         if os.path.exists(convpdfdirpc):
             shutil.rmtree(convpdfdirpc)
         
         if args.density :
             quality=int(args.density)
+        """
         if args.pagestart :
             pagestart=int(args.pagestart)
         else:
@@ -1793,6 +1836,8 @@ def setvarconvpdf():
             pdftoppmcommand,pdfpage=getpdfinfo(pdfdir,pdfname,"")
             #pdfpage=subprocess.getoutput("pdfinfo \\""+pdfdir+os.path.sep+pdfname+"\\" | grep Pages: | awk '{print $2}'")
             pageend=int(pdfpage)
+        """
+                
         if args.singlepage:
             pagestart=int(args.singlepage)
             pageend=int(args.singlepage)
@@ -1802,8 +1847,8 @@ def setvarconvpdf():
             
         if args.noconversion=="1":
             noconversion=True
-        print("PDFDir="+pdfdir+os.path.sep+pdfname+" Page="+str(pagestart)+" to "+str(pageend))
-        print("ocvt"+str(ocvtype))
+        #print("PDFDir="+pdfdir+os.path.sep+pdfname+" Page="+str(pagestart)+" to "+str(pageend))
+        #print("ocvt"+str(ocvtype))
         if args.showpdf:
             runshowpdf(convpdfdirpc,pdfdir,pdfname,pagestart,pageend,ocvtype,continuenote)
         if not args.showpdf:
@@ -1811,7 +1856,37 @@ def setvarconvpdf():
                 testing=""
             if testing:
                 continuenote=False
-            rectcoordlist,wledposdir=runpdftonote(convpdfdirpc,pdfdir,pdfname,pagestart,pageend,ocvtype,continuenote,testing,multiplepage)
+            if args.pagestart:
+                pageslst=args.pagestart.split("+")
+                for pages in pageslst:
+                    if pages:
+                        eachpages=pages.split(";;")
+                        try:
+                            pagestart=int(eachpages[0])
+                        except:
+                            pagestart=0
+                        try:
+                            pageend=int(eachpages[1])
+                        except:
+                            pdftoppmcommand,pdfpage=getpdfinfo(pdfdir,pdfname,"")
+                            #pdfpage=subprocess.getoutput("pdfinfo \\""+pdfdir+os.path.sep+pdfname+"\\" | grep Pages: | awk '{print $2}'")
+                            pageend=int(pdfpage)
+                        print(pages, eachpages)
+                        #if not pagestart:
+                        #    pagestart=0
+                        #if not pageend:
+                        #    pdftoppmcommand,pdfpage=getpdfinfo(pdfdir,pdfname,"")
+                            #pdfpage=subprocess.getoutput("pdfinfo \\""+pdfdir+os.path.sep+pdfname+"\\" | grep Pages: | awk '{print $2}'")
+                        #    pageend=int(pdfpage)
+                        rectcoordlist,wledposdir=runpdftonote(convpdfdirpc,pdfdir,pdfname,pagestart,pageend,ocvtype,continuenote,testing,multiplepage)
+                        os.remove(curnotelocpc)
+            if not args.pagestart:
+                pagestart=0
+                if not args.pageend:
+                    pdftoppmcommand,pdfpage=getpdfinfo(pdfdir,pdfname,"")
+                    #pdfpage=subprocess.getoutput("pdfinfo \\""+pdfdir+os.path.sep+pdfname+"\\" | grep Pages: | awk '{print $2}'")
+                    pageend=int(pdfpage)
+                rectcoordlist,wledposdir=runpdftonote(convpdfdirpc,pdfdir,pdfname,pagestart,pageend,ocvtype,continuenote,testing,multiplepage)
         if rectcoordlist and os.path.exists(wledposdir):
             #print(rectcoordlist)
             for f in rectcoordlist:
@@ -1826,4 +1901,3 @@ args = parse_args()
 setvarconvpdf()
 #convertcolour(convpdfdirpc,".jpg","green")
 #convertcolour("/home/user/Pictures","Screenshot from 2018-07-05 20-04-46.png","green")
-'

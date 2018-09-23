@@ -200,6 +200,7 @@ if sys.platform in ['linux', 'linux2'] or sys.platform in ['Windows', 'win32', '
                                 columntype="slidenextline"
                                 rectcoordlist=everyletter(curattachdirpc,SS[2],"contouredc"+SS[2],1000,"",withcolour=True,testing=False,wledposdir="",rectcoordlist=rectcoordlist)
                                 objno2=convertjpg2note(curattachdirpc,column,newdir1,objno2,"",rectcoordlist)
+                                TT.config(text="DoneP")
                         objno2,curattachdirpc=appendnewpic(SS[0],SS[1],SS[2],newdir1,SS[4],columntype,rectcoordlist)
                         imgdir=curattachdirpc+os.path.sep+SS[2]
                         if (linuxpc==0) and os.path.exists("/run/user/1000/gvfs/*/Internal"):
@@ -434,7 +435,7 @@ if sys.platform in ['linux', 'linux2'] or sys.platform in ['Windows', 'win32', '
             return psutil.Process(pid[-1]).name()
     
     def Suspend1():
-        global pause
+        global pause, textclick
         if pause==0:
             pause=1
             TT.config(text="Suspended")
@@ -453,6 +454,7 @@ if sys.platform in ['linux', 'linux2'] or sys.platform in ['Windows', 'win32', '
                     wsh.SendKeys("^s")
                     #subprocess.call("taskkill /F /IM FiiNote.exe /T",shell=True)
                 pass
+        textclick=0
     def wlstatus():
         global wlareastatus
         if wlareastatus==True:

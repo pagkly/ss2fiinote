@@ -531,12 +531,13 @@ def appendnewpic(w,h,picname,newdir1,objno2,columntype,rectcoordlist):
             prevxcoordinate="E5A5A9E19E81"
             prevycoordinate=ctypelist[-1]
     if "slidenextline" or "nextline" or "exactcopy" in columntype and "firstline" not in columntype:
-        posxpppsuffixint=int(prevxcoordinate[-12:-10],16)
-        posxppsuffixint=int(prevxcoordinate[-10:-8],16)
-        posxpsuffixint=int(prevxcoordinate[-8:-6],16)
-        posxsuffixint=int(prevxcoordinate[-6:-4],16)
-        posxint=int(prevxcoordinate[-4:-2],16)
-        posxremint=int(prevxcoordinate[-2:],16)
+        if not "slide1" in columntype:
+            posxpppsuffixint=int(prevxcoordinate[-12:-10],16)
+            posxppsuffixint=int(prevxcoordinate[-10:-8],16)
+            posxpsuffixint=int(prevxcoordinate[-8:-6],16)
+            posxsuffixint=int(prevxcoordinate[-6:-4],16)
+            posxint=int(prevxcoordinate[-4:-2],16)
+            posxremint=int(prevxcoordinate[-2:],16)
                     
         posypppsuffixint=int(prevycoordinate[-12:-10],16)         
         posyppsuffixint=int(prevycoordinate[-10:-8],16)
@@ -1643,6 +1644,7 @@ def convertjpg2note(folderlocation,column,newdir1,objno2,wledposdir,rectcoordlis
             allfnpicdir.remove(rectcoordlist[i][4])
             pass
         picdir=folderlocation+ os.path.sep +  rectcoordlist[i][4]
+        global noconversion
         if objno2re>=0 and os.path.getsize(picdir)>0:
             ###print(rectcoordlist[i][4])                    
             ##picdir=folderlocation+ os.path.sep +  allfnpicdir[i]
