@@ -676,19 +676,21 @@ def appendnewpic(w,h,picname,newdir1,objno2,columntype,rectcoordlist):
             orix="03 E2 93 B9"
             oriy="03 E2 93 B9"
             if w>h:
+                #if w>1000 or h>1000:
                 if w>1000 or h>1000:
                     realscaling=12
                 else:
-                    realscaling=18
+                    realscaling=21
                 if h<=25 and w>h:
-                    realscaling=18
+                    realscaling=21
             elif w<h:
+                #if w>1000 or h>1000:
                 if w>1000 or h>1000:
                     realscaling=12
                 else:
-                    realscaling=18
+                    realscaling=21
             else:
-                realscaling=18
+                realscaling=21
             orixlist=orix.split()
             defxvallist=[]
             for f in orixlist:
@@ -712,12 +714,14 @@ def appendnewpic(w,h,picname,newdir1,objno2,columntype,rectcoordlist):
             #xscalerem=(B9=183,BF=191)
             #xpresuffix=(02=2,)
             scaledw=(realscaling*w)
-            if w>h and h<=25:
-                #scaledw-=(w*3)
+            if w>h and h<=30:
+                scaledw-=(w*3)
                 pass
             if w<h and h>1000:
                 #scaledw+=(w//2)
+                #scaledw+=w
                 pass
+            #scaledw-=(w*3)
             while scaledw>0:
                 xscaleremint+=1
                 if xscaleremint>191:
@@ -1151,6 +1155,11 @@ def everyletter(imgdir,imgname,afterimg,a,ocvtype,withcolour,testing,wledposdir,
                 rectcoord=str(x-5)+" "+str(y-5)+" "+str(x+w+5)+" "+str(y+h+5)+" "+rectimgname
                 ###appendtext(wledposdir,rectcoord,"a")
                 rectcoord=(int(x-5),int(y-5),int(x+w+5),int(y+h+5),rectimgname)
+
+                rectcoord=str(x)+" "+str(y)+" "+str(x+w)+" "+str(y+h)+" "+rectimgname
+                ###appendtext(wledposdir,rectcoord,"a")
+                rectcoord=(int(x),int(y),int(x+w),int(y+h),rectimgname)
+                
                 rectcoordlist.append(rectcoord)
                 pass
     a=1000
@@ -1172,6 +1181,10 @@ def everyletter(imgdir,imgname,afterimg,a,ocvtype,withcolour,testing,wledposdir,
             rectcoord=str(x-5)+" "+str(y-5)+" "+str(x+w+5)+" "+str(y+h+5)+" "+rectimgname
             ###appendtext(wledposdir,rectcoord,"a")
             rectcoord=(int(x-5),int(y-5),int(x+w+5),int(y+h+5),rectimgname)
+
+            rectcoord=str(x)+" "+str(y)+" "+str(x+w)+" "+str(y+h)+" "+rectimgname
+            ###appendtext(wledposdir,rectcoord,"a")
+            rectcoord=(int(x),int(y),int(x+w),int(y+h),rectimgname)
             rectcoordlist.append(rectcoord)
             pass
     #cv2.imwrite("savedmser2.jpg",imgfinal)
