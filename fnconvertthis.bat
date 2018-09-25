@@ -45,4 +45,4 @@ REM microecons computing
 .\\python C:\\Users\\SP3\\Documents\\GitHub\\FN35OCVbside\\FN33andlib.py -p "Joshua Gans, Stephen King, Martin Byford, N. Gregory Mankiw-Principles of Microeconomics [Australia and New Zealand Edition]-Cengage [Australia] (2015).pdf" -d 120 -t 1 -nc 2 -sp 200
 
 .\\python C:\\Users\\SP3\\Documents\\GitHub\\FN35OCVbside\\FN33andlib.py -p "C:\\Users\\SP3\\Downloads\\CHEM10003-ChemicalEquilibrium-1pp.pdf" -d 120 -t 1 -nc 2
-.\\python C:\\Users\\SP3\\Documents\\GitHub\\FN35OCVbside\\FN33andlib.py -p "C:\\Users\\SP3\\Downloads\\CHEM10003-Thermo2-2018-1pp.pdf" -d 120 -t 1 -nc 2'
+.\\python %USERPROFILE%\\Documents\\GitHub\\FN35OCVbside\\FN33andlib.py -p "%USERPROFILE%\\Downloads\\Chem10003 GNLJ Lectures part 1.pdf" -d 120 -t 1 -nc 2

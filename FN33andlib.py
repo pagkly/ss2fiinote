@@ -714,14 +714,16 @@ def appendnewpic(w,h,picname,newdir1,objno2,columntype,rectcoordlist):
             #xscalerem=(B9=183,BF=191)
             #xpresuffix=(02=2,)
             scaledw=(realscaling*w)
-            if w>h and h<=30:
+            if w>h and h<=50:
                 scaledw-=(w*3)
+                pass
+            if w>h and h>1000:
+                scaledw-=(w*1.7)
                 pass
             if w<h and h>1000:
                 #scaledw+=(w//2)
                 #scaledw+=w
                 pass
-            #scaledw-=(w*3)
             while scaledw>0:
                 xscaleremint+=1
                 if xscaleremint>191:
@@ -766,23 +768,69 @@ def appendnewpic(w,h,picname,newdir1,objno2,columntype,rectcoordlist):
     if mode2:
         objscalehex="03"+orix+oriy+xscalehexs+yscalehexs
     if (w<128):
-        xpixshex=format(w,'x')
-        xpixshex=str(xpixshex).zfill(2)
-    if (w>=128):
-        xquothexint=int(math.trunc(192+(w/64)));
+        xpixshex=str(format(w,'x')).zfill(2)
+    """
+    if (128<=w<2048):
+        xquothexint=int(math.trunc(194+(w/64)));
         xremhexint=int(math.trunc(128+(w%64)));
         xquothexs=format(xquothexint,'x')
         xremhexs=format(xremhexint,'x')
         xpixshex=xquothexs+xremhexs;
+    """
+    if w==127:
+                xpixshex="c280"
+    if 127<w<2048:
+                phexint=194+(w-128)//64
+                #objno2hexint=objno2-(phexint*64)
+                objno2hexint=128+((w-128)%64)
+                phexd=str(format(phexint,'x')).zfill(2)
+                objno2hexd=str(format(objno2hexint,'x')).zfill(2)
+                xpixshex=phexd+objno2hexd
+    if w==2048:
+                totalobjhex="e0a080"
+    if w>2048:
+                pphexint=224+((w-2048)//(64*(192-160)))
+                phexint=160+((w-2048)//64)
+                #objno2hexint=objno2-(phexint*64)
+                objno2hexint=128+((w-2048)%64)
+                pphexd=str(format(pphexint,'x')).zfill(2)
+                phexd=str(format(phexint,'x')).zfill(2)
+                objno2hexd=str(format(objno2hexint,'x')).zfill(2)
+                xpixshex=pphexd+phexd+objno2hexd
+                pass
     if (h<128):
-        ypixshex=format(h,'x')
-        ypixshex=str(ypixshex).zfill(2)
-    if (h>=128):
-        yquothexint=int(math.trunc(192+(h/64)));
+        ypixshex=str(format(h,'x')).zfill(2)
+    """
+    if (128<=h<2048):
+        yquothexint=int(math.trunc(194+(h/64)));
         yremhexint=int(math.trunc(128+(h%64)));
         yquothexs=format(yquothexint,'x')
         yremhexs=format(yremhexint,'x')
         ypixshex=yquothexs+yremhexs;
+    """
+    if h==127:
+                xpixshex="c280"
+    if 127<h<2048:
+                phexint=194+(h-128)//64
+                #objno2hexint=objno2-(phexint*64)
+                objno2hexint=128+((h-128)%64)
+                phexd=str(format(phexint,'x')).zfill(2)
+                objno2hexd=str(format(objno2hexint,'x')).zfill(2)
+                ypixshex=phexd+objno2hexd
+    if h==2048:
+                totalobjhex="e0a080"
+    if h>2048:
+                pphexint=224+((h-2048)//(64*(192-160)))
+                phexint=160+((h-2048)//64)
+                #objno2hexint=objno2-(phexint*64)
+                objno2hexint=128+((h-2048)%64)
+                pphexd=str(format(pphexint,'x')).zfill(2)
+                phexd=str(format(phexint,'x')).zfill(2)
+                objno2hexd=str(format(objno2hexint,'x')).zfill(2)
+                ypixshex=pphexd+phexd+objno2hexd
+                pass
+    print(xpixshex)
+    print(ypixshex)
         
     picnamelen=len(picname)+1
     picnamelenhex=format(picnamelen,'x')
