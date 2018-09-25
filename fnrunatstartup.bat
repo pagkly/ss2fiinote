@@ -16,6 +16,24 @@ start /MIN "" powershell -noexit -command "cd %USERPROFILE%\Documents\Docs\Autom
 start /MAX "" %USERPROFILE%\\Documents\\Docs\\Automate\\FiiNoteWINE\\FiiNote.exe
 
 goto comment
+ayumi shinoda
+asahi mizuno
+kurea hasumi
+aika
+yua mikami
+shunka ayami
+airi mashiro
+ai uehara
+tia bejean
+miri mizuki
+nami itoshino
+shiina sora
+mao hamasaki
+ruri tachibana
+yuki jin
+momoka nishina
+karen uehara
+riri-houshou
 xcopy C:\Users\SP3\AppData\Roaming\FiiNote\@pagkly\notes Z:\fiinote /h/i/c/k/e/r/y
 #https://improve.dk/simple-file-synchronization-using-robocopy/
 robocopy /MIR /Z /W:1 /R:1
