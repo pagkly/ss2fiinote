@@ -566,10 +566,10 @@ def appendnewpic(w,h,picname,newdir1,objno2,columntype,rectcoordlist):
                         countingy=scaledh                        
                 else:
                     pass
-
+    realscaling=18
     if "exactcopy" in columntype:
-        posxloc=rectcoordlist[0]*18
-        posyloc=rectcoordlist[1]*18
+        posxloc=rectcoordlist[0]*realscaling
+        posyloc=rectcoordlist[1]*realscaling
         countingx=posxloc
         countingy=posyloc
         if "exactcopy1" in columntype:
@@ -677,20 +677,14 @@ def appendnewpic(w,h,picname,newdir1,objno2,columntype,rectcoordlist):
             oriy="03 E2 93 B9"
             if w>h:
                 #if w>1000 or h>1000:
-                if w>1000 or h>1000:
+                if w>1000 and h>1000:
                     realscaling=12
-                else:
-                    realscaling=21
-                if h<=25 and w>h:
-                    realscaling=21
+                #if h<=25 and w>h:
+                #    realscaling=manscaling
             elif w<h:
                 #if w>1000 or h>1000:
-                if w>1000 or h>1000:
+                if w>1000 and h>1000:
                     realscaling=12
-                else:
-                    realscaling=21
-            else:
-                realscaling=21
             orixlist=orix.split()
             defxvallist=[]
             for f in orixlist:
@@ -715,10 +709,10 @@ def appendnewpic(w,h,picname,newdir1,objno2,columntype,rectcoordlist):
             #xpresuffix=(02=2,)
             scaledw=(realscaling*w)
             if w>h and h<=50:
-                scaledw-=(w*3)
+                scaledw-=(w*3/18*realscaling)
                 pass
-            if w>h and h>1000:
-                scaledw-=(w*1.7)
+            if w>h and h>1000 and w>1000:
+                scaledw-=(w*1.7/18*realscaling)
                 pass
             if w<h and h>1000:
                 #scaledw+=(w//2)
