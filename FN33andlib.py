@@ -566,10 +566,10 @@ def appendnewpic(w,h,picname,newdir1,objno2,columntype,rectcoordlist):
                         countingy=scaledh                        
                 else:
                     pass
-    realscaling=18
+    realscaling=10
     if "exactcopy" in columntype:
-        posxloc=rectcoordlist[0]*realscaling
-        posyloc=rectcoordlist[1]*realscaling
+        posxloc=rectcoordlist[0]*(18/19*realscaling)
+        posyloc=rectcoordlist[1]*(18/19*realscaling)
         countingx=posxloc
         countingy=posyloc
         if "exactcopy1" in columntype:
