@@ -201,9 +201,6 @@ regexnote4=r'(0302010201)((((.){2,6})(0a){1})|(01))'
 regexnote1v2=r'(.{1570})(0201)(.{2})(0a)'
 thedir=dir0+os.path.sep+"ConvPDF"
 wsldir="/mnt/c/Windows"
-batchpdf=False
-batchpdfstart=False
-batchpdfend=False
 
 if sys.platform in ['linux', 'linux2']:
     userid=subprocess.getoutput("awk -F: '!/root/ && /(\\/bin\\/bash)/ {print $1}' /etc/passwd")
@@ -458,14 +455,12 @@ def getnewdirlatest():
     return latestdir
 
 currentx=""
-def appendnewpic(w,h,picname,newdir1,objno2,columntype,rectcoordlist,append):
-    global batchpdf, batchpdfstart, batchpdfend
+def appendnewpic(w,h,picname,newdir1,objno2,columntype,rectcoordlist):
     #newdir1=getnewdirlatest()
     curnotzpc,curnotefpc,curattachdirpc,curnotzand,curattachdirand=setvarnotz(fnnotesdirpc,newdir1)
-    if not batchpdf:
-        CN=checknotz(curnotelocpc)
-        objno2=CN[1]
-        objno2=int(objno2)
+    CN=checknotz(curnotelocpc)
+    objno2=CN[1]
+    objno2=int(objno2)
     w=int(w)
     h=int(h)
     newlinehex="0AC480C391C391C39101";
@@ -479,18 +474,12 @@ def appendnewpic(w,h,picname,newdir1,objno2,columntype,rectcoordlist,append):
         newxlochex="A9E19E81"
     if "slidenextline" or "nearlatest" or "exactcopyrest" in columntype:
         print(columntype)
-        print("o2="+str(objno2))
         if objno2<=1:
             pass
         if objno2>1:
             with open(curnotefpc, 'rb') as f:
                 content = f.read()
                 cihx=str(binascii.hexlify(content).decode('utf-8'))
-                if batchpdf:
-                    cihx=append
-                    cihx=append[-250:]
-                    print(cihx)
-                    #time.sleep(3600)
                 regexc1=re.compile(patternpicx)
                 print("findpatternpic1")
                 if regexc1.search(cihx):
@@ -850,12 +839,8 @@ def appendnewpic(w,h,picname,newdir1,objno2,columntype,rectcoordlist,append):
     print(zlochex)
     print("objscale="+objscalehex)
     print(picnamehex)
-    hexc=re.sub(" ","",hexc)
-    print(batchpdf, batchpdfstart, batchpdfend)
-    if batchpdf:
-        append+=hexc
-        #print(append)
-    if (os.path.exists(curnotefpc) and not batchpdf) or (os.path.exists(curnotefpc) and batchpdf and batchpdfend):
+    append=""
+    if os.path.exists(curnotefpc):
         with open(curnotefpc,"rb") as f:
             content=f.read()
             cihx=str(binascii.hexlify(content).decode('utf-8'))
@@ -896,11 +881,7 @@ def appendnewpic(w,h,picname,newdir1,objno2,columntype,rectcoordlist,append):
                 
             if mo2.search(cihx) and totalobjhex:
                 replace1 = re.sub(mo1.group(1)+mo1.group(2), mo1.group(1)+totalobjhex+ending, cihx)
-                if not batchpdf:
-                    append=replace1+hexc
-                if batchpdf:
-                    append1=replace1+append
-                    append=append1
+                append=replace1+hexc
                 pass
             """
             mo1=re.search(regexnote1,cihx)
@@ -944,15 +925,9 @@ def appendnewpic(w,h,picname,newdir1,objno2,columntype,rectcoordlist,append):
             #print(replace1)
             print("TOTOBJHEX="+totalobjhex)
             print("totpics="+str(len(os.listdir(curattachdirpc))))
-    if batchpdf:
-        print(batchpdfend)
-        if batchpdfend:
-            appendtext(curnotefpc,append,"wb")
-        return objno2,curattachdirpc,append
-    if not batchpdf:
-        if append:
-            appendtext(curnotefpc,append,"wb")
-        return objno2,curattachdirpc
+    if append:
+        appendtext(curnotefpc,append,"wb")
+    return objno2,curattachdirpc
 
 
 def appendnewnote(newdir1,curindexpc,curindexoldpc):
@@ -1474,30 +1449,25 @@ def pushnewdir1toand(newdir1,curindexpc,curindexoldpc):
         copydir(fnnotesdirpc+os.path.sep+newdir1,fnnotesdirand)
         appendnewnote(newdir1,curindexpc,curindexoldpc)
     return True
-
-def runpdftonote(convpdfdirpc,pdfdir,pdfname,pagelst,ocvtype,continuenote,testing,multiplepage):
-    global batchpdf, batchpdfstart, batchpdfend
-    append=""
+def runpdftonote(convpdfdirpc,pdfdir,pdfname,pagestart,pageend,ocvtype,continuenote,testing,multiplepage):
     print("startpdftonote")
     #column=1
     column=""
-    pagestart=pagelst[0]
-    pageend=pagelst[-1]
-    batchpdf=True
+    pageend=pageend+1
     if noconversion:
         print("noconv")
         countpage=0
         #b=objno2
         delfile(convpdfdirpc)
         newdir1,objno2=newnotz(fnnotesdirpc,fnnotesdirpc)
-        for i in pagelst :
+        for i in range(pagestart,pageend) :
             print("Page"+str(i))
             convpname,imgname=convertpdf2jpg2(pdfdir,pdfname,quality,i,convpdfdirpc,"")
             page=re.sub(r"(convp|.jpg)","",imgname)
             page=re.sub(r"(conv)","wledpos",imgname)
             wledposdir=re.sub(convpdfdirpcname,"",page)
             rectcoordlist=[(0,0,0,0,convpname+".jpg")]
-            objno2,append=convertjpg2note(convpdfdirpc,column,newdir1,objno2,wledposdir,rectcoordlist,append)
+            objno2=convertjpg2note(convpdfdirpc,column,newdir1,objno2,wledposdir,rectcoordlist)
             """
             if a==10 or i==(pageend-1):
                 #convertjpg2note(convpdfdirpc,column,newdir1,objno2,wledposdir)
@@ -1511,20 +1481,14 @@ def runpdftonote(convpdfdirpc,pdfdir,pdfname,pagelst,ocvtype,continuenote,testin
         countpage=0
         delfile(convpdfdirpc)
         newdir1,objno2=newnotz(fnnotesdirpc,fnnotesdirpc)
-        for i in pagelst :
+        for i in range(pagestart,pageend) :
             if i==pagestart:
                 column="exactcopy1"
             if i>pagestart:
                 with open(curnotefpc, 'rb') as f:
                     content = f.read()
                     cihx=str(binascii.hexlify(content).decode('utf-8'))
-                    if batchpdf:
-                        cihx=append
-                        cihx=append[-250:]
-                        print(cihx)
-                        #time.sleep(3600)
-                        
-                    regexc1=re.compile(patternpicx)
+                    regexc1=re.compile(patternpic)
                     print("findpatternpic1")
                     if regexc1.search(cihx):
                         print("findpatternpic2")
@@ -1535,7 +1499,6 @@ def runpdftonote(convpdfdirpc,pdfdir,pdfname,pagelst,ocvtype,continuenote,testin
                         prevendyscale=mox.group(13)
                         column="exactcopyrest;;"+prevycoordinate
                     print(str(column))
-                    #time.sleep(3600)
                 #time.sleep(3600)
                 pass
             delfile(convpdfdirpc)
@@ -1593,7 +1556,7 @@ def runpdftonote(convpdfdirpc,pdfdir,pdfname,pagelst,ocvtype,continuenote,testin
                     subprocess.call("mv "+pdfdir0img+" "+pdfconvimg,shell=True)
                     rectcoordlist=converttext(convpdfdirpc,"contouredc"+convpname+".jpg","contouredc"+convpname+".jpg",1000,ocvtype,"neutral","",wledposdir,rectcoordlist)
                     subprocess.call("mv "+pdfconvimg+" "+pdfdir0img,shell=True)
-                    append,objno2=convertjpg2note(convpdfdirpc,2,newdir1,objno2,wledposdir)
+                    objno2=convertjpg2note(convpdfdirpc,2,newdir1,objno2,wledposdir)
 
                 if straight:
                     #shutil.rmtree(convpdfdirpc)
@@ -1602,11 +1565,7 @@ def runpdftonote(convpdfdirpc,pdfdir,pdfname,pagelst,ocvtype,continuenote,testin
                     ##rectcoordlist=converttext(convpdfdirpc,convpname+".jpg","contouredc"+convpname+".jpg",1000,1,"neutral","",wledposdir,rectcoordlist)
                     rectcoordlist=everyletter(convpdfdirpc,convpname+".jpg","contouredc"+convpname+".jpg",1000,ocvtype,withcolour,testing,wledposdir,rectcoordlist)
                     #subprocess.call("mv "+pdfconvimg+" "+pdfdir0img,shell=True)
-                    objno2,append=convertjpg2note(convpdfdirpc,column,newdir1,objno2,wledposdir,rectcoordlist,append)
-                    #print("objno2="+str(objno2))
-                    #print("page="+str(i))
-                    #print("append="+append)
-                    #time.sleep(3600)
+                    objno2=convertjpg2note(convpdfdirpc,column,newdir1,objno2,wledposdir,rectcoordlist)
 
                 ###subprocess.call("cp "+convpdfdirpc+os.path.sep+convpname+".jpg "+pdfdir+os.path.sep+"attach/00.jpg",shell=True)
                 ###subprocess.call("cp "+convpdfdirpc+os.path.sep+convpname+".jpg "+pdfdir+os.path.sep+"attach",shell=True)
@@ -1618,7 +1577,7 @@ def runpdftonote(convpdfdirpc,pdfdir,pdfname,pagelst,ocvtype,continuenote,testin
         #b=objno2
         #delfile(convpdfdirpc)
         #newdir1,objno2=newnotz(fnnotesdirpc,fnnotesdirpc)
-        for i in pagelst :
+        for i in range(pagestart,pageend) :
             print("Page"+str(i))
             #delfile(convpdfdirpc)
             #convpdfdirpc
@@ -1634,10 +1593,8 @@ def runpdftonote(convpdfdirpc,pdfdir,pdfname,pagelst,ocvtype,continuenote,testin
                 column="slide1"
             elif i>pagestart:
                 column="slidenextline"
-            if i==pageend:
-                batchpdfend=True
             
-            objno2,append=convertjpg2note(curattachdirpc,column,newdir1,objno2,wledposdir,rectcoordlist,append)
+            objno2=convertjpg2note(curattachdirpc,column,newdir1,objno2,wledposdir,rectcoordlist)
             """
             if a==10 or i==(pageend-1):
                 #convertjpg2note(convpdfdirpc,column,newdir1,objno2,wledposdir)
@@ -1803,8 +1760,8 @@ def conwindirtovwsldir(windir):
     print("ad="+wsldir)
     return wsldir
 
-def convertjpg2note(folderlocation,column,newdir1,objno2,wledposdir,rectcoordlist,append):
-    global curattachdirpc, batchpdf, batchpdfstart,batchpdfend
+def convertjpg2note(folderlocation,column,newdir1,objno2,wledposdir,rectcoordlist):
+    global curattachdirpc
     print("runengine")
     objno2re=objno2
     folderlocation=curattachdirpc
@@ -1917,7 +1874,8 @@ def convertjpg2note(folderlocation,column,newdir1,objno2,wledposdir,rectcoordlis
                     else:
                         columntype=column
             if columntype:
-                _,_,append=appendnewpic(w,h,picname,newdir1,objno2re,columntype,rectcoordlist[i],append)
+                appendnewpic(w,h,picname,newdir1,objno2re,columntype,rectcoordlist[i])  
+                
             if curanddevice:
                 runadbcommand("adb push -p \""+picdirnew+"\" \""+attachfnanddir+"\"")
             objno2re+=1
@@ -1945,7 +1903,7 @@ def convertjpg2note(folderlocation,column,newdir1,objno2,wledposdir,rectcoordlis
             runadbcommand("adb push -p \\""+picdirnew+"\\" \\""+attachfnanddir+"\\"")
         objno2re+=1
     """
-    return objno2re,append
+    return objno2re
 
 def restartfn():
         if sys.platform in ['Windows', 'win32', 'cygwin']:
@@ -2046,11 +2004,10 @@ def setvarconvpdf():
             if testing:
                 continuenote=False
             if args.pagestart:
-                pageslst=args.pagestart.split(";;")
+                pageslst=args.pagestart.split("+")
                 for pages in pageslst:
                     if pages:
-                        eachpages=pages.split("-")
-                        addpages=args.pagestart.split("+")[1:]
+                        eachpages=pages.split(";;")
                         try:
                             pagestart=int(eachpages[0])
                         except:
@@ -2068,10 +2025,7 @@ def setvarconvpdf():
                         #    pdftoppmcommand,pdfpage=getpdfinfo(pdfdir,pdfname,"")
                             #pdfpage=subprocess.getoutput("pdfinfo \\""+pdfdir+os.path.sep+pdfname+"\\" | grep Pages: | awk '{print $2}'")
                         #    pageend=int(pdfpage)
-                        pagelst=list(range(pagestart,pageend+1))
-                        for i in addpages:
-                            pagelst.append(i)
-                        rectcoordlist,wledposdir=runpdftonote(convpdfdirpc,pdfdir,pdfname,pagelst,ocvtype,continuenote,testing,multiplepage)
+                        rectcoordlist,wledposdir=runpdftonote(convpdfdirpc,pdfdir,pdfname,pagestart,pageend,ocvtype,continuenote,testing,multiplepage)
                         os.remove(curnotelocpc)
             if not args.pagestart and not args.singlepage:
                 pagestart=1
@@ -2079,13 +2033,11 @@ def setvarconvpdf():
                     pdftoppmcommand,pdfpage=getpdfinfo(pdfdir,pdfname,"")
                     #pdfpage=subprocess.getoutput("pdfinfo \\""+pdfdir+os.path.sep+pdfname+"\\" | grep Pages: | awk '{print $2}'")
                     pageend=int(pdfpage)
-                pagelst=list(range(pagestart,pageend+1))
-                rectcoordlist,wledposdir=runpdftonote(convpdfdirpc,pdfdir,pdfname,pagelst,ocvtype,continuenote,testing,multiplepage)
+                rectcoordlist,wledposdir=runpdftonote(convpdfdirpc,pdfdir,pdfname,pagestart,pageend,ocvtype,continuenote,testing,multiplepage)
             if args.singlepage:
                 pagestart=int(args.singlepage)
                 pageend=int(args.singlepage)
-                pagelst=list(range(pagestart,pageend+1))
-                rectcoordlist,wledposdir=runpdftonote(convpdfdirpc,pdfdir,pdfname,pagelst,ocvtype,continuenote,testing,multiplepage)
+                rectcoordlist,wledposdir=runpdftonote(convpdfdirpc,pdfdir,pdfname,pagestart,pageend,ocvtype,continuenote,testing,multiplepage)
         if rectcoordlist and os.path.exists(wledposdir):
             #print(rectcoordlist)
             for f in rectcoordlist:

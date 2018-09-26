@@ -42,6 +42,7 @@ robocopy C:\Users\SP3\AppData\Roaming\FiiNote\@pagkly\notes Z:\fiinote\notes /mi
 /copyall
 bookpages
  .\python C:\Users\SP3\Documents\GitHub\FN35OCVbside\FN33andlib.py -p "C:\Users\SP3\Documents\GitHub\DocsSem2\SEM0218\MAST10005\booklet(5).pdf" -d 120 -t 1 -nc 2 -ps "9;;15+16;;23"
- .\python C:\Users\SP3\Documents\GitHub\FN35OCVbside\FN33andlib.py -p "C:\Users\SP3\Documents\GitHub\DocsSem2\SEM0218\MAST10005\slide-master(1).pdf" -d 120 -t 1 -nc 2 -ps 337 -pe 472
 python %USERPROFILE%\Documents\GitHub\FN35OCVbside\FN33andlib.py -p "%USERPROFILE%\Downloads\Chem10003 GNLJ Lectures part 1.pdf" -d 120 -t 1 -nc 2
+.\python %USERPROFILE%\Documents\GitHub\FN35OCVbside\FN33andlib.py -p "%USERPROFILE%\Documents\GitHub\DocsSem2\SEM0218\ECON10004\lecture 16 and 17 S2_2018.pdf" -d 120 -t 1 -nc 2
+.\python %USERPROFILE%\Documents\GitHub\FN35OCVbside\FN33andlib.py -p "C:\Users\SP3\Documents\GitHub\DocsSem2\SEM0218\MAST10005\slides_master(1).pdf" -d 120 -t 1 -nc 2 -ps "197-336;;337-472;;473-"
 :comment
