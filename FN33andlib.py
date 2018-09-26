@@ -678,13 +678,13 @@ def appendnewpic(w,h,picname,newdir1,objno2,columntype,rectcoordlist):
             if w>h:
                 #if w>1000 or h>1000:
                 if w>1000 and h>1000:
-                    realscaling=12
+                    realscaling=12/18*realscaling
                 #if h<=25 and w>h:
                 #    realscaling=manscaling
             elif w<h:
                 #if w>1000 or h>1000:
                 if w>1000 and h>1000:
-                    realscaling=12
+                    realscaling=12/18*realscaling
             orixlist=orix.split()
             defxvallist=[]
             for f in orixlist:
