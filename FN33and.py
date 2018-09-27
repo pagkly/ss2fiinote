@@ -116,6 +116,27 @@ def FindColor():
                 print("Red="+str(pos))
                 #sys.exit()
                 return pos
+roottrans=""
+def spawntrans():
+    global roottrans
+    roottrans = Tk()
+    if sys.platform in ['linux', 'linux2'] :
+        w = root.winfo_screenwidth()
+        h = root.winfo_screenheight()
+    if sys.platform in ['Windows', 'win32', 'cygwin']:
+        w=GetSystemMetrics(0)
+        h=GetSystemMetrics(1)
+    #roottrans.attributes('-alpha', 0.3)
+    roottrans.wm_attributes('-alpha',0.05,'-topmost',1)
+    roottrans.geometry('%dx%d+%d+%d' % (w, h, 0,0))
+    roottrans.resizable(False, False)
+    roottrans.update_idletasks()
+    roottrans.overrideredirect(True)
+    roottrans.mainloop()
+def closetrans():
+    global roottrans
+    roottrans.destroy()
+    
 im=None
 screengrab=True
 sgrabauto=False
@@ -130,17 +151,24 @@ if sys.platform in ['linux', 'linux2'] or sys.platform in ['Windows', 'win32', '
             if sys.platform in ['linux', 'linux2']:
                 clickX, clickY=MouseGetPos()
             if sys.platform in ['Windows', 'win32', 'cygwin']:
-                clickX, clickY=event.Position            
+                clickX, clickY=event.Position
+                #lastapp=active_window_process_name()
+                #if "FiiNote.exe" in lastapp:
+                #    import win32com.client as comclt
+                #    wsh=comclt.Dispatch("WScript.Shell")
+                #    wsh.SendKeys("^s")
             if (textclick==0):
                 clickStartX, clickStartY=clickX, clickY
                 print(clickStartX, clickStartY)
                 TT.config(text="C")
                 if screengrab or sgrabauto:
                     TT.config(text="C1")
+                    _thread.start_new_thread(spawntrans,())
                     if (linuxpc==0) and os.path.exists("/run/user/1000/gvfs/*/Internal"):
                         subprocess.call("adb shell \"su -c 'input keyevent KEYCODE_ESCAPE && sleep 0.1 && killall com.fiistudio.fiinote'\"", shell=True)
                     clickStartX, clickStartY=clickX, clickY
-                    _thread.start_new_thread(grabscreen,())
+                    grabscreen()
+                    #_thread.start_new_thread(grabscreen,())
                 textclick=1
                 if fnmove:
                     textclick=5
@@ -177,7 +205,7 @@ if sys.platform in ['linux', 'linux2'] or sys.platform in ['Windows', 'win32', '
                             if sgrabauto:
                                 columntype="slide1"
                                 rectcoordlist=everyletter(curattachdirpc,SS[2],"contouredc"+SS[2],1000,"",withcolour=True,testing=False,wledposdir="",rectcoordlist=rectcoordlist)
-                                objno2=convertjpg2note(curattachdirpc,0,newdir1,objno2,"",rectcoordlist)
+                                objno2=convertjpg2note(curattachdirpc,0,newdir1,objno2,"",rectcoordlist,"")
                         if objno2>2:
                             if screengrab:
                                 columntype="nearlatest;;firstcolumn;;nextline"
@@ -199,9 +227,9 @@ if sys.platform in ['linux', 'linux2'] or sys.platform in ['Windows', 'win32', '
                                 lastline=""
                                 columntype="slidenextline"
                                 rectcoordlist=everyletter(curattachdirpc,SS[2],"contouredc"+SS[2],1000,"",withcolour=True,testing=False,wledposdir="",rectcoordlist=rectcoordlist)
-                                objno2=convertjpg2note(curattachdirpc,column,newdir1,objno2,"",rectcoordlist)
+                                objno2=convertjpg2note(curattachdirpc,column,newdir1,objno2,"",rectcoordlist,"")
                                 TT.config(text="DoneP")
-                        objno2,curattachdirpc=appendnewpic(SS[0],SS[1],SS[2],newdir1,SS[4],columntype,rectcoordlist)
+                        objno2,curattachdirpc=appendnewpic(SS[0],SS[1],SS[2],newdir1,SS[4],columntype,rectcoordlist,"")
                         imgdir=curattachdirpc+os.path.sep+SS[2]
                         if (linuxpc==0) and os.path.exists("/run/user/1000/gvfs/*/Internal"):
                             subprocess.call("adb push -p "+imgdir+" "+fnnotesanddirint+newdir1+".notz/attach",shell=True)
@@ -212,6 +240,7 @@ if sys.platform in ['linux', 'linux2'] or sys.platform in ['Windows', 'win32', '
                             ##TT.config(text="try")
                         ##monkey -p com.fiistudio.fiinote.editor.Fiinote -c android.intent.category.LAUNCHER 1
                         textclick=0
+                        _thread.start_new_thread(closetrans,())
                     else:
                         TT.config(text="Rep")
                 if fnmove:
@@ -427,15 +456,8 @@ if sys.platform in ['linux', 'linux2'] or sys.platform in ['Windows', 'win32', '
         """
         textclick=0
     
-    def active_window_process_name():
-        if sys.platform in ['Windows', 'win32', 'cygwin']:
-            import psutil, win32process, win32gui, time
-            pid = win32process.GetWindowThreadProcessId(win32gui.GetForegroundWindow()) #This produces a list of PIDs active window relates to
-            #pid[-1] is the most likely to survive last longer
-            return psutil.Process(pid[-1]).name()
-    
     def Suspend1():
-        global pause, textclick
+        global pause, textclick, screengrab
         if pause==0:
             pause=1
             TT.config(text="Suspended")

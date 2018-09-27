@@ -133,7 +133,15 @@ def imgsize(imgdir):
     im=PIL.Image.open(imgdir)
     w, h = im.size
     return w,h
+def active_window_process_name():
+    if sys.platform in ['Windows', 'win32', 'cygwin']:
+        import psutil, win32process, win32gui, time
+        pid = win32process.GetWindowThreadProcessId(win32gui.GetForegroundWindow()) #This produces a list of PIDs active window relates to
+        #pid[-1] is the most likely to survive last longer
+        return psutil.Process(pid[-1]).name()
+        
 def grabscreen():
+    #global screengrab
     #time.sleep(1)
     if sys.platform in ['linux', 'linux2'] :
         screenw = Home.winfo_screenwidth()
@@ -142,6 +150,12 @@ def grabscreen():
         from win32api import GetSystemMetrics
         screenw=GetSystemMetrics(0)
         screenh=GetSystemMetrics(1)
+        
+        lastapp=active_window_process_name()
+        if "FiiNote.exe" in lastapp:
+            import win32com.client as comclt
+            wsh=comclt.Dispatch("WScript.Shell")
+            wsh.SendKeys("^s")
     im=pyscreenshot.grab(bbox=(0,0,screenw,screenh),childprocess=False)
     im.save("screenshot.jpg")
     #return im
