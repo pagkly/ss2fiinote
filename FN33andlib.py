@@ -1931,7 +1931,10 @@ def convertjpg2note(folderlocation,column,newdir1,objno2,wledposdir,rectcoordlis
                     else:
                         columntype=column
             if columntype:
-                _,_,append=appendnewpic(w,h,picname,newdir1,objno2re,columntype,rectcoordlist[i],append)
+                if not batchpdf:
+                    _,_=appendnewpic(w,h,picname,newdir1,objno2re,columntype,rectcoordlist[i],append)
+                if batchpdf:
+                    _,_,append=appendnewpic(w,h,picname,newdir1,objno2re,columntype,rectcoordlist[i],append)
             if curanddevice:
                 runadbcommand("adb push -p \""+picdirnew+"\" \""+attachfnanddir+"\"")
             objno2re+=1

@@ -240,7 +240,8 @@ if sys.platform in ['linux', 'linux2'] or sys.platform in ['Windows', 'win32', '
                             ##TT.config(text="try")
                         ##monkey -p com.fiistudio.fiinote.editor.Fiinote -c android.intent.category.LAUNCHER 1
                         textclick=0
-                        _thread.start_new_thread(closetrans,())
+                        closetrans()
+                        #_thread.start_new_thread(closetrans,())
                     else:
                         TT.config(text="Rep")
                 if fnmove:
