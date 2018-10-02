@@ -119,23 +119,26 @@ def FindColor():
 roottrans=""
 def spawntrans():
     global roottrans
-    roottrans = Tk()
+    #roottrans = tk.Tk()
+    roottrans=tk.Toplevel()
     if sys.platform in ['linux', 'linux2'] :
         w = root.winfo_screenwidth()
         h = root.winfo_screenheight()
     if sys.platform in ['Windows', 'win32', 'cygwin']:
         w=GetSystemMetrics(0)
         h=GetSystemMetrics(1)
+    h=95/100*h
+    starth=1.8/100*h
     #roottrans.attributes('-alpha', 0.3)
-    roottrans.wm_attributes('-alpha',0.05,'-topmost',1)
-    roottrans.geometry('%dx%d+%d+%d' % (w, h, 0,0))
+    roottrans.wm_attributes('-alpha',0.1,'-topmost',1)
+    roottrans.geometry('%dx%d+%d+%d' % (w, h, 0,starth))
     roottrans.resizable(False, False)
     roottrans.update_idletasks()
     roottrans.overrideredirect(True)
-    roottrans.mainloop()
 def closetrans():
     global roottrans
     roottrans.destroy()
+    roottrans=""
     
 im=None
 screengrab=True
@@ -163,7 +166,8 @@ if sys.platform in ['linux', 'linux2'] or sys.platform in ['Windows', 'win32', '
                 TT.config(text="C")
                 if screengrab or sgrabauto:
                     TT.config(text="C1")
-                    _thread.start_new_thread(spawntrans,())
+                    spawntrans()
+
                     if (linuxpc==0) and os.path.exists("/run/user/1000/gvfs/*/Internal"):
                         subprocess.call("adb shell \"su -c 'input keyevent KEYCODE_ESCAPE && sleep 0.1 && killall com.fiistudio.fiinote'\"", shell=True)
                     clickStartX, clickStartY=clickX, clickY
@@ -241,7 +245,6 @@ if sys.platform in ['linux', 'linux2'] or sys.platform in ['Windows', 'win32', '
                         ##monkey -p com.fiistudio.fiinote.editor.Fiinote -c android.intent.category.LAUNCHER 1
                         textclick=0
                         closetrans()
-                        #_thread.start_new_thread(closetrans,())
                     else:
                         TT.config(text="Rep")
                 if fnmove:
@@ -284,6 +287,7 @@ if sys.platform in ['linux', 'linux2'] or sys.platform in ['Windows', 'win32', '
         global root,TT,TT2
         #global fnnotesdirpc
         root=tk.Tk()
+        #root=tk.Toplevel()
         m = Button(root, text="Pause R", command=Suspend1,height=3,width=3)
         m.pack()
         newf = Button(root, text="New F", command=newnotz1,height=3,width=3)
@@ -506,7 +510,8 @@ def choosepdfgui0():
     global rootimgv,Top,Mid,mfwidth,mfheight
     if sys.platform in ['Windows', 'win32', 'cygwin']:
         userhomedir=subprocess.getoutput("echo %USERPROFILE%")
-    rootimgv = tk.Tk()
+    #rootimgv = tk.Tk()
+    rootimgv=tk.Toplevel()
     width = 600
     height = 300
     screen_width = rootimgv.winfo_screenwidth()
@@ -527,7 +532,7 @@ def choosepdfgui0():
     lbl_title.pack(fill=X)
     allfilesdir,allfilesname,allfilesfulldir=listfilesext(dir0,".pdf")
     placebutton(allfilesdir,allfilesname,allfilesfulldir)
-    rootimgv.mainloop()
+    #rootimgv.mainloop()
 def choosepdfgui():
     global Top,Mid,mfwidth,mfheight,Home1
     if sys.platform in ['Windows', 'win32', 'cygwin']:
@@ -1559,7 +1564,7 @@ curnotzpc,curnotefpc,curattachdirpc,curnotzand,curattachdirand=setvarnotz(fnnote
 #curattachdirpc=CN[4]
 #curnotzand=CN[5]
 #curattachdirand=CN[6]
-_thread.start_new_thread(task2, ())
+#_thread.start_new_thread(task2, ())
 print(newdir1)
 print(objno2)
 print(curattachdirpc)
@@ -1567,6 +1572,7 @@ if __name__=='__main__':
     if sys.platform in ['linux', 'linux2']:
         while 1:
             Listener().run()
+            #_thread.start_new_thread(Listener().run, ())
     if sys.platform in ['Windows', 'win32', 'cygwin']:
         global hm
         #https://www.lfd.uci.edu/~gohlke/pythonlibs/#pyhook
@@ -1583,6 +1589,12 @@ if __name__=='__main__':
         #hm.MouseLeftUp = OnUp
         hm.HookKeyboard()
         hm.KeyDown = OnKeyboardEventA
-        pythoncom.PumpMessages()
-        hm.UnhookMouse()
+        #pythoncom.PumpMessages()
+        #hm.UnhookMouse()
         ##hm.UnhookKeyboard()
+    task2()
+    if sys.platform in ['Windows', 'win32', 'cygwin']:
+        _thread.start_new_thread(pythoncom.PumpMessages, ())
+        _thread.start_new_thread(hm.UnhookMouse, ())
+        
+    
