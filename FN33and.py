@@ -1347,7 +1347,9 @@ if sys.platform in ['Windows', 'win32', 'cygwin']:
     import win32com.client as comclt
     import win32gui, win32con
     #import pyHook
-    import pythoncom,PyHook3
+    import pythoncom
+    import PyHook3
+    #import pyHook
     import pyautogui
     import psutil
     #from pymouse import PyMouse
