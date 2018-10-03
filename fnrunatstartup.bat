@@ -4,7 +4,8 @@ REM shell:common startup
 REM PS $env:UserName
 taskkill /F /IM powershell.exe /T
 taskkill /F /IM FiiNote.exe /T
-REM pip install psutil pyscreenshot pillow opencv-python pywin32 imutils
+REM install swigwin & vbcppbuildtools
+REM pip install psutil pyscreenshot pillow opencv-python pywin32 imutils PyHook3 pyautogui
 if '%USERNAME%' == 'SP3' (
 REM start /MIN "" powershell -noexit -command "echo %USERPROFILE% ; %USERPROFILE%\Documents\Docs\Automate\3WinPython-32bit-3.5.3.1Qt5\scripts\python %USERPROFILE%\Documents\GitHub\FN35OCVbside\FN33and.py"
 start /MIN "" powershell -noexit -command "python %USERPROFILE%\Documents\GitHub\FN35OCVbside\FN33and.py"
