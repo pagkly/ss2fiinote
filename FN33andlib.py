@@ -962,6 +962,7 @@ def appendnewpic(w,h,picname,newdir1,objno2,columntype,rectcoordlist,append):
         print(batchpdfend)
         if batchpdfend:
             appendtext(curnotefpc,append,"wb")
+            batchpdfend=False
         return objno2,curattachdirpc,append
     if not batchpdf:
         if append:
@@ -1535,7 +1536,7 @@ def runpdftonote(convpdfdirpc,pdfdir,pdfname,pagelst,ocvtype,continuenote,testin
                     if batchpdf:
                         cihx=append
                         cihx=append[-250:]
-                        print(cihx)
+                        print("cihx="+cihx)
                         #time.sleep(3600)
                         
                     regexc1=re.compile(patternpicx)
@@ -2064,6 +2065,7 @@ def setvarconvpdf():
                 continuenote=False
             if args.pagestart:
                 pageslst=args.pagestart.split(";;")
+                print(pageslst)
                 for pages in pageslst:
                     if pages:
                         eachpages=pages.split("-")
@@ -2079,6 +2081,9 @@ def setvarconvpdf():
                             #pdfpage=subprocess.getoutput("pdfinfo \\""+pdfdir+os.path.sep+pdfname+"\\" | grep Pages: | awk '{print $2}'")
                             pageend=int(pdfpage)
                         print(pages, eachpages)
+                        if pages==pageslst[1]:
+                            print(pagestart,pageend)
+                            #time.sleep(3600)
                         #if not pagestart:
                         #    pagestart=0
                         #if not pageend:
@@ -2088,8 +2093,9 @@ def setvarconvpdf():
                         pagelst=list(range(pagestart,pageend+1))
                         for i in addpages:
                             pagelst.append(i)
+                        rectcoordlist=""
                         rectcoordlist,wledposdir=runpdftonote(convpdfdirpc,pdfdir,pdfname,pagelst,ocvtype,continuenote,testing,multiplepage)
-                        os.remove(curnotelocpc)
+                    os.remove(curnotelocpc)
             if not args.pagestart and not args.singlepage:
                 pagestart=1
                 if not args.pageend:

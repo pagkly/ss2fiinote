@@ -82,4 +82,25 @@ python %USERPROFILE%\Documents\GitHub\FN35OCVbside\FN33andlib.py -p "%USERPROFIL
 .\python %USERPROFILE%\Documents\GitHub\FN35OCVbside\FN33andlib.py -p "%USERPROFILE%\Documents\GitHub\DocsSem2\SEM0218\COMP10001\week06c.pdf" -d 120 -t 1 -nc 2 ;
 .\python %USERPROFILE%\Documents\GitHub\FN35OCVbside\FN33andlib.py -p "%USERPROFILE%\Documents\GitHub\DocsSem2\SEM0218\COMP10001\week07c.pdf" -d 120 -t 1 -nc 2 ;
 .\python %USERPROFILE%\Documents\GitHub\FN35OCVbside\FN33andlib.py -p "%USERPROFILE%\Documents\GitHub\DocsSem2\SEM0218\COMP10001\week08a.pdf" -d 120 -t 1 -nc 2 ;
+
+python C:\Users\user\Documents\GitHub\FN35OCVbside\FN33andlib.py -p "C:\Users\user\Documents\GitHub\DocsSem2\SEM0218\ECON10004\Joshua Gans, Stephen King, Martin Byford, N. Gregory Mankiw-Principles of Microeconomics [Australia and New Zealand Edition]-Cengage [Australia] (2015).pdf" -d 120 -t 1 -nc 2 -ps "53-80;;81-96;;97-126;;127-150;;151-176;;177-200;;223-251;;252-274;;275-295;;321-346;;347-369;;399-417;;444-464"
+.\python %USERPROFILE%\Documents\GitHub\FN35OCVbside\FN33andlib.py -p "%USERPROFILE%\Documents\GitHub\DocsSem2\SEM0218\COMP10001\week01b.pdf" -d 120 -t 1 -nc 2 ;
+.\python %USERPROFILE%\Documents\GitHub\FN35OCVbside\FN33andlib.py -p "%USERPROFILE%\Documents\GitHub\DocsSem2\SEM0218\COMP10001\week01c.pdf" -d 120 -t 1 -nc 2 ;
+.\python %USERPROFILE%\Documents\GitHub\FN35OCVbside\FN33andlib.py -p "%USERPROFILE%\Documents\GitHub\DocsSem2\SEM0218\COMP10001\week02a.pdf" -d 120 -t 1 -nc 2 ;
+.\python %USERPROFILE%\Documents\GitHub\FN35OCVbside\FN33andlib.py -p "%USERPROFILE%\Documents\GitHub\DocsSem2\SEM0218\COMP10001\week02b.pdf" -d 120 -t 1 -nc 2 ;
+.\python %USERPROFILE%\Documents\GitHub\FN35OCVbside\FN33andlib.py -p "%USERPROFILE%\Documents\GitHub\DocsSem2\SEM0218\COMP10001\week02c(1).pdf" -d 120 -t 1 -nc 2 ;
+.\python %USERPROFILE%\Documents\GitHub\FN35OCVbside\FN33andlib.py -p "%USERPROFILE%\Documents\GitHub\DocsSem2\SEM0218\COMP10001\week03a.pdf" -d 120 -t 1 -nc 2 ;
+.\python %USERPROFILE%\Documents\GitHub\FN35OCVbside\FN33andlib.py -p "%USERPROFILE%\Documents\GitHub\DocsSem2\SEM0218\COMP10001\week03b.pdf" -d 120 -t 1 -nc 2 ;
+.\python %USERPROFILE%\Documents\GitHub\FN35OCVbside\FN33andlib.py -p "%USERPROFILE%\Documents\GitHub\DocsSem2\SEM0218\COMP10001\week03c_guest_lecture_security.pdf" -d 120 -t 1 -nc 2 ;
+.\python %USERPROFILE%\Documents\GitHub\FN35OCVbside\FN33andlib.py -p "%USERPROFILE%\Documents\GitHub\DocsSem2\SEM0218\COMP10001\week03c-advanced.pdf" -d 120 -t 1 -nc 2 ;
+.\python %USERPROFILE%\Documents\GitHub\FN35OCVbside\FN33andlib.py -p "%USERPROFILE%\Documents\GitHub\DocsSem2\SEM0218\COMP10001\week04a.pdf" -d 120 -t 1 -nc 2 ;
+.\python %USERPROFILE%\Documents\GitHub\FN35OCVbside\FN33andlib.py -p "%USERPROFILE%\Documents\GitHub\DocsSem2\SEM0218\COMP10001\week05a.pdf" -d 120 -t 1 -nc 2 ;
+.\python %USERPROFILE%\Documents\GitHub\FN35OCVbside\FN33andlib.py -p "%USERPROFILE%\Documents\GitHub\DocsSem2\SEM0218\COMP10001\week05b.pdf" -d 120 -t 1 -nc 2 ;
+.\python %USERPROFILE%\Documents\GitHub\FN35OCVbside\FN33andlib.py -p "%USERPROFILE%\Documents\GitHub\DocsSem2\SEM0218\COMP10001\week05c.pdf" -d 120 -t 1 -nc 2 ;
+.\python %USERPROFILE%\Documents\GitHub\FN35OCVbside\FN33andlib.py -p "%USERPROFILE%\Documents\GitHub\DocsSem2\SEM0218\COMP10001\week06a.pdf" -d 120 -t 1 -nc 2 ;
+.\python %USERPROFILE%\Documents\GitHub\FN35OCVbside\FN33andlib.py -p "%USERPROFILE%\Documents\GitHub\DocsSem2\SEM0218\COMP10001\week06b.pdf" -d 120 -t 1 -nc 2 ;
+.\python %USERPROFILE%\Documents\GitHub\FN35OCVbside\FN33andlib.py -p "%USERPROFILE%\Documents\GitHub\DocsSem2\SEM0218\COMP10001\week06c.pdf" -d 120 -t 1 -nc 2 ;
+.\python %USERPROFILE%\Documents\GitHub\FN35OCVbside\FN33andlib.py -p "%USERPROFILE%\Documents\GitHub\DocsSem2\SEM0218\COMP10001\week07c.pdf" -d 120 -t 1 -nc 2 ;
+.\python %USERPROFILE%\Documents\GitHub\FN35OCVbside\FN33andlib.py -p "%USERPROFILE%\Documents\GitHub\DocsSem2\SEM0218\COMP10001\week08a.pdf" -d 120 -t 1 -nc 2 ;
+
 :comment

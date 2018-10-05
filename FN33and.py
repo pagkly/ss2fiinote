@@ -137,7 +137,8 @@ def spawntrans():
     roottrans.overrideredirect(True)
 def closetrans():
     global roottrans
-    roottrans.destroy()
+    if roottrans:
+        roottrans.destroy()
     roottrans=""
     
 im=None
@@ -166,7 +167,7 @@ if sys.platform in ['linux', 'linux2'] or sys.platform in ['Windows', 'win32', '
                 TT.config(text="C")
                 if screengrab or sgrabauto:
                     TT.config(text="C1")
-                    spawntrans()
+                    #spawntrans()
 
                     if (linuxpc==0) and os.path.exists("/run/user/1000/gvfs/*/Internal"):
                         subprocess.call("adb shell \"su -c 'input keyevent KEYCODE_ESCAPE && sleep 0.1 && killall com.fiistudio.fiinote'\"", shell=True)
@@ -244,7 +245,7 @@ if sys.platform in ['linux', 'linux2'] or sys.platform in ['Windows', 'win32', '
                             ##TT.config(text="try")
                         ##monkey -p com.fiistudio.fiinote.editor.Fiinote -c android.intent.category.LAUNCHER 1
                         textclick=0
-                        closetrans()
+                        #closetrans()
                     else:
                         TT.config(text="Rep")
                 if fnmove:
@@ -467,12 +468,14 @@ if sys.platform in ['linux', 'linux2'] or sys.platform in ['Windows', 'win32', '
             pause=1
             TT.config(text="Suspended")
             fiinotew10pcdir=userhomedir+"\\\\Documents\\\\Docs\\\\Automate\\\\FiiNoteWINE\\\\FiiNote.exe"
+            closetrans()
             if sys.platform in ['Windows', 'win32', 'cygwin'] and screengrab:
                 #restartfn()
                 pass
         elif pause==1:
             pause=0
             TT.config(text="Resume")
+            spawntrans()
             if sys.platform in ['Windows', 'win32', 'cygwin'] and screengrab:
                 lastapp=active_window_process_name()
                 if "FiiNote.exe" in lastapp:
