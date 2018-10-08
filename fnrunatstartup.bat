@@ -84,23 +84,32 @@ python %USERPROFILE%\Documents\GitHub\FN35OCVbside\FN33andlib.py -p "%USERPROFIL
 .\python %USERPROFILE%\Documents\GitHub\FN35OCVbside\FN33andlib.py -p "%USERPROFILE%\Documents\GitHub\DocsSem2\SEM0218\COMP10001\week08a.pdf" -d 120 -t 1 -nc 2 ;
 
 python C:\Users\user\Documents\GitHub\FN35OCVbside\FN33andlib.py -p "C:\Users\user\Documents\GitHub\DocsSem2\SEM0218\ECON10004\Joshua Gans, Stephen King, Martin Byford, N. Gregory Mankiw-Principles of Microeconomics [Australia and New Zealand Edition]-Cengage [Australia] (2015).pdf" -d 120 -t 1 -nc 2 -ps "53-80;;81-96;;97-126;;127-150;;151-176;;177-200;;223-251;;252-274;;275-295;;321-346;;347-369;;399-417;;444-464"
-.\python %USERPROFILE%\Documents\GitHub\FN35OCVbside\FN33andlib.py -p "%USERPROFILE%\Documents\GitHub\DocsSem2\SEM0218\COMP10001\week01b.pdf" -d 120 -t 1 -nc 2 ;
-.\python %USERPROFILE%\Documents\GitHub\FN35OCVbside\FN33andlib.py -p "%USERPROFILE%\Documents\GitHub\DocsSem2\SEM0218\COMP10001\week01c.pdf" -d 120 -t 1 -nc 2 ;
-.\python %USERPROFILE%\Documents\GitHub\FN35OCVbside\FN33andlib.py -p "%USERPROFILE%\Documents\GitHub\DocsSem2\SEM0218\COMP10001\week02a.pdf" -d 120 -t 1 -nc 2 ;
-.\python %USERPROFILE%\Documents\GitHub\FN35OCVbside\FN33andlib.py -p "%USERPROFILE%\Documents\GitHub\DocsSem2\SEM0218\COMP10001\week02b.pdf" -d 120 -t 1 -nc 2 ;
-.\python %USERPROFILE%\Documents\GitHub\FN35OCVbside\FN33andlib.py -p "%USERPROFILE%\Documents\GitHub\DocsSem2\SEM0218\COMP10001\week02c(1).pdf" -d 120 -t 1 -nc 2 ;
-.\python %USERPROFILE%\Documents\GitHub\FN35OCVbside\FN33andlib.py -p "%USERPROFILE%\Documents\GitHub\DocsSem2\SEM0218\COMP10001\week03a.pdf" -d 120 -t 1 -nc 2 ;
-.\python %USERPROFILE%\Documents\GitHub\FN35OCVbside\FN33andlib.py -p "%USERPROFILE%\Documents\GitHub\DocsSem2\SEM0218\COMP10001\week03b.pdf" -d 120 -t 1 -nc 2 ;
-.\python %USERPROFILE%\Documents\GitHub\FN35OCVbside\FN33andlib.py -p "%USERPROFILE%\Documents\GitHub\DocsSem2\SEM0218\COMP10001\week03c_guest_lecture_security.pdf" -d 120 -t 1 -nc 2 ;
-.\python %USERPROFILE%\Documents\GitHub\FN35OCVbside\FN33andlib.py -p "%USERPROFILE%\Documents\GitHub\DocsSem2\SEM0218\COMP10001\week03c-advanced.pdf" -d 120 -t 1 -nc 2 ;
-.\python %USERPROFILE%\Documents\GitHub\FN35OCVbside\FN33andlib.py -p "%USERPROFILE%\Documents\GitHub\DocsSem2\SEM0218\COMP10001\week04a.pdf" -d 120 -t 1 -nc 2 ;
-.\python %USERPROFILE%\Documents\GitHub\FN35OCVbside\FN33andlib.py -p "%USERPROFILE%\Documents\GitHub\DocsSem2\SEM0218\COMP10001\week05a.pdf" -d 120 -t 1 -nc 2 ;
-.\python %USERPROFILE%\Documents\GitHub\FN35OCVbside\FN33andlib.py -p "%USERPROFILE%\Documents\GitHub\DocsSem2\SEM0218\COMP10001\week05b.pdf" -d 120 -t 1 -nc 2 ;
-.\python %USERPROFILE%\Documents\GitHub\FN35OCVbside\FN33andlib.py -p "%USERPROFILE%\Documents\GitHub\DocsSem2\SEM0218\COMP10001\week05c.pdf" -d 120 -t 1 -nc 2 ;
-.\python %USERPROFILE%\Documents\GitHub\FN35OCVbside\FN33andlib.py -p "%USERPROFILE%\Documents\GitHub\DocsSem2\SEM0218\COMP10001\week06a.pdf" -d 120 -t 1 -nc 2 ;
-.\python %USERPROFILE%\Documents\GitHub\FN35OCVbside\FN33andlib.py -p "%USERPROFILE%\Documents\GitHub\DocsSem2\SEM0218\COMP10001\week06b.pdf" -d 120 -t 1 -nc 2 ;
-.\python %USERPROFILE%\Documents\GitHub\FN35OCVbside\FN33andlib.py -p "%USERPROFILE%\Documents\GitHub\DocsSem2\SEM0218\COMP10001\week06c.pdf" -d 120 -t 1 -nc 2 ;
-.\python %USERPROFILE%\Documents\GitHub\FN35OCVbside\FN33andlib.py -p "%USERPROFILE%\Documents\GitHub\DocsSem2\SEM0218\COMP10001\week07c.pdf" -d 120 -t 1 -nc 2 ;
-.\python %USERPROFILE%\Documents\GitHub\FN35OCVbside\FN33andlib.py -p "%USERPROFILE%\Documents\GitHub\DocsSem2\SEM0218\COMP10001\week08a.pdf" -d 120 -t 1 -nc 2 ;
-
+python C:\Users\SP3\Documents\GitHub\FN35OCVbside\FN33andlib.py -p "file:///C:/Users/SP3/Documents/GitHub/DocsSem2/SEM0218/ECON10004/Borland_Case_Studies_and_Applications_Microeconomics.pdf" -d 120 -t 1 -nc 2 -ps "23-27;;39-43;;63-67;;74-78;;88-94;;79-87;;95-101;;113-119;;102-107;;144-151;;159-168;;169-183;;199-204;;191-198;;44-51;;128-132;;205-209;;217-268;;285-306;;307-326;;337-354"
+python C:\Users\SP3\Documents\GitHub\FN35OCVbside\FN33andlib.py -p "file:///C:/Users/SP3/Documents/GitHub/DocsSem2/SEM0218/ECON10004/W1_tute.pdf" -d 120 -t 1 -nc 2 ;
+python C:\Users\SP3\Documents\GitHub\FN35OCVbside\FN33andlib.py -p "file:///C:/Users/SP3/Documents/GitHub/DocsSem2/SEM0218/ECON10004/W2 in-tute.pdf" -d 120 -t 1 -nc 2 ;
+python C:\Users\SP3\Documents\GitHub\FN35OCVbside\FN33andlib.py -p "file:///C:/Users/SP3/Documents/GitHub/DocsSem2/SEM0218/ECON10004/W2 pre-tute.pdf" -d 120 -t 1 -nc 2 ;
+python C:\Users\SP3\Documents\GitHub\FN35OCVbside\FN33andlib.py -p "file:///C:/Users/SP3/Documents/GitHub/DocsSem2/SEM0218/ECON10004/W2 pre-tute-soln.pdf" -d 120 -t 1 -nc 2 ;
+python C:\Users\SP3\Documents\GitHub\FN35OCVbside\FN33andlib.py -p "file:///C:/Users/SP3/Documents/GitHub/DocsSem2/SEM0218/ECON10004/W3_in_tute.pdf" -d 120 -t 1 -nc 2 ;
+python C:\Users\SP3\Documents\GitHub\FN35OCVbside\FN33andlib.py -p "file:///C:/Users/SP3/Documents/GitHub/DocsSem2/SEM0218/ECON10004/W3_pre_tute.pdf" -d 120 -t 1 -nc 2 ;
+python C:\Users\SP3\Documents\GitHub\FN35OCVbside\FN33andlib.py -p "file:///C:/Users/SP3/Documents/GitHub/DocsSem2/SEM0218/ECON10004/W3_pre_tute_solutions.pdf" -d 120 -t 1 -nc 2 ;
+python C:\Users\SP3\Documents\GitHub\FN35OCVbside\FN33andlib.py -p "file:///C:/Users/SP3/Documents/GitHub/DocsSem2/SEM0218/ECON10004/W4_in_tute.pdf" -d 120 -t 1 -nc 2 ;
+python C:\Users\SP3\Documents\GitHub\FN35OCVbside\FN33andlib.py -p "file:///C:/Users/SP3/Documents/GitHub/DocsSem2/SEM0218/ECON10004/W4_pre_tute.pdf" -d 120 -t 1 -nc 2 ;
+python C:\Users\SP3\Documents\GitHub\FN35OCVbside\FN33andlib.py -p "file:///C:/Users/SP3/Documents/GitHub/DocsSem2/SEM0218/ECON10004/W4_pre_tute_solutions.pdf" -d 120 -t 1 -nc 2 ;
+python C:\Users\SP3\Documents\GitHub\FN35OCVbside\FN33andlib.py -p "file:///C:/Users/SP3/Documents/GitHub/DocsSem2/SEM0218/ECON10004/W5_in_tute.pdf" -d 120 -t 1 -nc 2 ;
+python C:\Users\SP3\Documents\GitHub\FN35OCVbside\FN33andlib.py -p "file:///C:/Users/SP3/Documents/GitHub/DocsSem2/SEM0218/ECON10004/W5_pre_tute.pdf" -d 120 -t 1 -nc 2 ;
+python C:\Users\SP3\Documents\GitHub\FN35OCVbside\FN33andlib.py -p "file:///C:/Users/SP3/Documents/GitHub/DocsSem2/SEM0218/ECON10004/W5_pre_tute_solutions(2).pdf" -d 120 -t 1 -nc 2 ;
+python C:\Users\SP3\Documents\GitHub\FN35OCVbside\FN33andlib.py -p "file:///C:/Users/SP3/Documents/GitHub/DocsSem2/SEM0218/ECON10004/W6_in_tute.pdf" -d 120 -t 1 -nc 2 ;
+python C:\Users\SP3\Documents\GitHub\FN35OCVbside\FN33andlib.py -p "file:///C:/Users/SP3/Documents/GitHub/DocsSem2/SEM0218/ECON10004/W6_pre_tute.pdf" -d 120 -t 1 -nc 2 ;
+python C:\Users\SP3\Documents\GitHub\FN35OCVbside\FN33andlib.py -p "file:///C:/Users/SP3/Documents/GitHub/DocsSem2/SEM0218/ECON10004/W6_pre_tute_solutions.pdf" -d 120 -t 1 -nc 2 ;
+python C:\Users\SP3\Documents\GitHub\FN35OCVbside\FN33andlib.py -p "file:///C:/Users/SP3/Documents/GitHub/DocsSem2/SEM0218/ECON10004/W7_in_tute.pdf" -d 120 -t 1 -nc 2 ;
+python C:\Users\SP3\Documents\GitHub\FN35OCVbside\FN33andlib.py -p "file:///C:/Users/SP3/Documents/GitHub/DocsSem2/SEM0218/ECON10004/W7_pre_tute.pdf" -d 120 -t 1 -nc 2 ;
+python C:\Users\SP3\Documents\GitHub\FN35OCVbside\FN33andlib.py -p "file:///C:/Users/SP3/Documents/GitHub/DocsSem2/SEM0218/ECON10004/W7_pre_tute_solutions.pdf" -d 120 -t 1 -nc 2 ;
+python C:\Users\SP3\Documents\GitHub\FN35OCVbside\FN33andlib.py -p "file:///C:/Users/SP3/Documents/GitHub/DocsSem2/SEM0218/ECON10004/W8_in_tute.pdf" -d 120 -t 1 -nc 2 ;
+python C:\Users\SP3\Documents\GitHub\FN35OCVbside\FN33andlib.py -p "file:///C:/Users/SP3/Documents/GitHub/DocsSem2/SEM0218/ECON10004/W8_pre_tute.pdf" -d 120 -t 1 -nc 2 ;
+python C:\Users\SP3\Documents\GitHub\FN35OCVbside\FN33andlib.py -p "file:///C:/Users/SP3/Documents/GitHub/DocsSem2/SEM0218/ECON10004/W8_pre_tute_solutions.pdf" -d 120 -t 1 -nc 2 ;
+python C:\Users\SP3\Documents\GitHub\FN35OCVbside\FN33andlib.py -p "file:///C:/Users/SP3/Documents/GitHub/DocsSem2/SEM0218/ECON10004/W9_in_tute.pdf" -d 120 -t 1 -nc 2 ;
+python C:\Users\SP3\Documents\GitHub\FN35OCVbside\FN33andlib.py -p "file:///C:/Users/SP3/Documents/GitHub/DocsSem2/SEM0218/ECON10004/W9_pre_tute.pdf" -d 120 -t 1 -nc 2 ;
+python C:\Users\SP3\Documents\GitHub\FN35OCVbside\FN33andlib.py -p "file:///C:/Users/SP3/Documents/GitHub/DocsSem2/SEM0218/ECON10004/W9_pre_tute_solutions.pdf" -d 120 -t 1 -nc 2 ;
+python C:\Users\SP3\Documents\GitHub\FN35OCVbside\FN33andlib.py -p "file:///C:/Users/SP3/Documents/GitHub/DocsSem2/SEM0218/ECON10004/W10_pre_tute.pdf" -d 120 -t 1 -nc 2 ;
+python C:\Users\SP3\Documents\GitHub\FN35OCVbside\FN33andlib.py -p "file:///C:/Users/SP3/Documents/GitHub/DocsSem2/SEM0218/ECON10004/W11 pre-tute.pdf" -d 120 -t 1 -nc 2 ;
 :comment
