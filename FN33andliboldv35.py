@@ -205,12 +205,10 @@ def runadbcommand(command):
         subprocess.call(command, shell=True)
 curanddevice=checkadbdevices()
 dir0=os.path.dirname(os.path.realpath(__file__))
-beginningpart=r"^(.*?)(0[Aa][Cc]480)"
 regexindex1=r'(01)(.{8})(.{4})(011a)'
 patternpic=r'(010ac480c391c391c391(?!.*010ac480c391c391c391))(.*?)(01c88a)(.{36})(.{28})(.{2})(.{2})(.{2})(.{2})(.{36})(0303)(.{102,})'
 #patternpicx=r'(010ac480c391c391c391(?!.*010ac480c391c391c391))(.*?)(01c88a)(.{28})(.{2})(.{2})(.{2})(.{2})(.{36})(.{36})(03)(.{8})(.{8})(.{8})(.{8})(.*?)'
 patternpicx=r'(010[aA][cC]480[cC]391[cC]391[cC]391(?!.*010[aA][cC]480[cC]391[cC]391[cC]391))(.*?)(01[cC]88[aA])(.{24})(.{12})(.{24})(.{12})(.{36})(03)(.{8})(.{8})(.{8})(.{8})(.*?)'
-patternpicgen=r"(0[aA][cC]480[cC]391[cC]391[cC]391)(.*?)(01[cC]88[aA])(.{24})(.{12})(.{24})(.{12})(.{36})(03)(.{8})(.{8})(.{8})(.{8})(22)(.*?)(2[Ee]6[Aa]7067)(.){2,8}(.){2,8}(01)"
 regexindex2=r'(1123236e6f7465732f2323756e66696c6564(?!.*1123236e6f7465732f2323756e66696c6564))(.*?)(00\d\d\d\d00\d\d)(2323)'
 regexnote1=r'(0302010201)(.{2})(.{2}){0,1}'
 regexnote2=r'(0302010201)(.{2})(.{2})(0a){0,1}'
@@ -2021,85 +2019,14 @@ def restartfn():
             subprocess.call("start /MAX \"fiinote\" \""+fiinotew10pcdir+"\"",shell=True)
 
 #LOCATION
-def ylochextoint2(sprevycoordinate,eprevycoordinate):
-    #print(eprevycoordinate)
-    sposypppsuffixint=int(sprevycoordinate[-12:-10],16)         
-    sposyppsuffixint=int(sprevycoordinate[-10:-8],16)
-    sposypsuffixint=int(sprevycoordinate[-8:-6],16)
-    sposysuffixint=int(sprevycoordinate[-6:-4],16)
-    sposyint=int(sprevycoordinate[-4:-2],16)
-    sposyremint=int(sprevycoordinate[-2:],16)
-
-    eposypppsuffixint=int(eprevycoordinate[-12:-10],16)         
-    eposyppsuffixint=int(eprevycoordinate[-10:-8],16)
-    eposypsuffixint=int(eprevycoordinate[-8:-6],16)
-    eposysuffixint=int(eprevycoordinate[-6:-4],16)
-    eposyint=int(eprevycoordinate[-4:-2],16)
-    eposyremint=int(eprevycoordinate[-2:],16)
-    county=0
-    while True:
-        if sprevycoordinate.lower()==eprevycoordinate.lower():
-            break
-        sposyremint+=1
-        if sposyremint>191:
-            sposyint+=1
-            sposyremint=128
-        if sposyint>191:
-            sposysuffixint+=1
-            sposyint=128
-        if sposysuffixint>231:
-            sposypsuffixint+=1
-            sposysuffixint=225
-        if sposypsuffixint>191:
-            sposyppsuffixint+=1
-            sposypsuffixint=128
-        if sposyppsuffixint>191:
-            sposypppsuffixint+=1
-            sposyppsuffixint=128
-        
-        if sposyremint==eposyremint and sposyint==eposyint and sposysuffixint==eposysuffixint and sposypsuffixint==eposypsuffixint and sposyppsuffixint==eposyppsuffixint and sposypppsuffixint==eposypppsuffixint:
-            break
-        county+=1
-    return county
-
-def ylochextoint(sprevycoordinate,eprevycoordinate):
-    county=int(eprevycoordinate,16)
-    return county
-
-def modnewylochex(oldyhex,county):
-    posypppsuffixint=int(oldyhex[-12:-10],16)         
-    posyppsuffixint=int(oldyhex[-10:-8],16)
-    posypsuffixint=int(oldyhex[-8:-6],16)
-    posysuffixint=int(oldyhex[-6:-4],16)
-    posyint=int(oldyhex[-4:-2],16)
-    posyremint=int(oldyhex[-2:],16)
-    while county>0:
-        posyremint+=1
-        if posyremint>191:
-            posyint+=1
-            posyremint=128
-        if posyint>191:
-            posysuffixint+=1
-            posyint=128
-        if posysuffixint>231:
-            posypsuffixint+=1
-            posysuffixint=225
-        if posypsuffixint>191:
-            posyppsuffixint+=1
-            posypsuffixint=128
-        if posyppsuffixint>191:
-            posypppsuffixint+=1
-            posyppsuffixint=128
-        county-=1
-    posypppsuffixhex=format(posypppsuffixint, 'x')
-    posyppsuffixhex=format(posyppsuffixint, 'x')
-    posypsuffixhex=format(posypsuffixint, 'x')
-    posysuffixhex=format(posysuffixint, 'x')           
-    posyhex=format(posyint, 'x')
-    posyremhex=format(posyremint, 'x')
-    newylochex=posypppsuffixhex+posyppsuffixhex+posypsuffixhex+posysuffixhex+posyhex+posyremhex
-    return newylochex
-        
+def xlochextoint():
+    pass
+def ylochextoint():
+    pass
+def xlocinttohex():
+    pass
+def ylocinttohex():
+    pass
 
 #SCALE
 def xscalehextoint():
@@ -2111,84 +2038,9 @@ def xscaleinttohex():
 def yscaleinttohex():
     pass
 
-def addylocwscalehex(prevdefyscale,prevendyscale):
-    ypresuffixint=int(prevdefyscale[0:2],16)
-    ysuffixint=int(prevdefyscale[2:4],16)
-    yscalequotint=int(prevdefyscale[4:6],16)
-    yscaleremint=int(prevdefyscale[6:],16)
-                        
-    endypresuffixint=int(prevendyscale[0:2],16)
-    endysuffixint=int(prevendyscale[2:4],16)
-    endyscalequotint=int(prevendyscale[4:6],16)
-    endyscaleremint=int(prevendyscale[6:],16)
-    scaledh=0
-    while True:
-        yscaleremint+=1
-        if yscaleremint>191:
-            yscalequotint+=1
-            yscaleremint=128
-        if yscalequotint>191:
-            ysuffixint+=1
-            yscalequotint=128
-        if ysuffixint>231:
-            ypresuffixint+=1
-            ysuffixint=225
-        if ypresuffixint==endypresuffixint and ysuffixint==endysuffixint and yscalequotint==endyscalequotint and yscaleremint==endyscaleremint:
-            break
-        scaledh+=1
-    countingy=scaledh+(64*3)
-    return countingy
-    pass
-
 #FINDLASTY
-"""
-chemtbk
-joinnotz
-math
-grokp3
-"""
-def lastycoordinate(cihx):
-    print("Searching for lastycoordinate")
-    #l = re.compile(patternpicgen).split(cihx)
-    #m.start()
-    #l=[m.group(15) for m in re.finditer(patternpicgen, cihx)]
-    l=[m.group(7) for m in re.finditer(patternpicgen, cihx)]
-    print(len(l))
-    yloclst=[]
-    countycount=0
-    for r in l:
-        #picname=bytearray.fromhex(r).decode()
-        #print(picname)
-        #xlochextoint()
-        #yscalehextoint()
-        ##print(r)
-        countyloc=ylochextoint("E5A5A9E19E81",r)        
-        yloclst.append((countyloc,r))
-        countycount+=1
-        #print(str(countycount)+"  "+str(countyloc))
-    
-    lastyhex=sorted(yloclst)
-    #print(lastyhexlst)
-    print(len(lastyhex))
-    print("LATESTY="+lastyhex[-1][1])
-    #time.sleep(3600)
-    return str(lastyhex[-1][1])
+def lastycoordinate():
     pass
-def lastycoordinatelst(currentlasty,lastylst):
-    lastylst=[]
-    for hexs in lastylst:
-        countyloc=ylochextoint(currentlasty,hexs) 
-        lastylst.append((countyloc,hexs))
-    lastyhex=sorted(yloclst)
-    print("LATESTY="+lastyhex[-1][1])
-    return str(lastyhex[-1][1])
-
-def allindices(string, sub, listindex=[], offset=0):
-    i = string.find(sub, offset)
-    while i >= 0:
-        listindex.append(i)
-        i = string.find(sub, i + 1)
-    return listindex
 
 def copytree(src, dst, symlinks=False, ignore=None):
     for item in os.listdir(src):
@@ -2198,55 +2050,6 @@ def copytree(src, dst, symlinks=False, ignore=None):
             shutil.copytree(s, d, symlinks, ignore)
         else:
             shutil.copy2(s, d)
-
-def updateobjno2(objno2,curnotefpc):
-    with open(curnotefpc,"rb") as f:
-            content=f.read()
-            cihx=str(binascii.hexlify(content).decode('utf-8'))
-            mo1=re.search(regexnote4,cihx)
-            mo2=re.compile(regexnote4)
-            #add by 1 twice is correct
-            objno2+=1
-            objno2+=1
-            totalobjhex=""
-            if objno2<127:
-                totalobjhex=str(format(objno2,'x')).zfill(2)
-            if objno2==127:
-                totalobjhex="c280"
-            if 127<objno2<2048:
-                phexint=194+(objno2-128)//64
-                #objno2hexint=objno2-(phexint*64)
-                objno2hexint=128+((objno2-128)%64)
-                phexd=str(format(phexint,'x')).zfill(2)
-                objno2hexd=str(format(objno2hexint,'x')).zfill(2)
-                totalobjhex=phexd+objno2hexd
-            if objno2==2048:
-                totalobjhex="e0a080"
-            if objno2>2048:
-                pphexint=224+((objno2-2048)//(64*(192-160)))
-                phexint=160+((objno2-2048)//64)
-                #objno2hexint=objno2-(phexint*64)
-                objno2hexint=128+((objno2-2048)%64)
-                pphexd=str(format(pphexint,'x')).zfill(2)
-                phexd=str(format(phexint,'x')).zfill(2)
-                objno2hexd=str(format(objno2hexint,'x')).zfill(2)
-                totalobjhex=pphexd+phexd+objno2hexd
-                pass
-            print(mo1)
-            #print(mo1.group(6))
-            if str(mo1.group(6))=="None":
-                ending=""
-                repw=mo1.group(1)+totalobjhex+""
-            else:
-                ending=mo1.group(6)
-                repw=mo1.group(1)+totalobjhex+ending
-                
-            replace1 = re.sub(mo1.group(1)+mo1.group(2), repw, cihx)
-            print(mo1.group(1)+mo1.group(2))
-            print(repw)
-            #print(replace1)
-            appendtext(curnotefpc,replace1,"wb")
-    pass
 def setvarconvpdf():
     global ocvtype,noconversion
     global newdir1, objno2, usethisnewdir1
@@ -2262,7 +2065,6 @@ def setvarconvpdf():
             newcurattachdirpc=curattachdirpc
             notecount=0
             objno2=0
-            objno2add=0
             for d in cnlst:
                 if sys.platform in ['Windows', 'win32', 'cygwin']:
                     sep=os.path.sep+os.path.sep
@@ -2272,68 +2074,20 @@ def setvarconvpdf():
                 combnewdir1=dlst[-1]
                 CN=checknotz(combnewdir1)
                 newdir1=CN[0]
-                objno2=CN[1]
-                objno2add+=objno2
+                objno2+=CN[1]
                 combcurnotefpc=curnotefpc
                 combcurattachdirpc=curattachdirpc
                 print(newcurnotefpc,combcurnotefpc)
                 copytree(combcurattachdirpc, newcurattachdirpc)
                 #time.sleep(3600)
-                with open(newcurnotefpc, 'rb') as text:
-                    content = text.read()
-                    newcihx=str(binascii.hexlify(content).decode('utf-8'))
                 with open(combcurnotefpc, 'rb') as text:
                     content = text.read()
                     cihx=str(binascii.hexlify(content).decode('utf-8'))
                     if notecount==0:
-                        print("Note1")
-                        appendthis=cihx
-                        appendtext(newcurnotefpc,appendthis,"wb")
-                        print("ON1="+str(objno2add))
-                    elif notecount>0:
-                        print("Note2")
-                        mo=re.search(beginningpart,cihx)
-                        addthis=re.sub(mo.group(1),"",cihx)
-                        cihx=addthis
-                        print("ON2="+str(objno2add))
-                        if notecount==1:
-                            lastyhex=lastycoordinate(newcihx)
-                        elif notecount>1:
-                            lastyhex=lastycoordinatelst(currentlasty,lastylst)
-                        print(lastyhex)
-                        county=ylochextoint2("E5A5A9E19E81",lastyhex)
-                        print(county)
-                        #ylochex,scalesstart,scaleend
-                        oldyhexlst=[ (m.group(0),m.group(7)) for m in re.finditer(patternpicgen, cihx)]
-                        #oldyhexlst=[ (m) for m in re.finditer(patternpicgen, cihx)]
-                        #oldyhexlst=[(m.group(7),m.group(12),m.group(13)) for m in re.finditer(patternpicgen, cihx)]
-                        #oldyscalestart=[m.group(12) for m in re.finditer(patternpicgen, cihx)]
-                        #oldyscaleend=[m.group(13) for m in re.finditer(patternpicgen, cihx)]
-                        lastylst=[]
-                        for hexs in oldyhexlst:
-                            print(hexs)
-                            ##oldyhex+lastyhex+(64*3)
-                            oldyhex=hexs[1]
-                            newyhex=modnewylochex(oldyhex,county+(64*3))
-                            oldpic=hexs[0]
-                            newpic=re.sub(oldyhex,newyhex,oldpic)
-                            lastylst.append(newyhex)
-                            print("Report="+"\n\n"+
-                                  oldyhex+"\n\n"+
-                                  newyhex+"\n\n"+
-                                  oldpic+"\n\n"+
-                                  newpic)
-                            #time.sleep(3600)
-                            cihx=re.sub(oldpic,newpic,cihx)
-                        print(newcurnotefpc,combcurnotefpc)
-                        #print(addthis)
-                        appendthis+=cihx
-                        #print(appendthis)
-                        appendtext(newcurnotefpc,appendthis,"wb")
-                        updateobjno2(objno2add,newcurnotefpc)
-                        currentlasty=lastyhex
-                    #time.sleep(3600)
-                notecount+=1
+                        appendtext(newcurnotefpc,cihx,"wb")
+                    if notecount>0:
+                        lastyhex=lastycoordinate()                    
+            notecount+=1
         else:
             print("need more notz")
         return True

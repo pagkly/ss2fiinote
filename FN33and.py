@@ -147,10 +147,13 @@ sgrabauto=False
 fnmove=False
 detectred=False
 rectcoordlist=[]
+picdirlist=[]
 if sys.platform in ['linux', 'linux2'] or sys.platform in ['Windows', 'win32', 'cygwin']:
     def mouselu(event):
         global textclick, clickStartX, clickStartY, clickStopX, clickStopY, objno2, Home,im
+        global picdirlist
         rectcoordlist=[]
+        
         if pause==0 and not Home:
             if sys.platform in ['linux', 'linux2']:
                 clickX, clickY=MouseGetPos()
@@ -158,8 +161,6 @@ if sys.platform in ['linux', 'linux2'] or sys.platform in ['Windows', 'win32', '
                 clickX, clickY=event.Position
                 #lastapp=active_window_process_name()
                 #if "FiiNote.exe" in lastapp:
-                #    import win32com.client as comclt
-                #    wsh=comclt.Dispatch("WScript.Shell")
                 #    wsh.SendKeys("^s")
             if (textclick==0):
                 clickStartX, clickStartY=clickX, clickY
@@ -234,8 +235,14 @@ if sys.platform in ['linux', 'linux2'] or sys.platform in ['Windows', 'win32', '
                                 rectcoordlist=everyletter(curattachdirpc,SS[2],"contouredc"+SS[2],1000,"",withcolour=True,testing=False,wledposdir="",rectcoordlist=rectcoordlist)
                                 objno2=convertjpg2note(curattachdirpc,column,newdir1,objno2,"",rectcoordlist,"")
                                 TT.config(text="DoneP")
-                        objno2,curattachdirpc=appendnewpic(SS[0],SS[1],SS[2],newdir1,SS[4],columntype,rectcoordlist,"")
+                        #objno2,curattachdirpc=appendnewpic(SS[0],SS[1],SS[2],newdir1,SS[4],columntype,rectcoordlist,"")
+                        lastapp=active_window_process_name()
+                        if "FiiNote.exe" in lastapp and screengrab:
+                            pass
+                        else:
+                            objno2,curattachdirpc=appendnewpic(SS[0],SS[1],SS[2],newdir1,SS[4],columntype,rectcoordlist,"")
                         imgdir=curattachdirpc+os.path.sep+SS[2]
+                        picdirlist.append(imgdir)
                         if (linuxpc==0) and os.path.exists("/run/user/1000/gvfs/*/Internal"):
                             subprocess.call("adb push -p "+imgdir+" "+fnnotesanddirint+newdir1+".notz/attach",shell=True)
                         TT2.config(text=str(objno2))
@@ -461,9 +468,17 @@ if sys.platform in ['linux', 'linux2'] or sys.platform in ['Windows', 'win32', '
             TT.config(text="scrngrab")
         """
         textclick=0
-    
+
+    import win32api
+    from win32con import *
+    import win32com.client as comclt
+    wsh=comclt.Dispatch("WScript.Shell")
+    nircmddir="%USERPROFILE%\\Documents\\GitHub\\FN35OCVbside\\others\\nircmd-x64\\nircmdc.exe"
     def Suspend1():
         global pause, textclick, screengrab
+        global picdirlist
+        fnpicmode=False
+        countscroll=0
         if pause==0:
             pause=1
             TT.config(text="Suspended")
@@ -471,19 +486,39 @@ if sys.platform in ['linux', 'linux2'] or sys.platform in ['Windows', 'win32', '
             closetrans()
             if sys.platform in ['Windows', 'win32', 'cygwin'] and screengrab:
                 #restartfn()
+                if picdirlist:
+                    print("Copying picdirlist...")
+                    for picdir in picdirlist:
+                        print(nircmddir+" clipboard copyimage "+picdir)
+                        subprocess.call(nircmddir+" clipboard copyimage "+picdir, shell=True)
+                        lastapp=active_window_process_name()
+                        if "FiiNote.exe" in lastapp:
+                            #scrolldown
+                            if not fnpicmode:
+                                sendthiskey("!3")
+                                sendthiskey("!s")
+                                #wsh.SendKeys("!3")
+                                #wsh.SendKeys("!s")
+                                fnpicmode=True
+                            win32api.mouse_event(MOUSEEVENTF_WHEEL, 0, 0, -15, 0)
+                            wsh.SendKeys("^v")
+                            time.sleep(0.3)
+                            countscroll+=1
+                    for f in countscroll:
+                        win32api.mouse_event(MOUSEEVENTF_WHEEL, 0, 0, 15, 0)
+                    picdirlist=[]
                 pass
         elif pause==1:
             pause=0
             TT.config(text="Resume")
-            spawntrans()
             if sys.platform in ['Windows', 'win32', 'cygwin'] and screengrab:
+                picdirlist=[]
                 lastapp=active_window_process_name()
                 if "FiiNote.exe" in lastapp:
-                    import win32com.client as comclt
-                    wsh=comclt.Dispatch("WScript.Shell")
                     wsh.SendKeys("^s")
                     #subprocess.call("taskkill /F /IM FiiNote.exe /T",shell=True)
                 pass
+                spawntrans()
         textclick=0
     def wlstatus():
         global wlareastatus
