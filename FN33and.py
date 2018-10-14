@@ -474,6 +474,8 @@ if sys.platform in ['linux', 'linux2'] or sys.platform in ['Windows', 'win32', '
     import win32com.client as comclt
     wsh=comclt.Dispatch("WScript.Shell")
     nircmddir="%USERPROFILE%\\Documents\\GitHub\\FN35OCVbside\\others\\nircmd-x64\\nircmdc.exe"
+    from pynput.mouse import Button, Controller
+    mouse = Controller()
     def Suspend1():
         global pause, textclick, screengrab
         global picdirlist
@@ -489,23 +491,28 @@ if sys.platform in ['linux', 'linux2'] or sys.platform in ['Windows', 'win32', '
                 if picdirlist:
                     print("Copying picdirlist...")
                     for picdir in picdirlist:
+                        #https://superuser.com/questions/372602/how-to-copy-picture-from-a-file-to-clipboard
                         print(nircmddir+" clipboard copyimage "+picdir)
                         subprocess.call(nircmddir+" clipboard copyimage "+picdir, shell=True)
                         lastapp=active_window_process_name()
                         if "FiiNote.exe" in lastapp:
                             #scrolldown
                             if not fnpicmode:
+                                sendthiskey("!+{TAB}")
                                 sendthiskey("!3")
                                 sendthiskey("!s")
                                 #wsh.SendKeys("!3")
                                 #wsh.SendKeys("!s")
                                 fnpicmode=True
-                            win32api.mouse_event(MOUSEEVENTF_WHEEL, 0, 0, -15, 0)
+                            #win32api.mouse_event(MOUSEEVENTF_WHEEL, 0, 0, -15, 0)
+                            mouse.scroll(0, 2)
                             wsh.SendKeys("^v")
                             time.sleep(0.3)
                             countscroll+=1
-                    for f in countscroll:
-                        win32api.mouse_event(MOUSEEVENTF_WHEEL, 0, 0, 15, 0)
+                    for f in range(countscroll):
+                        #win32api.mouse_event(MOUSEEVENTF_WHEEL, 0, 0, 15, 0)
+                        #mouse.scroll(0, -2)
+                        pass
                     picdirlist=[]
                 pass
         elif pause==1:
@@ -1369,7 +1376,7 @@ if sys.platform in ['linux', 'linux2']:
                mouselu("")
 
 #pip install --upgrade setuptools
-#pip install psutil pymouse pyautogui pillow pyscreenshot numpy scipy matplotlib opencv-python pypiwin32
+#pip install psutil pymouse pyautogui pillow pyscreenshot numpy scipy matplotlib opencv-python pypiwin32 pynput
 #win32gui pillow
 #pip install %USERPROFILE%\\Downloads\\PyHook3-1.6.1-cp35-none-win_amd64.whl
 #pip install %USERPROFILE%\\Downloads\\pyhook-1.6.1-cp37-cp37m-amd64.whl
