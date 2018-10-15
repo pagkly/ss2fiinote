@@ -112,4 +112,13 @@ python C:\Users\SP3\Documents\GitHub\FN35OCVbside\FN33andlib.py -p "file:///C:/U
 python C:\Users\SP3\Documents\GitHub\FN35OCVbside\FN33andlib.py -p "file:///C:/Users/SP3/Documents/GitHub/DocsSem2/SEM0218/ECON10004/W9_pre_tute_solutions.pdf" -d 120 -t 1 -nc 2 ;
 python C:\Users\SP3\Documents\GitHub\FN35OCVbside\FN33andlib.py -p "file:///C:/Users/SP3/Documents/GitHub/DocsSem2/SEM0218/ECON10004/W10_pre_tute.pdf" -d 120 -t 1 -nc 2 ;
 python C:\Users\SP3\Documents\GitHub\FN35OCVbside\FN33andlib.py -p "file:///C:/Users/SP3/Documents/GitHub/DocsSem2/SEM0218/ECON10004/W11 pre-tute.pdf" -d 120 -t 1 -nc 2 ;
+
+MICRO
+CHEM
+FEES UNIMELB
+EXAM TIME
+
+ILT-2     18/10
+COMP      19/10
+SCAN BOOK 22/10
 :comment

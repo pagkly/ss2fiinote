@@ -89,7 +89,7 @@ def dragfromto(startx,starty,stopx,stopy):
         pass
 def sendthiskey(thekey):
     global wsh
-    time.sleep(0.3)
+    time.sleep(0.1)
     if sys.platform in ['linux', 'linux2']:
         subprocess.call("xdotool "+thekey, shell=True)
         pass
@@ -237,7 +237,9 @@ if sys.platform in ['linux', 'linux2'] or sys.platform in ['Windows', 'win32', '
                                 TT.config(text="DoneP")
                         #objno2,curattachdirpc=appendnewpic(SS[0],SS[1],SS[2],newdir1,SS[4],columntype,rectcoordlist,"")
                         lastapp=active_window_process_name()
-                        if "FiiNote.exe" in lastapp and screengrab:
+                        #if "FiiNote.exe" in lastapp and screengrab:
+                        if "FiiNote.exe" in lastappglobal and screengrab:
+                            print(lastappglobal)
                             pass
                         else:
                             objno2,curattachdirpc=appendnewpic(SS[0],SS[1],SS[2],newdir1,SS[4],columntype,rectcoordlist,"")
@@ -476,9 +478,11 @@ if sys.platform in ['linux', 'linux2'] or sys.platform in ['Windows', 'win32', '
     nircmddir="%USERPROFILE%\\Documents\\GitHub\\FN35OCVbside\\others\\nircmd-x64\\nircmdc.exe"
     from pynput.mouse import Button, Controller
     mouse = Controller()
+    lastappglobal=""
     def Suspend1():
         global pause, textclick, screengrab
         global picdirlist
+        global lastappglobal
         fnpicmode=False
         countscroll=0
         if pause==0:
@@ -498,21 +502,60 @@ if sys.platform in ['linux', 'linux2'] or sys.platform in ['Windows', 'win32', '
                         if "FiiNote.exe" in lastapp:
                             #scrolldown
                             if not fnpicmode:
-                                sendthiskey("!+{TAB}")
-                                sendthiskey("!3")
-                                sendthiskey("!s")
-                                #wsh.SendKeys("!3")
-                                #wsh.SendKeys("!s")
+                                focusprog("FiiNote")
+                                #sendthiskey("%{TAB}")
+                                sendthiskey("%3")
+                                sendthiskey("%s")
+                                if len(picdirlist)>2:
+                                    #sendthiskey("^{=}^{=}^{=}^{=}^{=}^{=}^{=}^{=}^{=}^{=}^{=}^{=}^{=}^{=}^{=}")
+                                    
+                                    sendthiskey("^{=}")
+                                    sendthiskey("^{=}")
+                                    sendthiskey("^{=}")
+                                    sendthiskey("^{=}")
+                                    sendthiskey("^{=}")
+                                    sendthiskey("^{=}")
+                                    sendthiskey("^{=}")
+                                    sendthiskey("^{=}")
+                                    sendthiskey("^{=}")
+                                    sendthiskey("^{=}")
+                                    sendthiskey("^{=}")
+                                    sendthiskey("^{=}")
+                                    sendthiskey("^{=}")
+                                    sendthiskey("^{=}")
+                                    sendthiskey("^{=}")
+                                    
                                 fnpicmode=True
                             #win32api.mouse_event(MOUSEEVENTF_WHEEL, 0, 0, -15, 0)
-                            mouse.scroll(0, 2)
-                            wsh.SendKeys("^v")
-                            time.sleep(0.3)
+                            #mouse.scroll(0, 20)
+                            sendthiskey("{DOWN}")
+                            sendthiskey("^v")
+                            time.sleep(0.1)
                             countscroll+=1
                     for f in range(countscroll):
                         #win32api.mouse_event(MOUSEEVENTF_WHEEL, 0, 0, 15, 0)
-                        #mouse.scroll(0, -2)
+                        sendthiskey("{UP}")
+                        #mouse.scroll(0, -20)
                         pass
+                    if len(picdirlist)>2:
+                        sendthiskey("^{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}")
+                        
+                        sendthiskey("^{-}")
+                        sendthiskey("^{-}")
+                        sendthiskey("^{-}")
+                        sendthiskey("^{-}")
+                        sendthiskey("^{-}")
+                        sendthiskey("^{-}")
+                        sendthiskey("^{-}")
+                        sendthiskey("^{-}")
+                        sendthiskey("^{-}")
+                        sendthiskey("^{-}")
+                        sendthiskey("^{-}")
+                        sendthiskey("^{-}")
+                        sendthiskey("^{-}")
+                        sendthiskey("^{-}")
+                        sendthiskey("^{-}")
+                        
                     picdirlist=[]
                 pass
         elif pause==1:
@@ -521,8 +564,10 @@ if sys.platform in ['linux', 'linux2'] or sys.platform in ['Windows', 'win32', '
             if sys.platform in ['Windows', 'win32', 'cygwin'] and screengrab:
                 picdirlist=[]
                 lastapp=active_window_process_name()
+                lastappglobal=lastapp
                 if "FiiNote.exe" in lastapp:
                     wsh.SendKeys("^s")
+                    
                     #subprocess.call("taskkill /F /IM FiiNote.exe /T",shell=True)
                 pass
                 spawntrans()
