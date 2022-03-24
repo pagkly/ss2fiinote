@@ -1,0 +1,19 @@
+#!/bin/bash
+if [[ $userid =~ (user) ]] ; then
+#fn35ocvdir="/mnt/c/Users/SP3/Documents/Docs/Tech/Automate/FN35AOCV"
+fn35ocvdir="/home/user/Documents/Docs/Tech/Automate/FN35AOCV"
+elif [[ $userid =~ (ubuntu) ]] ; then
+fn35ocvdir="/media/ubuntu/SED/AY/DocumentsSP3/ScPython/FN35AOCV"
+fi
+python3 $fn35ocvdir/startpdf2note.py -p "29.pdf" -d 120 -t 1 -nc 2
+#$usbl
+
+29
+#python3 $fn35ocvdir/startpdf2note.py -p "29.pdf" -d 120 -t 1 -nc 2
+alltopics(math)
+#python3 $fn35ocvdir/startpdf2note.py -p "29.pdf" -d 120 -t 1 -nc 2
+Summary4, lecture1-2
+#python3 $fn35ocvdir/startpdf2note.py -p "29.pdf" -d 120 -t 3 -nc 2
+Physics workbook
+#python3 $fn35ocvdir/startpdf2note.py -p "29.pdf" -d 120 -t 2 -nc 2
+
